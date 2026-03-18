@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TaxEase — CA Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ── RESET & VARS ── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:       #0c0e14;
+  --surface:  #13161f;
+  --surface2: #1c1f2e;
+  --surface3: #232738;
+  --border:   #252840;
+  --border2:  #2e3350;
+  --accent:   #5b7fff;
+  --accent2:  #8b5fff;
+  --green:    #22c55e;
+  --amber:    #f59e0b;
+  --red:      #ef4444;
+  --blue:     #38bdf8;
+  --text:     #e2e4f0;
+  --text2:    #7c82a3;
+  --text3:    #3d4260;
+  --r:        10px;
+  --r-lg:     14px;
+}
+html, body { height: 100%; font-family: 'DM Sans', sans-serif; background: var(--bg); color: var(--text); font-size: 14px; line-height: 1.5; }
+button, input, select { font-family: inherit; }
+a { color: inherit; text-decoration: none; }
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar { width: 3px; height: 3px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ══════════════════════════════════
+   LOGIN PAGE
+══════════════════════════════════ */
+#login-page {
+  min-height: 100vh;
+  display: flex; align-items: center; justify-content: center;
+  background: radial-gradient(ellipse 80% 80% at 20% 60%, rgba(91,127,255,.08) 0%, transparent 60%),
+              radial-gradient(ellipse 60% 60% at 80% 20%, rgba(139,95,255,.06) 0%, transparent 50%);
+}
+.login-wrap { width: 100%; max-width: 400px; padding: 20px; }
+.login-brand {
+  display: flex; align-items: center; gap: 10px;
+  margin-bottom: 36px; justify-content: center;
+}
+.brand-icon {
+  width: 36px; height: 36px; border-radius: 9px;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 16px;
+}
+.brand-name { font-size: 22px; font-weight: 600; letter-spacing: -.3px; }
+.login-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 36px 32px;
+}
+.login-card h2 { font-size: 20px; font-weight: 600; margin-bottom: 4px; }
+.login-card .subtitle { color: var(--text2); font-size: 13px; margin-bottom: 28px; }
+.form-field { margin-bottom: 14px; }
+.form-field label { display: block; font-size: 11px; font-weight: 500; color: var(--text2); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 6px; }
+.form-field input {
+  width: 100%; padding: 10px 14px;
+  background: var(--bg); border: 1px solid var(--border2);
+  border-radius: var(--r); color: var(--text); font-size: 14px;
+  transition: border-color .15s;
+}
+.form-field input:focus { outline: none; border-color: var(--accent); }
+.form-field input::placeholder { color: var(--text3); }
+.btn-login {
+  width: 100%; padding: 11px;
+  background: linear-gradient(135deg, var(--accent) 0%, var(--accent2) 100%);
+  border: none; border-radius: var(--r); color: #fff;
+  font-size: 14px; font-weight: 600; cursor: pointer; margin-top: 8px;
+  transition: opacity .2s, transform .1s;
+}
+.btn-login:hover { opacity: .92; }
+.btn-login:active { transform: scale(.99); }
+.login-error { color: var(--red); font-size: 12px; margin-top: 10px; min-height: 16px; }
+
+/* ══════════════════════════════════
+   APP SHELL
+══════════════════════════════════ */
+#app {
+  display: none;
+  height: 100vh;
+  flex-direction: row;
+}
+#app.visible { display: flex; }
+
+/* ── SIDEBAR ── */
+.sidebar {
+  width: 230px; flex-shrink: 0;
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  display: flex; flex-direction: column;
+}
+.sb-brand {
+  display: flex; align-items: center; gap: 10px;
+  padding: 20px 18px 18px;
+  border-bottom: 1px solid var(--border);
+}
+.sb-brand .brand-icon { width: 30px; height: 30px; border-radius: 7px; font-size: 14px; }
+.sb-brand .brand-name { font-size: 16px; font-weight: 600; }
+.sb-nav { flex: 1; padding: 14px 10px; }
+.nav-section { margin-bottom: 20px; }
+.nav-section-label { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .7px; padding: 0 8px; margin-bottom: 4px; }
+.nav-btn {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r);
+  font-size: 13px; font-weight: 500; color: var(--text2);
+  cursor: pointer; transition: all .15s; margin-bottom: 1px;
+  border: none; background: none; width: 100%; text-align: left;
+}
+.nav-btn:hover { background: var(--surface2); color: var(--text); }
+.nav-btn.active { background: rgba(91,127,255,.13); color: var(--accent); }
+.nav-btn svg { width: 16px; height: 16px; flex-shrink: 0; }
+.sb-footer {
+  padding: 14px 10px;
+  border-top: 1px solid var(--border);
+}
+.user-row {
+  display: flex; align-items: center; gap: 9px;
+  padding: 8px 10px; border-radius: var(--r);
+}
+.user-av {
+  width: 30px; height: 30px; border-radius: 50%; flex-shrink: 0;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  display: flex; align-items: center; justify-content: center;
+  font-size: 11px; font-weight: 700; color: #fff;
+}
+.user-meta { flex: 1; min-width: 0; }
+.user-email { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.user-tag { font-size: 10px; color: var(--text3); }
+.logout-btn {
+  background: none; border: none; cursor: pointer;
+  color: var(--text3); padding: 4px; border-radius: 6px;
+  font-size: 14px; transition: color .15s;
+}
+.logout-btn:hover { color: var(--red); }
+
+/* ── MAIN AREA ── */
+.main { flex: 1; min-width: 0; display: flex; flex-direction: column; overflow: hidden; }
+.topbar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+  flex-shrink: 0;
+}
+.topbar-left h1 { font-size: 17px; font-weight: 600; }
+.topbar-left p { font-size: 12px; color: var(--text2); margin-top: 1px; }
+.topbar-right { display: flex; gap: 8px; }
+.btn-sm {
+  padding: 7px 14px; border-radius: var(--r);
+  font-size: 12px; font-weight: 500; cursor: pointer;
+  transition: all .15s; border: 1px solid var(--border2);
+  background: var(--surface2); color: var(--text2);
+}
+.btn-sm:hover { border-color: var(--accent); color: var(--accent); }
+.btn-primary-sm {
+  padding: 7px 14px; border-radius: var(--r);
+  font-size: 12px; font-weight: 600; cursor: pointer;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  border: none; color: #fff; transition: opacity .15s;
+}
+.btn-primary-sm:hover { opacity: .9; }
+
+.page { flex: 1; overflow-y: auto; padding: 22px 24px; }
+
+/* ══════════════════════════════════
+   STATS CARDS
+══════════════════════════════════ */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; margin-bottom: 20px; }
+.stat-card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 16px 18px;
+}
+.stat-label { font-size: 11px; color: var(--text3); font-weight: 500; text-transform: uppercase; letter-spacing: .5px; margin-bottom: 8px; }
+.stat-val { font-size: 28px; font-weight: 600; letter-spacing: -.5px; line-height: 1; }
+.stat-sub { font-size: 11px; color: var(--text2); margin-top: 5px; }
+.stat-card.green .stat-val { color: var(--green); }
+.stat-card.blue .stat-val { color: var(--blue); }
+
+/* ══════════════════════════════════
+   TWO COLUMN LAYOUT
+══════════════════════════════════ */
+.two-col { display: grid; grid-template-columns: 260px 1fr; gap: 14px; }
+.panel {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--r-lg); overflow: hidden; display: flex; flex-direction: column;
+}
+.panel-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 16px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.panel-head h3 { font-size: 13px; font-weight: 600; }
+.panel-count {
+  font-size: 10px; font-weight: 500; color: var(--text2);
+  background: var(--surface2); padding: 2px 8px; border-radius: 20px;
+}
+
+/* ── SEARCH INPUT ── */
+.search-wrap { padding: 10px 12px; border-bottom: 1px solid var(--border); flex-shrink: 0; }
+.search-input {
+  width: 100%; padding: 7px 10px;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--text); font-size: 13px;
+}
+.search-input:focus { outline: none; border-color: var(--accent); }
+.search-input::placeholder { color: var(--text3); }
+
+/* ── CLIENT LIST ── */
+.client-list { overflow-y: auto; flex: 1; }
+.client-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 14px; cursor: pointer;
+  border-bottom: 1px solid rgba(37,40,64,.6);
+  transition: background .12s; position: relative;
+}
+.client-item:hover { background: var(--surface2); }
+.client-item.active { background: rgba(91,127,255,.08); }
+.client-item.active::before {
+  content: ''; position: absolute; left: 0; top: 0; bottom: 0;
+  width: 2px; background: var(--accent);
+}
+.cl-av {
+  width: 34px; height: 34px; border-radius: 50%; flex-shrink: 0;
+  background: var(--surface3); display: flex; align-items: center;
+  justify-content: center; font-size: 11px; font-weight: 600; color: var(--accent);
+  font-family: 'DM Mono', monospace;
+}
+.cl-info { flex: 1; min-width: 0; }
+.cl-phone { font-size: 12px; font-weight: 500; font-family: 'DM Mono', monospace; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cl-meta { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.cl-badge {
+  font-size: 10px; font-weight: 500; background: var(--surface3);
+  color: var(--text2); padding: 2px 6px; border-radius: 4px; flex-shrink: 0;
+}
+
+/* ── TOOLBAR ── */
+.toolbar {
+  display: flex; gap: 8px; padding: 10px 12px;
+  border-bottom: 1px solid var(--border); flex-shrink: 0; align-items: center;
+}
+.toolbar .search-input { flex: 1; }
+.type-select {
+  padding: 7px 10px; background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r); color: var(--text); font-size: 12px; cursor: pointer;
+}
+
+/* ── TABLE ── */
+.table-wrap { overflow: auto; flex: 1; }
+table { width: 100%; border-collapse: collapse; }
+thead th {
+  padding: 9px 14px; text-align: left; font-size: 10px; font-weight: 500;
+  color: var(--text3); text-transform: uppercase; letter-spacing: .5px;
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+  background: var(--surface); position: sticky; top: 0; z-index: 1;
+}
+tbody td { padding: 11px 14px; border-bottom: 1px solid rgba(37,40,64,.5); vertical-align: middle; }
+tbody tr { cursor: pointer; transition: background .1s; }
+tbody tr:hover td { background: rgba(255,255,255,.015); }
+tbody tr:last-child td { border-bottom: none; }
+
+/* badges */
+.badge {
+  display: inline-flex; align-items: center;
+  padding: 2px 8px; border-radius: 20px; font-size: 10px; font-weight: 600;
+  letter-spacing: .2px; text-transform: capitalize;
+}
+.b-invoice  { background: rgba(91,127,255,.15); color: #7b9fff; }
+.b-receipt  { background: rgba(34,197,94,.12);  color: #4ade80; }
+.b-expense  { background: rgba(245,158,11,.12); color: #fbbf24; }
+.b-general_text { background: rgba(124,130,163,.1); color: var(--text2); }
+.b-non_financial { background: rgba(124,130,163,.1); color: var(--text2); }
+
+.mono { font-family: 'DM Mono', monospace; font-size: 12px; }
+.amt  { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--green); }
+.desc-cell { color: var(--text2); max-width: 240px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* empty state */
+.empty {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 56px 24px; text-align: center;
+}
+.empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .4; }
+.empty p { color: var(--text3); font-size: 13px; }
+
+/* loading spinner */
+.spin-wrap { display: flex; align-items: center; justify-content: center; padding: 40px; }
+.spinner {
+  width: 22px; height: 22px; border: 2px solid var(--border2);
+  border-top-color: var(--accent); border-radius: 50%;
+  animation: spin .55s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ══════════════════════════════════
+   DETAIL DRAWER
+══════════════════════════════════ */
+.overlay {
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.5); z-index: 90;
+}
+.overlay.open { display: block; }
+.drawer {
+  position: fixed; right: -440px; top: 0; width: 420px; height: 100vh;
+  background: var(--surface); border-left: 1px solid var(--border);
+  z-index: 100; transition: right .28s cubic-bezier(.4,0,.2,1);
+  overflow-y: auto; display: flex; flex-direction: column;
+}
+.drawer.open { right: 0; }
+.drawer-head {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 18px 20px; border-bottom: 1px solid var(--border); flex-shrink: 0;
+}
+.drawer-head h3 { font-size: 15px; font-weight: 600; }
+.drawer-close {
+  background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+  color: var(--text2); cursor: pointer; padding: 4px 8px; font-size: 16px; line-height: 1;
+}
+.drawer-close:hover { color: var(--text); }
+.drawer-body { padding: 20px; flex: 1; }
+.dr { margin-bottom: 16px; }
+.dr .dl { font-size: 10px; font-weight: 500; color: var(--text3); text-transform: uppercase; letter-spacing: .6px; margin-bottom: 4px; }
+.dr .dv { font-size: 14px; color: var(--text); }
+.dr .dv.big { font-size: 22px; font-weight: 600; color: var(--green); font-family: 'DM Mono', monospace; }
+.drawer-divider { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+.raw-box {
+  background: var(--bg); border: 1px solid var(--border); border-radius: var(--r);
+  padding: 12px; font-size: 11px; color: var(--text2); font-family: 'DM Mono', monospace;
+  line-height: 1.7; white-space: pre-wrap; word-break: break-word; max-height: 200px; overflow-y: auto;
+}
+
+/* ══════════════════════════════════
+   DASHBOARD HOME CARDS
+══════════════════════════════════ */
+.home-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-top: 20px; }
+.home-panel { background: var(--surface); border: 1px solid var(--border); border-radius: var(--r-lg); overflow: hidden; }
+.home-panel-head { padding: 12px 16px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+.home-panel-head h3 { font-size: 13px; font-weight: 600; }
+.see-all { font-size: 11px; color: var(--accent); cursor: pointer; }
+.see-all:hover { text-decoration: underline; }
+
+/* activity item */
+.act-item {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-bottom: 1px solid rgba(37,40,64,.5);
+}
+.act-item:last-child { border-bottom: none; }
+.act-dot {
+  width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+}
+.act-info { flex: 1; min-width: 0; }
+.act-title { font-size: 12px; font-weight: 500; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.act-time { font-size: 11px; color: var(--text3); }
+.act-amt { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--green); }
+
+/* type donut summary */
+.type-summary { padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+.type-row { display: flex; align-items: center; gap: 10px; }
+.type-label { font-size: 12px; color: var(--text2); flex: 1; text-transform: capitalize; }
+.type-bar-wrap { flex: 2; height: 4px; background: var(--surface3); border-radius: 2px; overflow: hidden; }
+.type-bar { height: 100%; border-radius: 2px; }
+.type-count { font-size: 12px; font-family: 'DM Mono', monospace; color: var(--text2); min-width: 24px; text-align: right; }
+</style>
+</head>
+<body>
+
+<!-- ══ LOGIN ══ -->
+<div id="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <div class="brand-icon">₹</div>
+      <span class="brand-name">TaxEase</span>
+    </div>
+    <div class="login-card">
+      <h2>Sign in</h2>
+      <p class="subtitle">Access your CA firm dashboard</p>
+      <div class="form-field">
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="ca@yourfirm.com" autofocus>
+      </div>
+      <div class="form-field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in to Dashboard</button>
+      <div class="login-error" id="login-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="sb-brand">
+      <div class="brand-icon">₹</div>
+      <span class="brand-name">TaxEase</span>
+    </div>
+    <div class="sb-nav">
+      <div class="nav-section">
+        <div class="nav-section-label">Main</div>
+        <button class="nav-btn active" data-view="home" onclick="gotoView('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+          Overview
+        </button>
+        <button class="nav-btn" data-view="clients" onclick="gotoView('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+          Clients
+        </button>
+        <button class="nav-btn" data-view="receipts" onclick="gotoView('receipts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="16" y2="17"/></svg>
+          All Receipts
+        </button>
+      </div>
+    </div>
+    <div class="sb-footer">
+      <div class="user-row">
+        <div class="user-av" id="user-av">CA</div>
+        <div class="user-meta">
+          <div class="user-email" id="user-email-display">Loading...</div>
+          <div class="user-tag">Chartered Accountant</div>
+        </div>
+        <button class="logout-btn" onclick="doLogout()" title="Sign out">⏻</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Main -->
+  <div class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h1 id="page-title">Overview</h1>
+        <p id="page-sub">Your firm at a glance</p>
+      </div>
+      <div class="topbar-right">
+        <button class="btn-sm" onclick="loadData()">↺ Refresh</button>
+        <button class="btn-primary-sm" onclick="exportCSV()">↓ Export CSV</button>
+      </div>
+    </div>
+    <div class="page" id="page-content">
+      <div class="spin-wrap"><div class="spinner"></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Drawer overlay -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3>Receipt Detail</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<script>
+/* ══════════════════════════
+   CONFIG — replace these two values
+══════════════════════════ */
+const SUPA_URL = 'https://luljdeuhpldtjnbcdwgo.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
+
+/* ══════════════════════════
+   INIT
+══════════════════════════ */
+const sb = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+let invoices = [], clients = [], currentView = 'home', activeClient = null;
+
+/* ══════════════════════════
+   AUTH
+══════════════════════════ */
+async function doLogin() {
+  const btn = document.getElementById('login-btn');
+  const err = document.getElementById('login-err');
+  const email = document.getElementById('login-email').value.trim();
+  const pass  = document.getElementById('login-password').value;
+  err.textContent = '';
+  if (!email || !pass) { err.textContent = 'Please fill in both fields'; return; }
+  btn.textContent = 'Signing in...'; btn.disabled = true;
+  const { data, error } = await sb.auth.signInWithPassword({ email, password: pass });
+  btn.textContent = 'Sign in to Dashboard'; btn.disabled = false;
+  if (error) { err.textContent = error.message; return; }
+  bootApp(data.user);
+}
+
+async function doLogout() {
+  await sb.auth.signOut();
+  document.getElementById('app').classList.remove('visible');
+  document.getElementById('login-page').style.display = 'flex';
+}
+
+function bootApp(user) {
+  document.getElementById('login-page').style.display = 'none';
+  document.getElementById('app').classList.add('visible');
+  const email = user.email || '';
+  document.getElementById('user-email-display').textContent = email;
+  document.getElementById('user-av').textContent = email.slice(0,2).toUpperCase();
+  loadData();
+}
+
+/* ══════════════════════════
+   DATA
+══════════════════════════ */
+async function loadData() {
+  setContent('<div class="spin-wrap"><div class="spinner"></div></div>');
+  const { data, error } = await sb
+    .from('invoices')
+    .select('*')
+    .order('received_at', { ascending: false });
+  if (error) { setContent('<div class="empty"><div class="empty-icon">⚠</div><p>Error loading data: ' + error.message + '</p></div>'); return; }
+  invoices = data || [];
+  const phones = [...new Set(invoices.map(i => i.client_phone).filter(Boolean))];
+  clients = phones.map(phone => ({
+    phone,
+    count: invoices.filter(i => i.client_phone === phone).length,
+    lastSeen: invoices.filter(i => i.client_phone === phone)[0]?.received_at,
+    total: invoices.filter(i => i.client_phone === phone).reduce((s,i) => s + (parseFloat(i.amount)||0), 0)
+  })).sort((a,b) => new Date(b.lastSeen) - new Date(a.lastSeen));
+  renderView();
+}
+
+/* ══════════════════════════
+   ROUTING
+══════════════════════════ */
+function gotoView(v) {
+  currentView = v;
+  activeClient = null;
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === v));
+  const titles = { home: ['Overview','Your firm at a glance'], clients: ['Clients','Search and view client receipts'], receipts: ['All Receipts','Every receipt across all clients'] };
+  document.getElementById('page-title').textContent = titles[v][0];
+  document.getElementById('page-sub').textContent = titles[v][1];
+  renderView();
+}
+
+function renderView() {
+  if (currentView === 'home') renderHome();
+  else if (currentView === 'clients') renderClients('');
+  else renderReceipts('', '');
+}
+
+function setContent(html) { document.getElementById('page-content').innerHTML = html; }
+
+/* ══════════════════════════
+   HOME VIEW
+══════════════════════════ */
+function renderHome() {
+  const now = new Date();
+  const thisMonth = invoices.filter(i => {
+    const d = new Date(i.received_at);
+    return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+  });
+  const totalAmt = invoices.reduce((s,i) => s + (parseFloat(i.amount)||0), 0);
+  const uniqueClients = new Set(invoices.map(i => i.client_phone)).size;
+
+  // type breakdown
+  const types = ['invoice','receipt','expense','general_text','non_financial'];
+  const typeCounts = types.map(t => ({ t, n: invoices.filter(i => i.message_type === t).length })).filter(x => x.n > 0);
+  const maxType = Math.max(...typeCounts.map(x => x.n), 1);
+  const typeColors = { invoice:'#5b7fff', receipt:'#22c55e', expense:'#f59e0b', general_text:'#7c82a3', non_financial:'#3d4260' };
+
+  setContent(`
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-label">Total receipts</div>
+        <div class="stat-val">${invoices.length}</div>
+        <div class="stat-sub">${thisMonth.length} this month</div>
+      </div>
+      <div class="stat-card green">
+        <div class="stat-label">Total amount</div>
+        <div class="stat-val">₹${fmtAmt(totalAmt)}</div>
+        <div class="stat-sub">Across all receipts</div>
+      </div>
+      <div class="stat-card blue">
+        <div class="stat-label">Active clients</div>
+        <div class="stat-val">${uniqueClients}</div>
+        <div class="stat-sub">Unique WhatsApp numbers</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">This month</div>
+        <div class="stat-val">${thisMonth.length}</div>
+        <div class="stat-sub">${now.toLocaleString('default',{month:'long'})} ${now.getFullYear()}</div>
+      </div>
+    </div>
+
+    <div class="home-grid">
+      <div class="home-panel">
+        <div class="home-panel-head">
+          <h3>Recent receipts</h3>
+          <span class="see-all" onclick="gotoView('receipts')">See all →</span>
+        </div>
+        ${invoices.slice(0,8).map(inv => `
+          <div class="act-item" onclick="openDrawer('${inv.id}')" style="cursor:pointer">
+            <div class="act-dot" style="background:${typeColors[inv.message_type]||'#3d4260'}"></div>
+            <div class="act-info">
+              <div class="act-title">${inv.vendor_name || inv.description || 'Unknown'}</div>
+              <div class="act-time">${inv.client_phone?.replace('+91','') || '—'} · ${fmtDate(inv.received_at)}</div>
+            </div>
+            <div class="act-amt">${inv.amount ? '₹'+fmtAmt(parseFloat(inv.amount)) : '—'}</div>
+          </div>
+        `).join('')}
+        ${invoices.length===0?'<div class="empty"><div class="empty-icon">📭</div><p>No receipts yet</p></div>':''}
+      </div>
+
+      <div class="home-panel">
+        <div class="home-panel-head">
+          <h3>Receipt types</h3>
+          <span class="see-all" onclick="gotoView('receipts')">View all →</span>
+        </div>
+        <div class="type-summary">
+          ${typeCounts.length === 0 ? '<p style="color:var(--text3);font-size:13px;text-align:center;padding:20px">No data yet</p>' :
+            typeCounts.map(x => `
+            <div class="type-row">
+              <div class="type-label">${x.t.replace('_',' ')}</div>
+              <div class="type-bar-wrap">
+                <div class="type-bar" style="width:${Math.round(x.n/maxType*100)}%;background:${typeColors[x.t]||'#3d4260'}"></div>
+              </div>
+              <div class="type-count">${x.n}</div>
+            </div>`).join('')}
+        </div>
+
+        <div class="home-panel-head" style="margin-top:4px">
+          <h3>Top clients</h3>
+          <span class="see-all" onclick="gotoView('clients')">See all →</span>
+        </div>
+        ${clients.slice(0,5).map(c => `
+          <div class="act-item" onclick="selectClient('${c.phone}')" style="cursor:pointer">
+            <div class="cl-av" style="width:28px;height:28px;font-size:10px">${c.phone.slice(-4)}</div>
+            <div class="act-info">
+              <div class="act-title mono">${c.phone}</div>
+              <div class="act-time">${c.count} receipts · Last: ${fmtDate(c.lastSeen)}</div>
+            </div>
+            <div class="act-amt">₹${fmtAmt(c.total)}</div>
+          </div>
+        `).join('')}
+        ${clients.length===0?'<div class="empty"><div class="empty-icon">👤</div><p>No clients yet</p></div>':''}
+      </div>
+    </div>
+  `);
+}
+
+/* ══════════════════════════
+   CLIENTS VIEW
+══════════════════════════ */
+function renderClients(search) {
+  const filtered = search
+    ? clients.filter(c => c.phone.includes(search))
+    : clients;
+
+  const clientInv = activeClient
+    ? invoices.filter(i => i.client_phone === activeClient.phone)
+    : [];
+
+  setContent(`
+    <div class="two-col" style="height: calc(100vh - 130px)">
+      <!-- Left: client list -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>Clients</h3>
+          <span class="panel-count">${filtered.length}</span>
+        </div>
+        <div class="search-wrap">
+          <input class="search-input" placeholder="Search by phone number..." value="${search}" oninput="renderClients(this.value)">
+        </div>
+        <div class="client-list">
+          ${filtered.length === 0
+            ? '<div class="empty"><div class="empty-icon">🔍</div><p>No clients found</p></div>'
+            : filtered.map(c => `
+              <div class="client-item ${activeClient?.phone===c.phone?'active':''}" onclick="selectClient('${c.phone}')">
+                <div class="cl-av">${c.phone.slice(-4)}</div>
+                <div class="cl-info">
+                  <div class="cl-phone">${c.phone}</div>
+                  <div class="cl-meta">${c.count} receipts · ₹${fmtAmt(c.total)}</div>
+                </div>
+                <span class="cl-badge">${c.count}</span>
+              </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- Right: invoice table -->
+      <div class="panel">
+        ${activeClient ? `
+          <div class="panel-head">
+            <h3>${activeClient.phone}</h3>
+            <span class="panel-count">${clientInv.length} receipts</span>
+          </div>
+          <div class="toolbar">
+            <input class="search-input" placeholder="Search receipts..." oninput="filterClientTable(this.value)">
+            <select class="type-select" onchange="filterClientTable('',this.value)" id="client-type-sel">
+              <option value="">All types</option>
+              <option value="invoice">Invoice</option>
+              <option value="receipt">Receipt</option>
+              <option value="expense">Expense</option>
+              <option value="general_text">General</option>
+            </select>
+          </div>
+          <div class="table-wrap" id="client-table-wrap">
+            ${renderTable(clientInv)}
+          </div>
+        ` : `
+          <div class="empty" style="margin:auto">
+            <div class="empty-icon">←</div>
+            <p>Select a client to view their receipts</p>
+          </div>
+        `}
+      </div>
+    </div>
+  `);
+}
+
+function selectClient(phone) {
+  activeClient = clients.find(c => c.phone === phone);
+  currentView = 'clients';
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.toggle('active', b.dataset.view === 'clients'));
+  document.getElementById('page-title').textContent = 'Clients';
+  renderClients('');
+}
+
+function filterClientTable(search='', type='') {
+  type = type || document.getElementById('client-type-sel')?.value || '';
+  let inv = activeClient ? invoices.filter(i => i.client_phone === activeClient.phone) : [];
+  if (type) inv = inv.filter(i => i.message_type === type);
+  if (search) inv = inv.filter(i =>
+    (i.vendor_name||'').toLowerCase().includes(search.toLowerCase()) ||
+    (i.description||'').toLowerCase().includes(search.toLowerCase()) ||
+    (i.raw_text||'').toLowerCase().includes(search.toLowerCase())
+  );
+  const wrap = document.getElementById('client-table-wrap');
+  if (wrap) wrap.innerHTML = renderTable(inv);
+}
+
+/* ══════════════════════════
+   ALL RECEIPTS VIEW
+══════════════════════════ */
+function renderReceipts(search, type) {
+  let inv = invoices;
+  if (type) inv = inv.filter(i => i.message_type === type);
+  if (search) inv = inv.filter(i =>
+    (i.vendor_name||'').toLowerCase().includes(search.toLowerCase()) ||
+    (i.client_phone||'').includes(search) ||
+    (i.description||'').toLowerCase().includes(search.toLowerCase()) ||
+    (i.raw_text||'').toLowerCase().includes(search.toLowerCase())
+  );
+
+  setContent(`
+    <div class="panel" style="height: calc(100vh - 130px)">
+      <div class="panel-head">
+        <h3>All Receipts</h3>
+        <span class="panel-count">${inv.length} of ${invoices.length}</span>
+      </div>
+      <div class="toolbar">
+        <input class="search-input" placeholder="Search vendor, client, description..."
+          value="${search}"
+          oninput="renderReceipts(this.value, document.getElementById('all-type-sel').value)">
+        <select class="type-select" id="all-type-sel"
+          onchange="renderReceipts(document.querySelector('#page-content .search-input').value, this.value)">
+          <option value="" ${!type?'selected':''}>All types</option>
+          <option value="invoice" ${type==='invoice'?'selected':''}>Invoice</option>
+          <option value="receipt" ${type==='receipt'?'selected':''}>Receipt</option>
+          <option value="expense" ${type==='expense'?'selected':''}>Expense</option>
+          <option value="general_text" ${type==='general_text'?'selected':''}>General text</option>
+        </select>
+      </div>
+      <div class="table-wrap">
+        ${renderTable(inv)}
+      </div>
+    </div>
+  `);
+}
+
+/* ══════════════════════════
+   SHARED TABLE
+══════════════════════════ */
+function renderTable(data) {
+  if (!data || data.length === 0) return `<div class="empty"><div class="empty-icon">📭</div><p>No receipts found</p></div>`;
+  return `
+    <table>
+      <thead>
+        <tr>
+          <th>Date</th>
+          <th>Client</th>
+          <th>Type</th>
+          <th>Vendor</th>
+          <th>Amount</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${data.map(inv => `
+          <tr onclick="openDrawer('${inv.id}')">
+            <td class="mono">${fmtDate(inv.received_at)}</td>
+            <td class="mono" style="color:var(--text2)">${(inv.client_phone||'—').replace('+91','')}</td>
+            <td><span class="badge b-${inv.message_type||'receipt'}">${(inv.message_type||'receipt').replace('_',' ')}</span></td>
+            <td>${inv.vendor_name || '—'}</td>
+            <td class="amt">${inv.amount ? '₹'+fmtAmt(parseFloat(inv.amount)) : '—'}</td>
+            <td class="desc-cell">${inv.description || inv.raw_text || '—'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>`;
+}
+
+/* ══════════════════════════
+   DETAIL DRAWER
+══════════════════════════ */
+function openDrawer(id) {
+  const inv = invoices.find(i => i.id === id);
+  if (!inv) return;
+  document.getElementById('drawer-body').innerHTML = `
+    <div class="dr">
+      <div class="dl">Type</div>
+      <div class="dv"><span class="badge b-${inv.message_type||'receipt'}">${(inv.message_type||'receipt').replace('_',' ')}</span></div>
+    </div>
+    <div class="dr">
+      <div class="dl">Date received</div>
+      <div class="dv">${new Date(inv.received_at).toLocaleString('en-IN')}</div>
+    </div>
+    <div class="dr">
+      <div class="dl">Client phone</div>
+      <div class="dv mono">${inv.client_phone || '—'}</div>
+    </div>
+    <hr class="drawer-divider">
+    <div class="dr">
+      <div class="dl">Amount</div>
+      <div class="dv big">${inv.amount ? '₹'+fmtAmt(parseFloat(inv.amount)) : '—'}</div>
+    </div>
+    <div class="dr">
+      <div class="dl">Vendor / Merchant</div>
+      <div class="dv">${inv.vendor_name || '—'}</div>
+    </div>
+    <div class="dr">
+      <div class="dl">Invoice date</div>
+      <div class="dv">${inv.invoice_date || '—'}</div>
+    </div>
+    <div class="dr">
+      <div class="dl">GST number</div>
+      <div class="dv mono">${inv.gst_number || '—'}</div>
+    </div>
+    <div class="dr">
+      <div class="dl">GST amount</div>
+      <div class="dv">${inv.gst_amount ? '₹'+fmtAmt(parseFloat(inv.gst_amount)) : '—'}</div>
+    </div>
+    <hr class="drawer-divider">
+    <div class="dr">
+      <div class="dl">Description</div>
+      <div class="dv" style="color:var(--text2);line-height:1.6">${inv.description || '—'}</div>
+    </div>
+    ${inv.raw_text ? `
+    <div class="dr">
+      <div class="dl">Raw text from image</div>
+      <div class="raw-box">${inv.raw_text}</div>
+    </div>` : ''}
+  `;
+  document.getElementById('overlay').classList.add('open');
+  document.getElementById('drawer').classList.add('open');
+}
+
+function closeDrawer() {
+  document.getElementById('overlay').classList.remove('open');
+  document.getElementById('drawer').classList.remove('open');
+}
+
+/* ══════════════════════════
+   EXPORT CSV
+══════════════════════════ */
+function exportCSV() {
+  const headers = ['Date Received','Client Phone','Type','Vendor','Amount','GST Number','GST Amount','Invoice Date','Description'];
+  const rows = invoices.map(i => [
+    new Date(i.received_at).toLocaleDateString('en-IN'),
+    i.client_phone||'',
+    i.message_type||'',
+    (i.vendor_name||'').replace(/,/g,' '),
+    i.amount||'',
+    i.gst_number||'',
+    i.gst_amount||'',
+    i.invoice_date||'',
+    (i.description||'').replace(/,/g,' ')
+  ]);
+  const csv = [headers,...rows].map(r => r.join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv],{type:'text/csv'}));
+  a.download = `taxease_export_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+/* ══════════════════════════
+   HELPERS
+══════════════════════════ */
+function fmtDate(d) {
+  if (!d) return '—';
+  return new Date(d).toLocaleDateString('en-IN', { day:'2-digit', month:'short', year:'numeric' });
+}
+function fmtAmt(n) {
+  if (!n || isNaN(n)) return '0';
+  return n.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+}
+
+/* ══════════════════════════
+   AUTO LOGIN CHECK
+══════════════════════════ */
+sb.auth.getSession().then(({ data: { session } }) => {
+  if (session) bootApp(session.user);
+});
+</script>
+</body>
+</html>
