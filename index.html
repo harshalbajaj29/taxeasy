@@ -1096,11 +1096,12 @@ async function saveEditClient(phone){
   const address=document.getElementById('ec-address').value.trim();
   const notes=document.getElementById('ec-notes').value.trim();
   const isActive=document.getElementById('ec-active').value==='true';
-  const{error}=await sb.from('clients').update({
+  const{error}=await sb.from('clients').upsert({
+    phone:phone,
     name:name||null,business_name:business||null,pan_number:pan||null,
     gst_number:gst||null,email:email||null,address:address||null,
     notes:notes||null,is_active:isActive
-  }).eq('phone',phone);
+  },{onConflict:'phone'});
   if(error){alert('Error: '+error.message);return}
   closeModal();loadData();
 }
