@@ -332,6 +332,9 @@ tbody tr:last-child td{border-bottom:none}
           <button class="nav-btn" data-view="client360" onclick="gotoView('client360')">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client 360
           </button>
+          <button class="nav-btn" data-view="clients" onclick="gotoView('clients')">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage Clients
+          </button>
         </div>
         <div class="nav-section">
           <div class="nav-section-label">Activity</div>
@@ -395,8 +398,8 @@ tbody tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-const SUPA_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
-const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
+const SUPA_URL='YOUR_SUPABASE_URL';
+const SUPA_KEY='YOUR_SUPABASE_ANON_KEY';
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
 let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[];
 let currentView='home',selectedClient=null;
@@ -425,23 +428,29 @@ function bootApp(user){
 /* DATA */
 async function loadData(){
   setContent('<div class="spin-wrap"><div class="spinner"></div></div>');
-  const[invRes,qRes,apptRes,docRes,remRes,caInvRes,chalRes]=await Promise.all([
+  const[invRes,qRes,apptRes,docRes,remRes,caInvRes,chalRes,cliRes]=await Promise.all([
     sb.from('invoices').select('*').order('received_at',{ascending:false}),
     sb.from('questions').select('*').order('created_at',{ascending:false}),
     sb.from('appointments').select('*').order('created_at',{ascending:false}),
     sb.from('documents').select('*').order('created_at',{ascending:false}),
     sb.from('reminders').select('*').order('due_date',{ascending:true}),
     sb.from('ca_invoices').select('*').order('created_at',{ascending:false}),
-    sb.from('challans').select('*').order('created_at',{ascending:false})
+    sb.from('challans').select('*').order('created_at',{ascending:false}),
+    sb.from('clients').select('*').order('name',{ascending:true})
   ]);
   invoices=invRes.data||[];questions=qRes.data||[];appointments=apptRes.data||[];
   documents=docRes.data||[];reminders=remRes.data||[];caInvoices=caInvRes.data||[];challans=chalRes.data||[];
-  const phones=[...new Set(invoices.map(i=>i.client_phone).filter(Boolean))];
-  clients=phones.map(phone=>({
-    phone,count:invoices.filter(i=>i.client_phone===phone).length,
-    lastSeen:invoices.filter(i=>i.client_phone===phone)[0]?.received_at,
-    total:invoices.filter(i=>i.client_phone===phone).reduce((s,i)=>s+(parseFloat(i.amount)||0),0)
-  })).sort((a,b)=>new Date(b.lastSeen)-new Date(a.lastSeen));
+  const dbClients=cliRes.data||[];
+  const phones=[...new Set([...dbClients.map(c=>c.phone),...invoices.map(i=>i.client_phone).filter(Boolean)])];
+  clients=phones.map(phone=>{
+    const db=dbClients.find(c=>c.phone===phone)||{};
+    return{phone,id:db.id||null,name:db.name||null,business_name:db.business_name||null,
+      email:db.email||null,pan_number:db.pan_number||null,gst_number:db.gst_number||null,
+      address:db.address||null,notes:db.notes||null,is_active:db.is_active!==false,
+      count:invoices.filter(i=>i.client_phone===phone).length,
+      lastSeen:invoices.filter(i=>i.client_phone===phone)[0]?.received_at,
+      total:invoices.filter(i=>i.client_phone===phone).reduce((s,i)=>s+(parseFloat(i.amount)||0),0)};
+  }).sort((a,b)=>(a.name||a.phone).localeCompare(b.name||b.phone));
   updateBadges();
   populateClientDropdown();
   renderView();
@@ -462,7 +471,7 @@ function populateClientDropdown(){
   clients.forEach(c=>{
     const opt=document.createElement('option');
     opt.value=c.phone;
-    opt.textContent=c.phone;
+    opt.textContent=c.name?c.name+' ('+c.phone+')':c.phone;
     dd.appendChild(opt);
   });
   if(val)dd.value=val;
@@ -501,7 +510,8 @@ function gotoView(v){
     'ca-invoices':['CA Invoices','Invoices raised to clients'],
     challans:['Challans','Tax challans and payments'],
     reminders:['Reminders','Client reminders and follow-ups'],
-    tally:['Tally Import','Import data from Tally backup']
+    tally:['Tally Import','Import data from Tally backup'],
+    clients:['Manage Clients','Add, edit and delete your clients']
   };
   const t=titles[v]||['Dashboard',''];
   document.getElementById('page-title').textContent=t[0];
@@ -513,6 +523,7 @@ function gotoView(v){
   if(v==='challans'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'challan\')">+ New Challan</button>'}
   if(v==='reminders'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'reminder\')">+ Add Reminder</button>'}
   if(v==='documents'&&selectedClient){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'upload-doc\')">+ Upload Document</button>'}
+  if(v==='clients'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'add-client\')">'+'+ Add Client</button>'}
   renderView();
 }
 
@@ -526,6 +537,7 @@ function renderView(){
   else if(currentView==='ca-invoices')renderCAInvoices();
   else if(currentView==='challans')renderChallans();
   else if(currentView==='reminders')renderReminders();
+  else if(currentView==='clients')renderClients();
   else if(currentView==='tally')renderTally();
 }
 function setContent(html){document.getElementById('page-content').innerHTML=html}
@@ -583,12 +595,16 @@ function renderClient360(){
     <div class="client-360">
       <div class="client-info-card">
         <div class="client-info-row">
-          <div class="client-avatar-big">${phone.slice(-4)}</div>
+          <div class="client-avatar-big">${client.name?client.name.slice(0,2).toUpperCase():phone.slice(-4)}</div>
           <div class="client-info-details">
-            <div class="client-name">${phone}</div>
+            <div class="client-name">${client.name||phone}</div>
             <div class="client-phone-text">${phone}</div>
           </div>
         </div>
+        ${client.business_name?`<div class="info-field"><div class="label">Business</div><div class="value" style="font-weight:500">${client.business_name}</div></div>`:''}
+        ${client.pan_number?`<div class="info-field"><div class="label">PAN</div><div class="value mono">${client.pan_number}</div></div>`:''}
+        ${client.gst_number?`<div class="info-field"><div class="label">GST Number</div><div class="value mono">${client.gst_number}</div></div>`:''}
+        ${client.email?`<div class="info-field"><div class="label">Email</div><div class="value">${client.email}</div></div>`:''}
         <div class="info-field"><div class="label">Total receipts</div><div class="value" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent)">${clientInvoices.length}</div></div>
         <div class="info-field"><div class="label">Total spent</div><div class="value" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent)">₹${fmtAmt(totalSpent)}</div></div>
         <div class="info-field"><div class="label">Outstanding balance</div><div class="value" style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--red)">₹${fmtAmt(totalOwed)}</div></div>
@@ -599,6 +615,7 @@ function renderClient360(){
           <button class="action-btn" onclick="openModal('upload-doc','${phone}')">+ Upload Document</button>
           <button class="action-btn" onclick="openModal('ca-invoice','${phone}')">+ Add Invoice</button>
           <button class="action-btn" onclick="openModal('challan','${phone}')">+ Add Challan</button>
+          <button class="action-btn" onclick="openModal('edit-client','${phone}')">Edit Client</button>
         </div>
       </div>
       <div class="client-360-right">
@@ -705,6 +722,55 @@ function renderChallans(){
     <div class="panel-head"><h3>Challans</h3><span class="panel-count">${ch.length}</span></div>
     <div class="table-wrap">${ch.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet. Click + New Challan to add one.</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>${ch.map(c=>`<tr><td class="mono">${fmtDate(c.created_at)}</td><td class="mono" style="color:var(--text2)">${(c.client_phone||'').replace('+91','')}</td><td>${c.challan_type||'—'}</td><td class="amt">₹${fmtAmt(parseFloat(c.amount)||0)}</td><td class="mono">${c.period||'—'}</td><td><span class="badge b-${c.status||'pending'}">${c.status||'pending'}</span></td></tr>`).join('')}</tbody></table>`}</div>
   </div>`);
+}
+
+/* CLIENTS MANAGEMENT */
+function renderClients(){
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>All Clients</h3><span class="panel-count">${clients.length} clients</span></div>
+    <div class="toolbar"><input class="search-input" placeholder="Search by name, phone, PAN, GST..." id="client-search" oninput="filterClientsTable(this.value)"></div>
+    <div class="table-wrap" id="clients-table-wrap">
+      ${renderClientsTable(clients)}
+    </div>
+  </div>`);
+}
+
+function filterClientsTable(search){
+  const filtered=search?clients.filter(c=>
+    (c.name||'').toLowerCase().includes(search.toLowerCase())||
+    (c.phone||'').includes(search)||
+    (c.pan_number||'').toLowerCase().includes(search.toLowerCase())||
+    (c.gst_number||'').toLowerCase().includes(search.toLowerCase())||
+    (c.business_name||'').toLowerCase().includes(search.toLowerCase())
+  ):clients;
+  const wrap=document.getElementById('clients-table-wrap');
+  if(wrap)wrap.innerHTML=renderClientsTable(filtered);
+}
+
+function renderClientsTable(data){
+  if(!data||data.length===0)return '<div class="empty"><div class="empty-icon">👥</div><p>No clients yet. Click + Add Client to add your first client.</p></div>';
+  return '<table><thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>PAN</th><th>GST</th><th>Receipts</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+
+    data.map(c=>'<tr onclick="selectClientAndGo(\''+c.phone+'\')">'+
+      '<td style="font-weight:500">'+(c.name||'—')+'</td>'+
+      '<td class="mono">'+(c.phone||'—')+'</td>'+
+      '<td class="desc-cell">'+(c.business_name||'—')+'</td>'+
+      '<td class="mono">'+(c.pan_number||'—')+'</td>'+
+      '<td class="mono">'+(c.gst_number||'—')+'</td>'+
+      '<td style="text-align:center">'+c.count+'</td>'+
+      '<td class="amt">₹'+fmtAmt(c.total)+'</td>'+
+      '<td><span class="badge '+(c.is_active?'b-answered':'b-review')+'">'+(c.is_active?'Active':'Inactive')+'</span></td>'+
+      '<td onclick="event.stopPropagation()" style="white-space:nowrap">'+
+        '<button onclick="openModal(\'edit-client\',\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text2);margin-right:4px">Edit</button>'+
+        '<button onclick="deleteClient(\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--red-light);background:var(--red-light);color:var(--red)">Delete</button>'+
+      '</td>'+
+    '</tr>').join('')+
+  '</tbody></table>';
+}
+
+function selectClientAndGo(phone){
+  selectedClient=clients.find(c=>c.phone===phone);
+  document.getElementById('client-dropdown').value=phone;
+  gotoView('client360');
 }
 
 /* REMINDERS */
@@ -918,6 +984,34 @@ function openModal(type,phone=''){
       <div class="modal-field"><label>Amount (₹)</label><input type="number" id="chal-amount" placeholder="10000"></div>
       <div class="modal-field"><label>Period</label><input type="text" id="chal-period" placeholder="Q1 FY 2025-26"></div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveChallan()">Save Challan</button></div>`;
+  } else if(type==='add-client'){
+    modal.innerHTML=`<h3>Add New Client</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Phone number *</label><input type="text" id="ac-phone" placeholder="+919876543210"></div>
+        <div class="modal-field"><label>Client name</label><input type="text" id="ac-name" placeholder="Ramesh Kumar"></div>
+        <div class="modal-field"><label>Business name</label><input type="text" id="ac-business" placeholder="Ramesh Textiles Pvt Ltd"></div>
+        <div class="modal-field"><label>Email</label><input type="email" id="ac-email" placeholder="ramesh@business.com"></div>
+        <div class="modal-field"><label>PAN number</label><input type="text" id="ac-pan" placeholder="ABCDE1234F"></div>
+        <div class="modal-field"><label>GST number</label><input type="text" id="ac-gst" placeholder="27ABCDE1234F1Z5"></div>
+      </div>
+      <div class="modal-field"><label>Address</label><input type="text" id="ac-address" placeholder="123 Main Street, Pune"></div>
+      <div class="modal-field"><label>Notes</label><textarea id="ac-notes" placeholder="Any important notes about this client..."></textarea></div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveAddClient()">Add Client</button></div>`;
+  } else if(type==='edit-client'){
+    const c=clients.find(x=>x.phone===phone)||{};
+    modal.innerHTML=`<h3>Edit Client — ${c.name||phone}</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Phone</label><input type="text" value="${c.phone||''}" disabled style="opacity:.6"></div>
+        <div class="modal-field"><label>Client name</label><input type="text" id="ec-name" value="${c.name||''}"></div>
+        <div class="modal-field"><label>Business name</label><input type="text" id="ec-business" value="${c.business_name||''}"></div>
+        <div class="modal-field"><label>Email</label><input type="email" id="ec-email" value="${c.email||''}"></div>
+        <div class="modal-field"><label>PAN number</label><input type="text" id="ec-pan" value="${c.pan_number||''}"></div>
+        <div class="modal-field"><label>GST number</label><input type="text" id="ec-gst" value="${c.gst_number||''}"></div>
+      </div>
+      <div class="modal-field"><label>Address</label><input type="text" id="ec-address" value="${c.address||''}"></div>
+      <div class="modal-field"><label>Notes</label><textarea id="ec-notes">${c.notes||''}</textarea></div>
+      <div class="modal-field"><label>Status</label><select id="ec-active"><option value="true" ${c.is_active!==false?'selected':''}>Active</option><option value="false" ${c.is_active===false?'selected':''}>Inactive</option></select></div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveEditClient('${phone}')">Save Changes</button></div>`;
   } else if(type==='upload-doc'){
     modal.innerHTML=`<h3>Upload Document for Client</h3>
       <div class="modal-field"><label>Client</label><select id="udoc-client"><option value="">Select client</option>${clientOptions}</select></div>
@@ -972,6 +1066,51 @@ async function saveUploadDoc(){
   const fileUrl=SUPA_URL+'/storage/v1/object/public/documents/'+fileName;
   await sb.from('documents').insert({client_phone:clientPhone,doc_type:docType,file_name:file.name,file_url:fileUrl,status:'pending',summary:null});
   closeModal();loadData();
+}
+
+async function saveAddClient(){
+  const phone=document.getElementById('ac-phone').value.trim();
+  const name=document.getElementById('ac-name').value.trim();
+  const business=document.getElementById('ac-business').value.trim();
+  const pan=document.getElementById('ac-pan').value.trim().toUpperCase();
+  const gst=document.getElementById('ac-gst').value.trim().toUpperCase();
+  const email=document.getElementById('ac-email').value.trim();
+  const address=document.getElementById('ac-address').value.trim();
+  const notes=document.getElementById('ac-notes').value.trim();
+  if(!phone){alert('Phone number is required');return}
+  const{error}=await sb.from('clients').upsert({
+    phone:phone,name:name||null,business_name:business||null,
+    pan_number:pan||null,gst_number:gst||null,email:email||null,
+    address:address||null,notes:notes||null,is_active:true
+  },{onConflict:'phone'});
+  if(error){alert('Error: '+error.message);return}
+  closeModal();loadData();
+}
+
+async function saveEditClient(phone){
+  const name=document.getElementById('ec-name').value.trim();
+  const business=document.getElementById('ec-business').value.trim();
+  const pan=document.getElementById('ec-pan').value.trim().toUpperCase();
+  const gst=document.getElementById('ec-gst').value.trim().toUpperCase();
+  const email=document.getElementById('ec-email').value.trim();
+  const address=document.getElementById('ec-address').value.trim();
+  const notes=document.getElementById('ec-notes').value.trim();
+  const isActive=document.getElementById('ec-active').value==='true';
+  const{error}=await sb.from('clients').update({
+    name:name||null,business_name:business||null,pan_number:pan||null,
+    gst_number:gst||null,email:email||null,address:address||null,
+    notes:notes||null,is_active:isActive
+  }).eq('phone',phone);
+  if(error){alert('Error: '+error.message);return}
+  closeModal();loadData();
+}
+
+async function deleteClient(phone){
+  if(!confirm('Delete client '+phone+'? This will not delete their receipts or documents.'))return;
+  await sb.from('clients').delete().eq('phone',phone);
+  clients=clients.filter(c=>c.phone!==phone);
+  populateClientDropdown();
+  renderClients();
 }
 
 async function saveReply(qid){
