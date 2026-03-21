@@ -442,7 +442,7 @@ async function loadData(){
   invoices=invRes.data||[];questions=qRes.data||[];appointments=apptRes.data||[];
   documents=docRes.data||[];reminders=remRes.data||[];caInvoices=caInvRes.data||[];challans=chalRes.data||[];
   const dbClients=cliRes.data||[];
-  const phones=[...new Set([...dbClients.map(c=>c.phone),...invoices.map(i=>i.client_phone).filter(Boolean)])];
+ const phones=[...new Set(dbClients.map(c=>c.phone).filter(Boolean))];
   clients=phones.map(phone=>{
     const db=dbClients.find(c=>c.phone===phone)||{};
     return{phone,id:db.id||null,name:db.name||null,business_name:db.business_name||null,
