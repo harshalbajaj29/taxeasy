@@ -43,18 +43,18 @@ img{max-width:100%}
 .fade-in{animation:fadeIn .5s ease both}
 
 /* NAV */
-nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:16px 0;transition:all .3s}
-nav.scrolled{background:rgba(250,248,243,.92);backdrop-filter:blur(12px);border-bottom:1px solid var(--cream3);padding:12px 0}
+nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:12px 0;background:rgba(13,13,13,.95);backdrop-filter:blur(12px);border-bottom:1px solid rgba(255,255,255,.06);transition:all .3s}
+nav.scrolled{background:rgba(13,13,13,.98);border-bottom:1px solid rgba(255,255,255,.08);padding:10px 0}
 .nav-inner{max-width:1120px;margin:0 auto;padding:0 24px;display:flex;align-items:center;gap:32px}
 .nav-logo{display:flex;align-items:center;gap:10px;flex-shrink:0}
 .nav-logo-icon{width:34px;height:34px;background:var(--green);border-radius:9px;display:flex;align-items:center;justify-content:center;font-family:'Cabinet Grotesk',sans-serif;font-weight:900;font-size:14px;color:white}
 .nav-logo-text{font-family:'Cabinet Grotesk',sans-serif;font-weight:800;font-size:18px;color:var(--ink)}
 .nav-links{display:flex;align-items:center;gap:28px;flex:1;margin-left:16px}
-.nav-links a{font-size:14px;font-weight:500;color:var(--ink2);transition:color .15s}
-.nav-links a:hover{color:var(--ink)}
+.nav-links a{font-size:14px;font-weight:500;color:rgba(255,255,255,0.75);transition:color .15s}
+.nav-links a:hover{color:#f5a623}
 .nav-right{display:flex;align-items:center;gap:10px;margin-left:auto}
-.btn-ghost{padding:8px 18px;border-radius:var(--r);font-size:14px;font-weight:600;color:var(--ink2);background:transparent;border:1.5px solid var(--cream3);cursor:pointer;transition:all .15s}
-.btn-ghost:hover{border-color:var(--ink4);color:var(--ink)}
+.btn-ghost{padding:8px 18px;border-radius:var(--r);font-size:14px;font-weight:600;color:rgba(255,255,255,0.8);background:transparent;border:1.5px solid rgba(255,255,255,.2);cursor:pointer;transition:all .15s}
+.btn-ghost:hover{border-color:#f5a623;color:#f5a623}
 .btn-primary{padding:9px 20px;border-radius:var(--r);font-size:14px;font-weight:700;color:white;background:var(--green);border:none;cursor:pointer;transition:all .15s;white-space:nowrap}
 .btn-primary:hover{background:var(--green2);transform:translateY(-1px);box-shadow:0 4px 16px rgba(26,107,60,.25)}
 .btn-large{padding:14px 32px;font-size:16px;border-radius:var(--r-lg)}
@@ -302,30 +302,8 @@ footer{background:var(--ink);padding:64px 24px 32px}
 <nav id="navbar">
   <div class="nav-inner">
     <div class="nav-logo" style="display:flex;align-items:center">
-      <svg width="140" height="40" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
-        <defs>
-          <linearGradient id="ntg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2ecc71"/><stop offset="100%" style="stop-color:#1a6b3c"/></linearGradient>
-          <linearGradient id="ngg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f5a623"/><stop offset="100%" style="stop-color:#2ecc71"/></linearGradient>
-          <clipPath id="nc"><circle cx="596" cy="96" r="50"/></clipPath>
-        </defs>
-        <text x="28" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#ntg)">T</text>
-        <text x="100" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#ntg)">A</text>
-        <text x="178" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#ntg)">X</text>
-        <polyline points="188,88 210,112 248,52" fill="none" stroke="#f5a623" stroke-width="11" stroke-linecap="round" stroke-linejoin="round"/>
-        <text x="268" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#ntg)">N</text>
-        <text x="360" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#ntg)">I</text>
-        <circle cx="596" cy="96" r="50" fill="none" stroke="url(#ntg)" stroke-width="9"/>
-        <circle cx="596" cy="96" r="41" fill="#f8f8f6"/>
-        <g clip-path="url(#nc)">
-          <text x="567" y="90" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f5a623">₹</text>
-          <text x="600" y="90" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#f5a623">%</text>
-          <rect x="600" y="112" width="6" height="14" rx="1" fill="#27ae60"/>
-          <rect x="609" y="106" width="6" height="20" rx="1" fill="#27ae60"/>
-          <rect x="618" y="100" width="6" height="26" rx="1" fill="#f5a623"/>
-        </g>
-        <line x1="620" y1="60" x2="655" y2="18" stroke="url(#ngg)" stroke-width="5" stroke-linecap="round"/>
-        <polygon points="655,18 638,24 648,38" fill="#2ecc71"/>
-      </svg>
+      <img src="taxnio-logo.png" alt="Taxnio" style="height:38px;width:auto" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+      <div style="display:none;align-items:center;gap:8px"><div style="width:28px;height:28px;background:#27ae60;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:900;color:white;font-size:13px">T</div><span style="font-family:Arial Black,sans-serif;font-weight:900;font-size:16px;color:#2ecc71">TAX</span><span style="font-family:Arial Black,sans-serif;font-weight:900;font-size:16px;color:#27ae60">NIO</span></div>
     </div>
     <div class="nav-links">
       <a href="#how-it-works">How it works</a>
@@ -335,8 +313,8 @@ footer{background:var(--ink);padding:64px 24px 32px}
       <a href="#faq">FAQ</a>
     </div>
     <div class="nav-right">
-      <button class="btn-ghost" onclick="document.getElementById('cta-email').focus()">Sign in</button>
-      <button class="btn-primary" onclick="document.getElementById('cta-email').focus()">Start Free Month →</button>
+      <button class="btn-ghost" onclick="window.location.href='app.html'">Sign in</button>
+      <button class="btn-primary" onclick="window.location.href='app.html'">Start Free Month →</button>
     </div>
   </div>
 </nav>
@@ -370,7 +348,7 @@ footer{background:var(--ink);padding:64px 24px 32px}
           CA firms use Taxnio to collect receipts and documents from clients via WhatsApp and email — AI organises everything automatically into one clean dashboard.
         </p>
         <div style="display:flex;gap:12px;flex-wrap:wrap" class="fade-up-3">
-          <button class="btn-primary btn-large" style="background:#f5a623;color:#0d0d0d;font-weight:800" onclick="document.getElementById('cta-email').focus()">Start Free — No Card Needed →</button>
+          <button class="btn-primary btn-large" style="background:#f5a623;color:#0d0d0d;font-weight:800" onclick="window.location.href='app.html'">Start Free — No Card Needed →</button>
           <button style="padding:14px 28px;border-radius:12px;font-size:16px;font-weight:600;cursor:pointer;border:2px solid rgba(255,255,255,0.2);background:transparent;color:rgba(255,255,255,0.8);transition:all .15s" onclick="document.getElementById('how-it-works').scrollIntoView({behavior:'smooth'})">Watch how it works</button>
         </div>
         <p style="margin-top:16px;font-size:13px;color:rgba(255,255,255,0.35)" class="fade-up-4">
@@ -437,7 +415,7 @@ footer{background:var(--ink);padding:64px 24px 32px}
         <div style="font-size:13px;color:#8a8880;line-height:1.4">Powered<br>processing</div>
       </div>
       <div style="margin-left:auto">
-        <button class="btn-primary" style="padding:10px 24px;font-size:14px" onclick="document.getElementById('cta-email').focus()">Get started free →</button>
+        <button class="btn-primary" style="padding:10px 24px;font-size:14px" onclick="window.location.href='app.html'">Get started free →</button>
       </div>
     </div>
   </div>
@@ -775,7 +753,7 @@ footer{background:var(--ink);padding:64px 24px 32px}
         <li class="no">Tally integration</li>
         <li class="no">Priority support</li>
       </ul>
-      <button class="price-cta outline" onclick="document.getElementById('cta-email').focus()">Start Free Month</button>
+      <button class="price-cta outline" onclick="window.location.href='app.html'">Start Free Month</button>
     </div>
     <div class="price-card featured">
       <div class="price-popular">Most Popular</div>
@@ -796,7 +774,7 @@ footer{background:var(--ink);padding:64px 24px 32px}
         <li class="no">Dedicated account manager</li>
         <li class="no">Custom branding</li>
       </ul>
-      <button class="price-cta solid" onclick="document.getElementById('cta-email').focus()">Start Free Month →</button>
+      <button class="price-cta solid" onclick="window.location.href='app.html'">Start Free Month →</button>
     </div>
     <div class="price-card">
       <div class="price-plan">Enterprise</div>
@@ -889,7 +867,7 @@ footer{background:var(--ink);padding:64px 24px 32px}
     <p>Join CA firms across India who have already made the switch. Setup takes 10 minutes. Results start immediately.</p>
     <div class="cta-form">
       <input type="email" id="cta-email" placeholder="Enter your email to get started">
-      <button class="btn-primary btn-large">Start Free →</button>
+      <button class="btn-primary btn-large" onclick="window.location.href='app.html'">Start Free →</button>
     </div>
     <p class="cta-note">No credit card required. <strong>First month free.</strong> Cancel anytime.</p>
   </div>
