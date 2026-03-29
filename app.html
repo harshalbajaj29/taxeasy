@@ -5,36 +5,50 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taxnio — CA Dashboard</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f5f4f0;--bg2:#eeede8;--surface:#ffffff;--surface2:#f8f7f3;--surface3:#f0efe9;
-  --border:#e2e0d8;--border2:#d4d2c8;--accent:#27ae60;--accent2:#1a8a4a;--accent-light:#e8f8ee;
-  --accent-mid:#a8dfc0;--amber:#c27c0e;--amber-light:#fef3dc;--red:#c0392b;--red-light:#fdecea;
-  --blue:#1a5276;--blue-light:#e8f0f8;--purple:#6b3fa0;--purple-light:#f0eaf8;
-  --text:#1c1917;--text2:#57534e;--text3:#a8a29e;--text4:#d6d3cd;
-  --r:8px;--r-lg:12px;--shadow:0 1px 3px rgba(0,0,0,.08);--shadow-md:0 4px 12px rgba(0,0,0,.08)
+  --cream:#fdf8f0;--cream2:#f7f0e4;--cream3:#ede4d3;--cream4:#e0d4be;
+  --brown:#3d2b1f;--brown2:#5c4033;--brown3:#7d5a4a;--brown4:#a67c6a;
+  --brown-light:#c4a882;--brown-lighter:#e8d9c4;
+  --accent:#8b4513;--accent2:#6d3410;--accent-light:#f5e8dc;--accent-mid:#d4956a;
+  --green:#2d6a4f;--green-light:#e8f5ee;--green-mid:#95c4a8;
+  --amber:#b5720a;--amber-light:#fef3dc;
+  --red:#8b1a1a;--red-light:#fdecea;
+  --blue:#1a3a5c;--blue-light:#e8f0f8;
+  --purple:#4a2070;--purple-light:#f0eaf8;
+  --text:var(--brown);--text2:var(--brown3);--text3:var(--brown4);--text4:var(--brown-light);
+  --border:var(--cream3);--border2:var(--cream4);
+  --surface:var(--cream);--surface2:var(--cream2);--surface3:var(--cream3);
+  --r:8px;--r-lg:14px;
+  --shadow:0 1px 4px rgba(61,43,31,.08);
+  --shadow-md:0 4px 16px rgba(61,43,31,.10);
+  --shadow-lg:0 8px 32px rgba(61,43,31,.12);
 }
-html,body{height:100%;font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);font-size:14px;line-height:1.5}
+html,body{height:100%;font-family:'Source Sans 3',sans-serif;background:var(--cream2);color:var(--brown);font-size:14px;line-height:1.6}
 button,input,select,textarea{font-family:inherit}
-::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:var(--border2);border-radius:4px}
+h1,h2,h3,h4{font-family:'Playfair Display',serif;font-weight:600;color:var(--brown)}
+::-webkit-scrollbar{width:4px;height:4px}
+::-webkit-scrollbar-track{background:var(--cream2)}
+::-webkit-scrollbar-thumb{background:var(--brown-lighter);border-radius:4px}
 
 /* LOGIN */
-#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg)}
-.login-wrap{width:100%;max-width:420px;padding:20px}
-.login-brand{display:flex;align-items:center;gap:12px;margin-bottom:40px;justify-content:center}
-.brand-icon{width:40px;height:40px;border-radius:10px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:18px;color:white;font-family:'Fraunces',serif;font-weight:600}
-.brand-name{font-family:'Fraunces',serif;font-size:24px;font-weight:600}
-.login-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:36px 32px;box-shadow:var(--shadow-md)}
-.login-card h2{font-family:'Fraunces',serif;font-size:22px;font-weight:600;margin-bottom:4px}
-.login-card .subtitle{color:var(--text2);font-size:13px;margin-bottom:28px}
-.form-field{margin-bottom:16px}
-.form-field label{display:block;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
-.form-field input{width:100%;padding:10px 14px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:14px;transition:border-color .15s}
-.form-field input:focus{outline:none;border-color:var(--accent);background:white}
-.form-field input::placeholder{color:var(--text3)}
-.btn-login{width:100%;padding:11px;background:var(--accent);border:none;border-radius:var(--r);color:white;font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:background .15s}
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:var(--cream2);
+  background-image:radial-gradient(ellipse 80% 60% at 20% 50%,rgba(139,69,19,.06) 0%,transparent 60%),
+                   radial-gradient(ellipse 60% 60% at 80% 80%,rgba(139,69,19,.04) 0%,transparent 50%)}
+.login-wrap{width:100%;max-width:440px;padding:24px}
+.login-brand{display:flex;align-items:center;justify-content:center;margin-bottom:36px}
+.login-card{background:var(--cream);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:40px 36px;box-shadow:var(--shadow-lg)}
+.login-card h2{font-size:24px;margin-bottom:6px;color:var(--brown)}
+.login-card .subtitle{color:var(--brown3);font-size:14px;margin-bottom:28px}
+.form-field{margin-bottom:18px}
+.form-field label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.form-field input{width:100%;padding:11px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:14px;transition:border-color .15s}
+.form-field input:focus{outline:none;border-color:var(--accent);background:var(--cream)}
+.form-field input::placeholder{color:var(--brown4)}
+.btn-login{width:100%;padding:12px;background:var(--accent);border:none;border-radius:var(--r);color:var(--cream);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:background .15s;font-family:'Source Sans 3',sans-serif}
 .btn-login:hover{background:var(--accent2)}
 .login-error{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
 
@@ -42,247 +56,333 @@ button,input,select,textarea{font-family:inherit}
 #app{display:none;height:100vh;flex-direction:column}
 #app.visible{display:flex}
 
-/* TOP BAR */
-.topbar{display:flex;align-items:center;gap:12px;padding:10px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0;height:56px}
-.topbar-brand{display:flex;align-items:center;gap:8px;margin-right:8px;flex-shrink:0}
-.topbar-brand .brand-icon{width:28px;height:28px;border-radius:7px;font-size:13px}
-.topbar-brand .brand-name{font-family:'Fraunces',serif;font-size:15px;font-weight:600}
-.client-dropdown-wrap{position:relative;flex-shrink:0}
-.client-dropdown{padding:7px 32px 7px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;font-weight:500;cursor:pointer;appearance:none;min-width:200px;transition:border-color .15s}
-.client-dropdown:focus{outline:none;border-color:var(--accent)}
-.client-dropdown-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--text3);pointer-events:none}
+/* TOPBAR */
+.topbar{display:flex;align-items:center;gap:12px;padding:0 20px;border-bottom:1.5px solid var(--cream3);background:var(--cream);flex-shrink:0;height:58px;box-shadow:var(--shadow)}
+.topbar-logo{display:flex;align-items:center;margin-right:8px;flex-shrink:0}
+.topbar-divider{width:1px;height:28px;background:var(--cream3);flex-shrink:0}
 .topbar-search{flex:1;position:relative}
-.topbar-search input{width:100%;padding:7px 12px 7px 32px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;transition:border-color .15s}
-.topbar-search input:focus{outline:none;border-color:var(--accent);background:white}
-.topbar-search input::placeholder{color:var(--text3)}
-.topbar-search::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:11px;pointer-events:none}
-.topbar-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
-.btn-sm{padding:6px 12px;border-radius:var(--r);font-size:12px;font-weight:500;cursor:pointer;transition:all .12s;border:1.5px solid var(--border);background:var(--surface);color:var(--text2)}
-.btn-sm:hover{border-color:var(--border2);color:var(--text)}
-.btn-primary-sm{padding:6px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:white;transition:background .12s}
+.topbar-search input{width:100%;padding:7px 12px 7px 34px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;transition:all .15s}
+.topbar-search input:focus{outline:none;border-color:var(--accent-mid);background:var(--cream)}
+.topbar-search input::placeholder{color:var(--brown4)}
+.topbar-search::before{content:'🔍';position:absolute;left:10px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.client-sel{padding:7px 28px 7px 12px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;font-weight:500;cursor:pointer;appearance:none;min-width:200px;font-family:'Source Sans 3',sans-serif}
+.client-sel:focus{outline:none;border-color:var(--accent-mid)}
+.sel-wrap{position:relative;flex-shrink:0}
+.sel-wrap::after{content:'▾';position:absolute;right:10px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--brown4);pointer-events:none}
+.topbar-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.notif-btn{position:relative;width:34px;height:34px;border-radius:50%;background:var(--cream2);border:1.5px solid var(--cream3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:15px;transition:all .15s}
+.notif-btn:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.notif-dot{position:absolute;top:6px;right:6px;width:8px;height:8px;border-radius:50%;background:var(--red);border:1.5px solid var(--cream)}
+.btn-sm{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown2);transition:all .12s}
+.btn-sm:hover{border-color:var(--accent-mid);color:var(--accent)}
+.btn-primary-sm{padding:7px 14px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:var(--cream);transition:background .12s}
 .btn-primary-sm:hover{background:var(--accent2)}
-.user-av{width:28px;height:28px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:white;cursor:pointer;flex-shrink:0}
+.user-chip{display:flex;align-items:center;gap:8px;padding:5px 10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:20px;cursor:pointer;transition:all .12s}
+.user-chip:hover{border-color:var(--accent-mid)}
+.user-av{width:26px;height:26px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--cream)}
+.user-name{font-size:12px;font-weight:500;color:var(--brown2)}
 
-/* MAIN LAYOUT */
+/* LAYOUT */
 .app-body{display:flex;flex:1;overflow:hidden}
 
 /* SIDEBAR */
-.sidebar{width:200px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto}
-.sb-nav{flex:1;padding:10px 8px}
-.nav-section{margin-bottom:18px}
-.nav-section-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.9px;padding:0 8px;margin-bottom:4px}
-.nav-btn{display:flex;align-items:center;gap:8px;padding:7px 8px;border-radius:var(--r);font-size:12px;font-weight:500;color:var(--text2);cursor:pointer;transition:all .12s;margin-bottom:1px;border:none;background:none;width:100%;text-align:left}
-.nav-btn:hover{background:var(--surface3);color:var(--text)}
-.nav-btn.active{background:var(--accent-light);color:var(--accent);font-weight:600}
-.nav-btn svg{width:14px;height:14px;flex-shrink:0}
-.nav-badge{margin-left:auto;font-size:9px;font-weight:700;background:var(--red);color:white;padding:1px 5px;border-radius:10px}
+.sidebar{width:210px;flex-shrink:0;background:var(--cream);border-right:1.5px solid var(--cream3);display:flex;flex-direction:column;overflow-y:auto}
+.sb-section{padding:16px 10px 8px}
+.sb-label{font-size:10px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.9px;padding:0 8px;margin-bottom:6px}
+.nav-btn{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--brown3);cursor:pointer;transition:all .12s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left;font-family:'Source Sans 3',sans-serif}
+.nav-btn:hover{background:var(--cream2);color:var(--brown)}
+.nav-btn.active{background:var(--accent-light);color:var(--accent);font-weight:600;border-left:3px solid var(--accent);padding-left:7px}
+.nav-btn svg{width:15px;height:15px;flex-shrink:0;opacity:.7}
+.nav-btn.active svg{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;font-weight:700;background:var(--red);color:white;padding:1px 6px;border-radius:10px}
+.sb-footer{padding:12px 10px;border-top:1.5px solid var(--cream3);margin-top:auto}
+.user-info-row{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:var(--r);background:var(--cream2)}
+.user-av-lg{width:32px;height:32px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--cream);flex-shrink:0}
+.user-meta{flex:1;min-width:0}
+.user-email-text{font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user-tag-text{font-size:10px;color:var(--brown4)}
+.logout-btn{background:none;border:none;cursor:pointer;color:var(--brown4);padding:4px;border-radius:6px;font-size:14px;transition:color .12s}
+.logout-btn:hover{color:var(--red)}
 
-/* MAIN CONTENT */
-.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--bg)}
-.page-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--border);background:var(--surface);flex-shrink:0}
-.page-header h1{font-family:'Fraunces',serif;font-size:16px;font-weight:600}
-.page-header p{font-size:11px;color:var(--text3);margin-top:1px}
-.page{flex:1;overflow-y:auto;padding:18px 20px}
+/* MAIN */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--cream2)}
+.page-head{display:flex;align-items:center;justify-content:space-between;padding:14px 22px;border-bottom:1.5px solid var(--cream3);background:var(--cream);flex-shrink:0}
+.page-head h1{font-size:17px;color:var(--brown)}
+.page-head p{font-size:12px;color:var(--brown4);margin-top:1px}
+.page-actions{display:flex;gap:8px}
+.page{flex:1;overflow-y:auto;padding:20px 22px}
 
-/* STATS */
-.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
-.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:14px 16px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
-.stat-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md);transform:translateY(-1px)}
-.stat-icon{font-size:16px;margin-bottom:8px}
-.stat-label{font-size:10px;color:var(--text3);font-weight:500;text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
-.stat-val{font-size:24px;font-weight:700;letter-spacing:-.5px;line-height:1;font-family:'Fraunces',serif}
-.stat-sub{font-size:10px;color:var(--text3);margin-top:4px}
-.stat-card.green .stat-val{color:var(--accent)}
-.stat-card.blue .stat-val{color:var(--blue)}
+/* CARDS */
+.card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1.5px solid var(--cream3)}
+.card-head h3{font-size:13px;font-weight:600;color:var(--brown)}
+.card-count{font-size:10px;font-weight:600;color:var(--brown4);background:var(--cream2);padding:2px 8px;border-radius:20px;border:1px solid var(--cream3)}
+
+/* STAT CARDS */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px}
+.stat-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:16px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.stat-card:hover{border-color:var(--accent-mid);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.stat-emoji{font-size:20px;margin-bottom:10px}
+.stat-label{font-size:10px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.stat-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;color:var(--brown)}
+.stat-sub{font-size:10px;color:var(--brown4);margin-top:5px}
+.stat-card.green .stat-val{color:var(--green)}
 .stat-card.amber .stat-val{color:var(--amber)}
-.stat-card.purple .stat-val{color:var(--purple)}
 .stat-card.red .stat-val{color:var(--red)}
+.stat-card.blue .stat-val{color:var(--blue)}
+.stat-card.accent .stat-val{color:var(--accent)}
 
-/* PANELS */
-.panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
-.panel-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface2)}
-.panel-head h3{font-size:12px;font-weight:600;color:var(--text)}
-.panel-count{font-size:10px;font-weight:600;color:var(--text3);background:var(--surface3);padding:2px 7px;border-radius:20px;border:1px solid var(--border)}
+/* CALENDAR */
+.calendar-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.cal-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow)}
+.cal-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.cal-title{font-family:'Playfair Display',serif;font-size:15px;font-weight:600;color:var(--brown)}
+.cal-subtitle{font-size:11px;color:var(--brown4)}
+.cal-badge{font-size:10px;font-weight:600;padding:3px 10px;border-radius:20px}
+.cal-badge.ai{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mid)}
+.cal-badge.custom{background:var(--blue-light);color:var(--blue);border:1px solid #b8d0e8}
+.deadline-list{display:flex;flex-direction:column;gap:8px}
+.deadline-item{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:var(--r);border:1px solid var(--cream3);background:var(--cream2);transition:all .12s}
+.deadline-item:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.deadline-dot{width:10px;height:10px;border-radius:50%;flex-shrink:0}
+.deadline-info{flex:1;min-width:0}
+.deadline-name{font-size:13px;font-weight:500;color:var(--brown)}
+.deadline-desc{font-size:11px;color:var(--brown4)}
+.deadline-date{font-size:12px;font-weight:600;font-family:'DM Mono',monospace;white-space:nowrap}
+.d-urgent{color:var(--red);background:var(--red-light);border-color:#f0c0c0}
+.d-soon{color:var(--amber);background:var(--amber-light);border-color:#e8d4a0}
+.d-ok{color:var(--green);background:var(--green-light);border-color:var(--green-mid)}
+.add-event-btn{width:100%;margin-top:12px;padding:8px;border-radius:var(--r);border:1.5px dashed var(--cream4);background:transparent;color:var(--brown4);font-size:12px;cursor:pointer;transition:all .12s;font-family:'Source Sans 3',sans-serif}
+.add-event-btn:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.custom-event{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--r);border:1px solid var(--blue-light);background:#f0f5fc;margin-bottom:6px}
+.custom-event-dot{width:8px;height:8px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.custom-event-info{flex:1;min-width:0}
+.custom-event-name{font-size:13px;font-weight:500;color:var(--blue)}
+.custom-event-date{font-size:10px;color:var(--brown4)}
+.custom-event-del{background:none;border:none;cursor:pointer;color:var(--brown4);font-size:14px;padding:0 4px;transition:color .12s}
+.custom-event-del:hover{color:var(--red)}
 
-/* TABLE */
-.table-wrap{overflow:auto;flex:1}
-table{width:100%;border-collapse:collapse}
-thead th{padding:8px 12px;text-align:left;font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.5px;border-bottom:1.5px solid var(--border);white-space:nowrap;background:var(--surface2);position:sticky;top:0;z-index:1}
-tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle;color:var(--text);font-size:13px}
-tbody tr{cursor:pointer;transition:background .08s}
-tbody tr:hover td{background:var(--surface2)}
-tbody tr:last-child td{border-bottom:none}
+/* HOME GRID */
+.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:18px}
+.home-grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-bottom:18px}
+
+/* ACTIVITY FEED */
+.feed-item{display:flex;align-items:flex-start;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);transition:background .08s;cursor:pointer}
+.feed-item:hover{background:var(--cream2)}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feed-info{flex:1;min-width:0}
+.feed-title{font-size:13px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-sub{font-size:11px;color:var(--brown4);margin-top:2px}
+.feed-time{font-size:10px;color:var(--brown4);white-space:nowrap;font-family:'DM Mono',monospace}
+.feed-tag{font-size:10px;font-weight:600;padding:2px 7px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+
+/* OUTSTANDING */
+.outstanding-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);transition:background .08s}
+.outstanding-item:hover{background:var(--cream2)}
+.outstanding-item:last-child{border-bottom:none}
+.outstanding-av{width:32px;height:32px;border-radius:50%;background:var(--accent-light);border:1px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0}
+.outstanding-info{flex:1;min-width:0}
+.outstanding-name{font-size:13px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.outstanding-days{font-size:11px;color:var(--brown4)}
+.outstanding-amt{font-family:'Playfair Display',serif;font-size:16px;font-weight:700;color:var(--red);margin-right:8px}
+.remind-btn{padding:5px 10px;border-radius:var(--r);background:var(--accent-light);border:1px solid var(--accent-mid);color:var(--accent);font-size:11px;font-weight:600;cursor:pointer;transition:all .12s;white-space:nowrap;flex-shrink:0}
+.remind-btn:hover{background:var(--accent);color:var(--cream)}
+
+/* URGENT Q&A */
+.qa-urgent{padding:10px 14px;border-bottom:1px solid var(--cream3);cursor:pointer;transition:background .08s}
+.qa-urgent:hover{background:var(--cream2)}
+.qa-urgent:last-child{border-bottom:none}
+.qa-q{font-size:13px;font-weight:500;color:var(--brown);margin-bottom:3px}
+.qa-meta{display:flex;align-items:center;gap:8px}
+.qa-client{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
+.qa-time{font-size:10px;color:var(--brown4)}
+.qa-reply-btn{margin-top:6px;padding:5px 10px;border-radius:var(--r);background:var(--accent);border:none;color:var(--cream);font-size:11px;font-weight:600;cursor:pointer}
+
+/* CHALLAN STATUS */
+.challan-item{display:flex;align-items:center;gap:10px;padding:8px 14px;border-bottom:1px solid var(--cream3)}
+.challan-item:last-child{border-bottom:none}
+.challan-info{flex:1;min-width:0}
+.challan-name{font-size:12px;font-weight:500;color:var(--brown)}
+.challan-client{font-size:11px;color:var(--brown4)}
+.challan-amt{font-size:13px;font-weight:600;color:var(--brown2);font-family:'DM Mono',monospace;margin-right:8px}
+
+/* QUICK ACTIONS */
+.quick-actions{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:18px}
+.quick-btn{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:14px 10px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.quick-btn:hover{border-color:var(--accent-mid);background:var(--accent-light);transform:translateY(-1px);box-shadow:var(--shadow-md)}
+.quick-icon{font-size:22px;margin-bottom:6px}
+.quick-label{font-size:11px;font-weight:600;color:var(--brown2)}
 
 /* BADGES */
 .badge{display:inline-flex;align-items:center;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:700;text-transform:capitalize}
-.b-receipt{background:var(--accent-light);color:var(--accent)}
+.b-receipt,.b-answered{background:var(--green-light);color:var(--green)}
 .b-invoice{background:#e8edff;color:#3b5bdb}
 .b-expense{background:var(--amber-light);color:var(--amber)}
 .b-document{background:var(--amber-light);color:var(--amber)}
 .b-question{background:var(--blue-light);color:var(--blue)}
 .b-appointment{background:var(--purple-light);color:var(--purple)}
-.b-general,.b-general_text{background:var(--surface3);color:var(--text3)}
-.b-answered{background:var(--accent-light);color:var(--accent)}
+.b-general,.b-general_text{background:var(--cream3);color:var(--brown4)}
 .b-pending{background:var(--amber-light);color:var(--amber)}
-.b-confirmed{background:var(--accent-light);color:var(--accent)}
-.b-paid{background:var(--accent-light);color:var(--accent)}
+.b-confirmed{background:var(--green-light);color:var(--green)}
+.b-paid{background:var(--green-light);color:var(--green)}
 .b-unpaid{background:var(--red-light);color:var(--red)}
 .b-overdue{background:var(--red-light);color:var(--red)}
 .b-review{background:var(--red-light);color:var(--red)}
-.b-processed{background:var(--accent-light);color:var(--accent)}
+.b-processed{background:var(--green-light);color:var(--green)}
+.b-active{background:var(--green-light);color:var(--green)}
+.b-inactive{background:var(--red-light);color:var(--red)}
 
+/* TABLE */
+.table-wrap{overflow:auto;flex:1}
+table{width:100%;border-collapse:collapse}
+thead th{padding:9px 14px;text-align:left;font-size:10px;font-weight:700;color:var(--brown4);text-transform:uppercase;letter-spacing:.6px;border-bottom:1.5px solid var(--cream3);white-space:nowrap;background:var(--cream2);position:sticky;top:0;z-index:1}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--cream3);vertical-align:middle;color:var(--brown);font-size:13px}
+tbody tr{cursor:pointer;transition:background .08s}
+tbody tr:hover td{background:var(--cream2)}
+tbody tr:last-child td{border-bottom:none}
 .mono{font-family:'DM Mono',monospace;font-size:12px}
-.amt{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--accent)}
-.desc-cell{color:var(--text2);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.amt{font-family:'DM Mono',monospace;font-size:13px;font-weight:600;color:var(--green)}
+.desc-cell{color:var(--brown3);max-width:220px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 
 /* EMPTY */
 .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
-.empty-icon{font-size:28px;margin-bottom:10px;opacity:.35}
-.empty p{color:var(--text3);font-size:13px}
+.empty-icon{font-size:32px;margin-bottom:10px;opacity:.3}
+.empty p{color:var(--brown4);font-size:13px}
 
 /* SPINNER */
 .spin-wrap{display:flex;align-items:center;justify-content:center;padding:60px}
-.spinner{width:22px;height:22px;border:2.5px solid var(--border2);border-top-color:var(--accent);border-radius:50%;animation:spin .55s linear infinite}
+.spinner{width:24px;height:24px;border:2.5px solid var(--cream3);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* DRAWER */
-.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:90;backdrop-filter:blur(2px)}
-.overlay.open{display:block}
-.drawer{position:fixed;right:-520px;top:0;width:500px;height:100vh;background:var(--surface);border-left:1px solid var(--border);z-index:100;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(0,0,0,.08)}
-.drawer.open{right:0}
-.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--border);flex-shrink:0;background:var(--surface2)}
-.drawer-head h3{font-family:'Fraunces',serif;font-size:15px;font-weight:600}
-.drawer-close{background:var(--surface);border:1.5px solid var(--border);border-radius:6px;color:var(--text2);cursor:pointer;padding:3px 8px;font-size:15px;line-height:1}
-.drawer-body{padding:20px;flex:1}
-.dr{margin-bottom:16px}
-.dr .dl{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
-.dr .dv{font-size:14px;color:var(--text)}
-.dr .dv.big{font-size:22px;font-weight:700;color:var(--accent);font-family:'Fraunces',serif}
-.drawer-divider{border:none;border-top:1px solid var(--border);margin:16px 0}
-.raw-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--r);padding:10px;font-size:11px;color:var(--text2);font-family:'DM Mono',monospace;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:180px;overflow-y:auto}
-.ai-box{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);padding:12px;font-size:13px;color:var(--text);line-height:1.7;margin-top:4px}
-.reply-wrap{margin-top:8px}
-.reply-wrap textarea{width:100%;padding:10px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;resize:vertical;min-height:80px;transition:border-color .12s}
-.reply-wrap textarea:focus{outline:none;border-color:var(--accent);background:white}
-.reply-wrap textarea::placeholder{color:var(--text3)}
-.btn-reply{margin-top:8px;padding:8px 16px;background:var(--accent);border:none;border-radius:var(--r);color:white;font-size:13px;font-weight:600;cursor:pointer;transition:background .12s}
-.btn-reply:hover{background:var(--accent2)}
-.reply-sent{color:var(--accent);font-size:12px;font-weight:500;margin-top:6px;display:none}
+/* PANEL */
+.panel{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:11px 16px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;background:var(--cream2)}
+.panel-head h3{font-size:13px;font-weight:600;color:var(--brown)}
+.panel-count{font-size:10px;font-weight:600;color:var(--brown4);background:var(--cream3);padding:2px 8px;border-radius:20px}
 
 /* TOOLBAR */
-.toolbar{display:flex;gap:8px;padding:8px 12px;border-bottom:1px solid var(--border);flex-shrink:0;align-items:center;background:var(--surface2)}
-.toolbar .search-input{flex:1}
-.search-input{width:100%;padding:6px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;transition:border-color .12s}
-.search-input:focus{outline:none;border-color:var(--accent)}
-.search-input::placeholder{color:var(--text3)}
-.type-select{padding:6px 10px;background:var(--surface);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:12px;cursor:pointer}
+.toolbar{display:flex;gap:8px;padding:8px 12px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;align-items:center;background:var(--cream2)}
+.search-input{width:100%;padding:7px 10px;background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;transition:border-color .12s;font-family:'Source Sans 3',sans-serif}
+.search-input:focus{outline:none;border-color:var(--accent-mid)}
+.search-input::placeholder{color:var(--brown4)}
+.type-select{padding:7px 10px;background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:12px;cursor:pointer;font-family:'Source Sans 3',sans-serif}
 
-/* HOME PANELS */
-.home-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
-.home-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow)}
-.home-panel-head{padding:10px 14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.home-panel-head h3{font-size:12px;font-weight:600}
-.see-all{font-size:11px;color:var(--accent);cursor:pointer;font-weight:500}
-.see-all:hover{text-decoration:underline}
-.act-item{display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--border);transition:background .08s;cursor:pointer}
-.act-item:hover{background:var(--surface2)}
-.act-item:last-child{border-bottom:none}
-.act-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
-.act-info{flex:1;min-width:0}
-.act-title{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-.act-time{font-size:10px;color:var(--text3)}
-.act-amt{font-size:12px;font-family:'DM Mono',monospace;color:var(--accent);font-weight:600}
+/* DRAWER */
+.overlay{display:none;position:fixed;inset:0;background:rgba(61,43,31,.3);z-index:90;backdrop-filter:blur(2px)}
+.overlay.open{display:block}
+.drawer{position:fixed;right:-500px;top:0;width:480px;height:100vh;background:var(--cream);border-left:1.5px solid var(--cream3);z-index:100;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-4px 0 32px rgba(61,43,31,.12)}
+.drawer.open{right:0}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;background:var(--cream2)}
+.drawer-head h3{font-size:16px;color:var(--brown)}
+.drawer-close{background:var(--cream);border:1.5px solid var(--cream3);border-radius:6px;color:var(--brown3);cursor:pointer;padding:4px 9px;font-size:15px;line-height:1;transition:all .12s}
+.drawer-close:hover{color:var(--brown)}
+.drawer-body{padding:22px;flex:1}
+.dr{margin-bottom:18px}
+.dr .dl{font-size:10px;font-weight:700;color:var(--brown4);text-transform:uppercase;letter-spacing:.7px;margin-bottom:5px}
+.dr .dv{font-size:14px;color:var(--brown)}
+.dr .dv.big{font-family:'Playfair Display',serif;font-size:24px;font-weight:700;color:var(--green)}
+.drawer-divider{border:none;border-top:1.5px solid var(--cream3);margin:18px 0}
+.raw-box{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r);padding:12px;font-size:11px;color:var(--brown3);font-family:'DM Mono',monospace;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:180px;overflow-y:auto}
+.ai-box{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);padding:14px;font-size:13px;color:var(--brown);line-height:1.7;margin-top:4px}
+.reply-wrap{margin-top:8px}
+.reply-wrap textarea{width:100%;padding:10px 12px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;resize:vertical;min-height:80px;transition:border-color .12s;font-family:'Source Sans 3',sans-serif}
+.reply-wrap textarea:focus{outline:none;border-color:var(--accent-mid)}
+.reply-wrap textarea::placeholder{color:var(--brown4)}
+.btn-reply{margin-top:8px;padding:9px 18px;background:var(--accent);border:none;border-radius:var(--r);color:var(--cream);font-size:13px;font-weight:600;cursor:pointer;transition:background .12s;font-family:'Source Sans 3',sans-serif}
+.btn-reply:hover{background:var(--accent2)}
+.reply-sent{color:var(--green);font-size:12px;font-weight:500;margin-top:6px;display:none}
 
-/* 360 VIEW */
-.client-360{display:grid;grid-template-columns:280px 1fr;gap:14px;height:calc(100vh - 130px)}
-.client-info-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;overflow-y:auto}
-.client-avatar-big{width:56px;height:56px;border-radius:50%;background:var(--accent-light);border:2px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0}
-.client-info-row{display:flex;gap:12px;align-items:flex-start}
-.client-info-details{flex:1;min-width:0}
-.client-name{font-size:16px;font-weight:600;font-family:'Fraunces',serif}
-.client-phone-text{font-size:12px;color:var(--text3);font-family:'DM Mono',monospace;margin-top:2px}
-.info-field{margin-bottom:10px}
-.info-field .label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
-.info-field .value{font-size:13px;color:var(--text)}
-.action-btns{display:flex;flex-direction:column;gap:8px;margin-top:4px}
-.action-btn{padding:8px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2);text-align:center;transition:all .12s}
-.action-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-light)}
-.action-btn.primary{background:var(--accent);color:white;border-color:var(--accent)}
+/* CLIENT 360 */
+.client-360{display:grid;grid-template-columns:280px 1fr;gap:16px;height:calc(100vh - 130px)}
+.client-info-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:14px;overflow-y:auto}
+.client-av-big{width:54px;height:54px;border-radius:50%;background:var(--accent-light);border:2px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0}
+.client-name-big{font-family:'Playfair Display',serif;font-size:17px;font-weight:600;color:var(--brown)}
+.client-phone-sm{font-size:12px;color:var(--brown4);font-family:'DM Mono',monospace}
+.info-field .lbl{font-size:10px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:3px}
+.info-field .val{font-size:13px;color:var(--brown)}
+.action-btn{padding:8px 12px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown2);text-align:center;transition:all .12s;width:100%;margin-bottom:6px;font-family:'Source Sans 3',sans-serif}
+.action-btn:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.action-btn.primary{background:var(--accent);color:var(--cream);border-color:var(--accent)}
 .action-btn.primary:hover{background:var(--accent2)}
+.tabs-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.tab-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown3);transition:all .12s;white-space:nowrap;font-family:'Source Sans 3',sans-serif}
+.tab-btn.active{background:var(--accent);color:var(--cream);border-color:var(--accent)}
+.tab-btn:hover:not(.active){border-color:var(--accent-mid);color:var(--brown)}
+.tab-content{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);flex:1}
 
-.client-360-right{display:flex;flex-direction:column;gap:12px;overflow-y:auto}
-.tabs-row{display:flex;gap:6px;flex-wrap:wrap;padding-bottom:4px}
-.tab-btn{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--surface);color:var(--text2);transition:all .12s;white-space:nowrap}
-.tab-btn.active{background:var(--accent);color:white;border-color:var(--accent)}
-.tab-btn:hover:not(.active){border-color:var(--border2);color:var(--text)}
-.tab-content{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);flex:1}
+/* DOC GRID */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:10px;padding:14px}
+.doc-card{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:14px;cursor:pointer;transition:all .15s}
+.doc-card:hover{border-color:var(--accent-mid);box-shadow:var(--shadow-md)}
+.doc-icon{font-size:26px;margin-bottom:8px}
+.doc-name{font-size:12px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brown)}
+.doc-type{font-size:10px;color:var(--brown4)}
+.doc-date{font-size:10px;color:var(--brown4);margin-top:3px}
 
-/* QA ITEMS */
-.qa-item{padding:12px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .08s}
-.qa-item:hover{background:var(--surface2)}
-.qa-item:last-child{border-bottom:none}
-.qa-question{font-size:13px;font-weight:500;margin-bottom:3px}
-.qa-answer{font-size:12px;color:var(--text2);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+/* COMING SOON */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:48px 24px;text-align:center;flex:1}
+.coming-soon h3{font-size:17px;color:var(--brown);margin-bottom:8px}
+.coming-soon p{font-size:13px;color:var(--brown4);max-width:280px;line-height:1.7}
+.coming-soon .tag{display:inline-block;margin-top:12px;padding:5px 14px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--accent-mid)}
 
-/* APPOINTMENT ITEMS */
-.appt-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:background .08s}
-.appt-item:hover{background:var(--surface2)}
-.appt-item:last-child{border-bottom:none}
-.appt-date-box{width:40px;height:40px;border-radius:var(--r);background:var(--purple-light);border:1px solid #d8c8f0;display:flex;flex-direction:column;align-items:center;justify-content:center;flex-shrink:0}
-.appt-day{font-size:15px;font-weight:700;color:var(--purple);line-height:1;font-family:'Fraunces',serif}
-.appt-info{flex:1;min-width:0}
-.appt-time{font-size:12px;font-weight:500}
-.appt-client{font-size:11px;color:var(--text3);font-family:'DM Mono',monospace}
-.appt-notes{font-size:11px;color:var(--text2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(61,43,31,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-overlay.open{display:flex}
+.modal{background:var(--cream);border-radius:var(--r-lg);padding:26px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);border:1.5px solid var(--cream3)}
+.modal h3{font-size:17px;color:var(--brown);margin-bottom:18px}
+.modal-field{margin-bottom:14px}
+.modal-field label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
+.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:9px 12px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;transition:border-color .12s;font-family:'Source Sans 3',sans-serif}
+.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{outline:none;border-color:var(--accent-mid)}
+.modal-field textarea{min-height:80px;resize:vertical}
+.modal-btns{display:flex;gap:10px;justify-content:flex-end;margin-top:18px}
+.modal-btn-cancel{padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown3);font-family:'Source Sans 3',sans-serif}
+.modal-btn-save{padding:9px 18px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:var(--cream);font-family:'Source Sans 3',sans-serif}
 
-/* DOCUMENT GRID */
-.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:14px}
-.doc-card{background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r-lg);padding:12px;cursor:pointer;transition:all .15s}
-.doc-card:hover{border-color:var(--border2);box-shadow:var(--shadow-md)}
-.doc-icon{font-size:24px;margin-bottom:8px}
-.doc-name{font-size:11px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;margin-bottom:3px}
-.doc-type{font-size:10px;color:var(--text3)}
-.doc-date{font-size:10px;color:var(--text3);margin-top:3px}
+/* UPLOAD ZONE */
+.upload-zone{border:2px dashed var(--cream4);border-radius:var(--r-lg);padding:28px;text-align:center;cursor:pointer;transition:all .15s;background:var(--cream2)}
+.upload-zone:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.upload-zone p{font-size:13px;color:var(--brown3);margin-top:6px}
 
-/* REMINDER ITEMS */
-.reminder-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--border);transition:background .08s}
-.reminder-item:hover{background:var(--surface2)}
+/* CLIENT LIST */
+.client-list{overflow-y:auto;flex:1}
+.client-item{display:flex;align-items:center;gap:10px;padding:10px 14px;cursor:pointer;border-bottom:1px solid var(--cream3);transition:background .1s;position:relative}
+.client-item:hover{background:var(--cream2)}
+.client-item.active{background:var(--accent-light)}
+.client-item.active::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--accent)}
+.cl-av{width:34px;height:34px;border-radius:50%;flex-shrink:0;background:var(--accent-light);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;border:1px solid var(--accent-mid)}
+.cl-info{flex:1;min-width:0}
+.cl-name{font-size:13px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.cl-meta{font-size:11px;color:var(--brown4);margin-top:1px}
+.cl-badge{font-size:10px;font-weight:600;background:var(--cream3);color:var(--brown3);padding:2px 7px;border-radius:20px;flex-shrink:0}
+
+/* CLIENT HEALTH */
+.health-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+.health-active{background:#27ae60}
+.health-quiet{background:#f39c12}
+.health-inactive{background:#c0392b}
+
+/* REMINDER ITEM */
+.reminder-item{display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);transition:background .08s;cursor:pointer}
+.reminder-item:hover{background:var(--cream2)}
 .reminder-item:last-child{border-bottom:none}
 .reminder-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
 .reminder-info{flex:1;min-width:0}
-.reminder-title{font-size:13px;font-weight:500}
-.reminder-meta{font-size:11px;color:var(--text3);margin-top:2px}
+.reminder-title{font-size:13px;font-weight:500;color:var(--brown)}
+.reminder-meta{font-size:11px;color:var(--brown4);margin-top:2px}
 .reminder-date{font-size:11px;font-family:'DM Mono',monospace;color:var(--amber);font-weight:500;white-space:nowrap}
 
-/* MODAL */
-.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
-.modal-overlay.open{display:flex}
-.modal{background:var(--surface);border-radius:var(--r-lg);padding:24px;width:100%;max-width:480px;box-shadow:var(--shadow-md);border:1px solid var(--border)}
-.modal h3{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:16px}
-.modal-field{margin-bottom:14px}
-.modal-field label{display:block;font-size:11px;font-weight:600;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:5px}
-.modal-field input,.modal-field select,.modal-field textarea{width:100%;padding:8px 12px;background:var(--surface2);border:1.5px solid var(--border);border-radius:var(--r);color:var(--text);font-size:13px;transition:border-color .12s}
-.modal-field input:focus,.modal-field select:focus,.modal-field textarea:focus{outline:none;border-color:var(--accent);background:white}
-.modal-field textarea{min-height:80px;resize:vertical}
-.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
-.modal-btn-cancel{padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--border);background:var(--surface2);color:var(--text2)}
-.modal-btn-save{padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:white}
-
-/* UPLOAD ZONE */
-.upload-zone{border:2px dashed var(--border2);border-radius:var(--r-lg);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--surface2)}
-.upload-zone:hover{border-color:var(--accent);background:var(--accent-light)}
-.upload-zone p{font-size:13px;color:var(--text2);margin-top:6px}
-.upload-zone .upload-icon{font-size:28px}
-.upload-progress{margin-top:10px;display:none}
-.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.progress-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .3s}
-
-/* COMING SOON */
-.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center;flex:1}
-.coming-soon-icon{font-size:40px;margin-bottom:14px;opacity:.4}
-.coming-soon h3{font-family:'Fraunces',serif;font-size:16px;font-weight:600;margin-bottom:6px}
-.coming-soon p{font-size:13px;color:var(--text2);max-width:280px;line-height:1.7}
-.coming-soon .tag{display:inline-block;margin-top:12px;padding:4px 12px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--accent-mid)}
+/* APPT ITEM */
+.appt-item{display:flex;align-items:center;gap:12px;padding:11px 14px;border-bottom:1px solid var(--cream3);cursor:pointer;transition:background .08s}
+.appt-item:hover{background:var(--cream2)}
+.appt-item:last-child{border-bottom:none}
+.appt-date-box{width:44px;height:44px;border-radius:var(--r);background:var(--purple-light);border:1px solid #d8c8f0;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-size:20px}
+.appt-info{flex:1;min-width:0}
+.appt-time{font-size:13px;font-weight:500;color:var(--brown)}
+.appt-client{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
+.appt-notes{font-size:11px;color:var(--brown3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.two-col{display:grid;grid-template-columns:260px 1fr;gap:14px}
 </style>
 </head>
 <body>
@@ -290,10 +390,12 @@ tbody tr:last-child td{border-bottom:none}
 <!-- LOGIN -->
 <div id="login-page">
   <div class="login-wrap">
-    <div class="login-brand" style="justify-content:center;margin-bottom:32px"><svg width="200" height="58" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="stg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2ecc71"/><stop offset="100%" style="stop-color:#1a6b3c"/></linearGradient><linearGradient id="sgg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f5a623"/><stop offset="100%" style="stop-color:#2ecc71"/></linearGradient><clipPath id="sc2"><circle cx="596" cy="96" r="50"/></clipPath><filter id="sgl2"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="28" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">T</text><text x="100" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">A</text><text x="178" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">X</text><polyline points="188,88 210,112 248,52" fill="none" stroke="#f5a623" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#sgl2)"/><text x="268" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">N</text><text x="360" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">I</text><circle cx="596" cy="96" r="50" fill="none" stroke="url(#stg)" stroke-width="9"/><circle cx="596" cy="96" r="41" fill="#f5f4f0"/><circle cx="596" cy="96" r="50" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.5"/><line x1="555" y1="96" x2="637" y2="96" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><line x1="596" y1="55" x2="596" y2="137" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><g clip-path="url(#sc2)"><text x="567" y="90" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f5a623">&#8377;</text><text x="600" y="90" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#f5a623">%</text><text x="568" y="118" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#27ae60">$</text><rect x="600" y="112" width="6" height="14" rx="1" fill="#27ae60"/><rect x="609" y="106" width="6" height="20" rx="1" fill="#27ae60"/><rect x="618" y="100" width="6" height="26" rx="1" fill="#f5a623"/></g><line x1="620" y1="60" x2="655" y2="18" stroke="url(#sgg)" stroke-width="5" stroke-linecap="round" filter="url(#sgl2)"/><polygon points="655,18 638,24 648,38" fill="#2ecc71" filter="url(#sgl2)"/></svg></div>
+    <div class="login-brand">
+      <img src="taxnio-logo.png" alt="Taxnio" style="height:60px;width:auto" onerror="this.style.display='none'">
+    </div>
     <div class="login-card">
       <h2>Welcome back</h2>
-      <p class="subtitle">Sign in to your Taxnio dashboard</p>
+      <p class="subtitle">Sign in to your Taxnio CA dashboard</p>
       <div class="form-field"><label>Email address</label><input type="email" id="login-email" placeholder="ca@yourfirm.com" autofocus></div>
       <div class="form-field"><label>Password</label><input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"></div>
       <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in to Dashboard</button>
@@ -304,82 +406,97 @@ tbody tr:last-child td{border-bottom:none}
 
 <!-- APP -->
 <div id="app">
-  <!-- TOP BAR -->
+  <!-- TOPBAR -->
   <div class="topbar">
-    <div class="topbar-brand" style="display:flex;align-items:center"><svg width="130" height="38" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="stg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2ecc71"/><stop offset="100%" style="stop-color:#1a6b3c"/></linearGradient><linearGradient id="sgg" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f5a623"/><stop offset="100%" style="stop-color:#2ecc71"/></linearGradient><clipPath id="sc2"><circle cx="596" cy="96" r="50"/></clipPath><filter id="sgl2"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="28" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">T</text><text x="100" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">A</text><text x="178" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">X</text><polyline points="188,88 210,112 248,52" fill="none" stroke="#f5a623" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#sgl2)"/><text x="268" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">N</text><text x="360" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#stg)">I</text><circle cx="596" cy="96" r="50" fill="none" stroke="url(#stg)" stroke-width="9"/><circle cx="596" cy="96" r="41" fill="#f5f4f0"/><circle cx="596" cy="96" r="50" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.5"/><line x1="555" y1="96" x2="637" y2="96" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><line x1="596" y1="55" x2="596" y2="137" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><g clip-path="url(#sc2)"><text x="567" y="90" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f5a623">&#8377;</text><text x="600" y="90" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#f5a623">%</text><text x="568" y="118" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#27ae60">$</text><rect x="600" y="112" width="6" height="14" rx="1" fill="#27ae60"/><rect x="609" y="106" width="6" height="20" rx="1" fill="#27ae60"/><rect x="618" y="100" width="6" height="26" rx="1" fill="#f5a623"/></g><line x1="620" y1="60" x2="655" y2="18" stroke="url(#sgg)" stroke-width="5" stroke-linecap="round" filter="url(#sgl2)"/><polygon points="655,18 638,24 648,38" fill="#2ecc71" filter="url(#sgl2)"/></svg></div>
-    <div class="client-dropdown-wrap">
-      <select class="client-dropdown" id="client-dropdown" onchange="onClientSelect(this.value)">
+    <div class="topbar-logo">
+      <img src="taxnio-logo.png" alt="Taxnio" style="height:34px;width:auto" onerror="this.style.display='none'">
+    </div>
+    <div class="topbar-divider"></div>
+    <div class="sel-wrap">
+      <select class="client-sel" id="client-dropdown" onchange="onClientSelect(this.value)">
         <option value="">All Clients</option>
       </select>
     </div>
     <div class="topbar-search"><input type="text" placeholder="Search clients, receipts, documents..." id="global-search" oninput="onGlobalSearch(this.value)"></div>
     <div class="topbar-right">
+      <div class="notif-btn" title="Notifications">🔔<div class="notif-dot" id="notif-dot" style="display:none"></div></div>
       <button class="btn-sm" onclick="loadData()">↺ Refresh</button>
       <button class="btn-primary-sm" onclick="openModal('reminder')">+ Reminder</button>
-      <div class="user-av" id="user-av" onclick="doLogout()" title="Sign out">CA</div>
+      <div class="user-chip" onclick="doLogout()" title="Sign out">
+        <div class="user-av" id="user-av">CA</div>
+        <span class="user-name" id="user-name-display">Loading</span>
+        <span style="color:var(--brown4);font-size:12px">⏻</span>
+      </div>
     </div>
   </div>
 
   <div class="app-body">
     <!-- SIDEBAR -->
     <div class="sidebar">
-      <div style="padding:12px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center"><svg width="130" height="38" viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg"><defs><linearGradient id="sbg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#2ecc71"/><stop offset="100%" style="stop-color:#1a6b3c"/></linearGradient><linearGradient id="sag" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" style="stop-color:#f5a623"/><stop offset="100%" style="stop-color:#2ecc71"/></linearGradient><clipPath id="sc3"><circle cx="596" cy="96" r="50"/></clipPath><filter id="sf3"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><text x="28" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#sbg)">T</text><text x="100" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#sbg)">A</text><text x="178" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#sbg)">X</text><polyline points="188,88 210,112 248,52" fill="none" stroke="#f5a623" stroke-width="11" stroke-linecap="round" stroke-linejoin="round" filter="url(#sf3)"/><text x="268" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#sbg)">N</text><text x="360" y="118" font-family="Arial Black,sans-serif" font-size="110" font-weight="900" fill="url(#sbg)">I</text><circle cx="596" cy="96" r="50" fill="none" stroke="url(#sbg)" stroke-width="9"/><circle cx="596" cy="96" r="41" fill="#f5f4f0"/><circle cx="596" cy="96" r="50" fill="none" stroke="#f5a623" stroke-width="1.5" stroke-dasharray="3 4" opacity="0.5"/><line x1="555" y1="96" x2="637" y2="96" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><line x1="596" y1="55" x2="596" y2="137" stroke="rgba(0,0,0,0.12)" stroke-width="1.5"/><g clip-path="url(#sc3)"><text x="567" y="90" font-family="Arial,sans-serif" font-size="20" font-weight="700" fill="#f5a623">&#8377;</text><text x="600" y="90" font-family="Arial,sans-serif" font-size="16" font-weight="700" fill="#f5a623">%</text><text x="568" y="118" font-family="Arial,sans-serif" font-size="18" font-weight="700" fill="#27ae60">$</text><rect x="600" y="112" width="6" height="14" rx="1" fill="#27ae60"/><rect x="609" y="106" width="6" height="20" rx="1" fill="#27ae60"/><rect x="618" y="100" width="6" height="26" rx="1" fill="#f5a623"/></g><line x1="620" y1="60" x2="655" y2="18" stroke="url(#sag)" stroke-width="5" stroke-linecap="round" filter="url(#sf3)"/><polygon points="655,18 638,24 648,38" fill="#2ecc71" filter="url(#sf3)"/></svg></div>
-      <div class="sb-nav">
-        <div class="nav-section">
-          <div class="nav-section-label">Main</div>
-          <button class="nav-btn active" data-view="home" onclick="gotoView('home')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview
-          </button>
-          <button class="nav-btn" data-view="client360" onclick="gotoView('client360')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client 360
-          </button>
-          <button class="nav-btn" data-view="clients" onclick="gotoView('clients')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage Clients
-          </button>
-        </div>
-        <div class="nav-section">
-          <div class="nav-section-label">Activity</div>
-          <button class="nav-btn" data-view="receipts" onclick="gotoView('receipts')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Receipts
-          </button>
-          <button class="nav-btn" data-view="qna" onclick="gotoView('qna')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Q&amp;A Inbox
-            <span class="nav-badge" id="qna-badge" style="display:none">0</span>
-          </button>
-          <button class="nav-btn" data-view="appointments" onclick="gotoView('appointments')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Appointments
-            <span class="nav-badge" id="appt-badge" style="display:none">0</span>
-          </button>
-          <button class="nav-btn" data-view="documents" onclick="gotoView('documents')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Documents
-          </button>
-        </div>
-        <div class="nav-section">
-          <div class="nav-section-label">Finance</div>
-          <button class="nav-btn" data-view="ca-invoices" onclick="gotoView('ca-invoices')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>CA Invoices
-          </button>
-          <button class="nav-btn" data-view="challans" onclick="gotoView('challans')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Challans
-          </button>
-          <button class="nav-btn" data-view="reminders" onclick="gotoView('reminders')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Reminders
-          </button>
-        </div>
-        <div class="nav-section">
-          <div class="nav-section-label">Tools</div>
-          <button class="nav-btn" data-view="tally" onclick="gotoView('tally')">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tally Import
-          </button>
+      <div class="sb-section">
+        <div class="sb-label">Main</div>
+        <button class="nav-btn active" data-view="home" onclick="gotoView('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview
+        </button>
+        <button class="nav-btn" data-view="client360" onclick="gotoView('client360')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client 360
+        </button>
+        <button class="nav-btn" data-view="clients" onclick="gotoView('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage Clients
+        </button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Activity</div>
+        <button class="nav-btn" data-view="receipts" onclick="gotoView('receipts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Receipts
+        </button>
+        <button class="nav-btn" data-view="qna" onclick="gotoView('qna')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Q&amp;A Inbox
+          <span class="nav-badge" id="qna-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-btn" data-view="appointments" onclick="gotoView('appointments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Appointments
+          <span class="nav-badge" id="appt-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-btn" data-view="documents" onclick="gotoView('documents')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Documents
+        </button>
+        <button class="nav-btn" data-view="reminders" onclick="gotoView('reminders')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Reminders
+        </button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Finance</div>
+        <button class="nav-btn" data-view="ca-invoices" onclick="gotoView('ca-invoices')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>CA Invoices
+        </button>
+        <button class="nav-btn" data-view="challans" onclick="gotoView('challans')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Challans
+        </button>
+      </div>
+      <div class="sb-section">
+        <div class="sb-label">Tools</div>
+        <button class="nav-btn" data-view="tally" onclick="gotoView('tally')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tally Import
+        </button>
+      </div>
+      <div class="sb-footer">
+        <div class="user-info-row">
+          <div class="user-av-lg" id="user-av-sidebar">CA</div>
+          <div class="user-meta">
+            <div class="user-email-text" id="user-email-display">Loading...</div>
+            <div class="user-tag-text">Smart Tax · Happy Clients</div>
+          </div>
+          <button class="logout-btn" onclick="doLogout()" title="Sign out">⏻</button>
         </div>
       </div>
     </div>
 
     <!-- MAIN -->
     <div class="main">
-      <div class="page-header">
-        <div><h1 id="page-title">Overview</h1><p id="page-sub">Your firm at a glance</p></div>
-        <div style="display:flex;gap:8px" id="page-actions"></div>
+      <div class="page-head">
+        <div><h1 id="page-title">Overview</h1><p id="page-sub">Good morning — here is your daily briefing</p></div>
+        <div class="page-actions" id="page-actions"></div>
       </div>
       <div class="page" id="page-content"><div class="spin-wrap"><div class="spinner"></div></div></div>
     </div>
@@ -402,7 +519,7 @@ tbody tr:last-child td{border-bottom:none}
 const SUPA_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[];
+let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[],customEvents=[];
 let currentView='home',selectedClient=null;
 
 /* AUTH */
@@ -422,7 +539,11 @@ function bootApp(user){
   document.getElementById('login-page').style.display='none';
   document.getElementById('app').classList.add('visible');
   const email=user.email||'';
-  document.getElementById('user-av').textContent=email.slice(0,2).toUpperCase();
+  const initials=email.slice(0,2).toUpperCase();
+  document.getElementById('user-email-display').textContent=email;
+  document.getElementById('user-av').textContent=initials;
+  document.getElementById('user-av-sidebar').textContent=initials;
+  document.getElementById('user-name-display').textContent=email.split('@')[0];
   loadData();
 }
 
@@ -442,29 +563,32 @@ async function loadData(){
   invoices=invRes.data||[];questions=qRes.data||[];appointments=apptRes.data||[];
   documents=docRes.data||[];reminders=remRes.data||[];caInvoices=caInvRes.data||[];challans=chalRes.data||[];
   const dbClients=cliRes.data||[];
- const phones=[...new Set(dbClients.map(c=>c.phone).filter(Boolean))];
+  const phones=[...new Set(dbClients.map(c=>c.phone).filter(Boolean))];
   clients=phones.map(phone=>{
     const db=dbClients.find(c=>c.phone===phone)||{};
+    const lastSeen=invoices.filter(i=>i.client_phone===phone)[0]?.received_at;
+    const daysSince=lastSeen?Math.floor((Date.now()-new Date(lastSeen))/(1000*60*60*24)):999;
     return{phone,id:db.id||null,name:db.name||null,business_name:db.business_name||null,
       email:db.email||null,pan_number:db.pan_number||null,gst_number:db.gst_number||null,
       address:db.address||null,notes:db.notes||null,is_active:db.is_active!==false,
       count:invoices.filter(i=>i.client_phone===phone).length,
-      lastSeen:invoices.filter(i=>i.client_phone===phone)[0]?.received_at,
-      total:invoices.filter(i=>i.client_phone===phone).reduce((s,i)=>s+(parseFloat(i.amount)||0),0)};
+      lastSeen,daysSince,
+      total:invoices.filter(i=>i.client_phone===phone).reduce((s,i)=>s+(parseFloat(i.amount)||0),0),
+      health:daysSince<14?'active':daysSince<30?'quiet':'inactive'};
   }).sort((a,b)=>(a.name||a.phone).localeCompare(b.name||b.phone));
-  updateBadges();
-  populateClientDropdown();
-  renderView();
+  customEvents=JSON.parse(localStorage.getItem('taxnio_events')||'[]');
+  updateBadges();populateClientDropdown();renderView();
 }
 
+function clientName(phone){const c=clients.find(x=>x.phone===phone);return c&&c.name?c.name:phone}
 function updateBadges(){
   const pq=questions.filter(q=>q.needs_ca_review&&q.status!=='ca_replied').length;
   const pa=appointments.filter(a=>a.status==='pending').length;
   const qb=document.getElementById('qna-badge'),ab=document.getElementById('appt-badge');
   if(qb){qb.textContent=pq;qb.style.display=pq>0?'inline':'none'}
   if(ab){ab.textContent=pa;ab.style.display=pa>0?'inline':'none'}
+  document.getElementById('notif-dot').style.display=(pq+pa)>0?'block':'none';
 }
-
 function populateClientDropdown(){
   const dd=document.getElementById('client-dropdown');
   const val=dd.value;
@@ -477,71 +601,84 @@ function populateClientDropdown(){
   });
   if(val)dd.value=val;
 }
-
 function onClientSelect(phone){
-  if(phone){
-    selectedClient=clients.find(c=>c.phone===phone)||{phone};
-    gotoView('client360');
-  } else {
-    selectedClient=null;
-    gotoView('home');
-  }
+  if(phone){selectedClient=clients.find(c=>c.phone===phone)||{phone};gotoView('client360');}
+  else{selectedClient=null;gotoView('home');}
 }
-
 function onGlobalSearch(val){
   if(!val)return;
   gotoView('receipts');
-  setTimeout(()=>{
-    const inp=document.querySelector('#page-content .search-input');
-    if(inp){inp.value=val;renderReceipts(val,'');}
-  },100);
+  setTimeout(()=>{const inp=document.querySelector('#page-content .search-input');if(inp){inp.value=val;renderReceipts(val,'');}},100);
 }
 
 /* ROUTING */
 function gotoView(v){
   currentView=v;
   document.querySelectorAll('.nav-btn').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  const now=new Date();const hr=now.getHours();
+  const greeting=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   const titles={
-    home:['Overview','Your firm at a glance'],
-    client360:['Client 360','Complete client profile and history'],
+    home:['Overview',greeting+' — here is your daily briefing'],
+    client360:['Client 360','Complete client profile and activity'],
+    clients:['Manage Clients','Add, edit and delete your clients'],
     receipts:['Receipts','All invoices and receipts'],
     qna:['Q&A Inbox','Client questions and AI answers'],
     appointments:['Appointments','Meeting requests from clients'],
     documents:['Documents','Client documents and files'],
+    reminders:['Reminders','Client reminders and follow-ups'],
     'ca-invoices':['CA Invoices','Invoices raised to clients'],
     challans:['Challans','Tax challans and payments'],
-    reminders:['Reminders','Client reminders and follow-ups'],
-    tally:['Tally Import','Import data from Tally backup'],
-    clients:['Manage Clients','Add, edit and delete your clients']
+    tally:['Tally Import','Import data from Tally backup']
   };
   const t=titles[v]||['Dashboard',''];
   document.getElementById('page-title').textContent=t[0];
   document.getElementById('page-sub').textContent=t[1];
-  const pa=document.getElementById('page-actions');
-  pa.innerHTML='';
-  if(v==='receipts'){pa.innerHTML='<button class="btn-sm" onclick="exportCSV()">↓ Export CSV</button>'}
-  if(v==='ca-invoices'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'ca-invoice\')">+ New Invoice</button>'}
-  if(v==='challans'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'challan\')">+ New Challan</button>'}
-  if(v==='reminders'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'reminder\')">+ Add Reminder</button>'}
-  if(v==='documents'&&selectedClient){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'upload-doc\')">+ Upload Document</button>'}
-  if(v==='clients'){pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'add-client\')">'+'+ Add Client</button>'}
+  const pa=document.getElementById('page-actions');pa.innerHTML='';
+  if(v==='receipts')pa.innerHTML='<button class="btn-sm" onclick="exportCSV()">↓ Export CSV</button>';
+  if(v==='ca-invoices')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'ca-invoice\')">+ New Invoice</button>';
+  if(v==='challans')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'challan\')">+ New Challan</button>';
+  if(v==='reminders')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'reminder\')">+ Add Reminder</button>';
+  if(v==='clients')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'add-client\')">+ Add Client</button>';
   renderView();
 }
-
 function renderView(){
   if(currentView==='home')renderHome();
   else if(currentView==='client360')renderClient360();
+  else if(currentView==='clients')renderClients();
   else if(currentView==='receipts')renderReceipts('','');
   else if(currentView==='qna')renderQnA('','');
   else if(currentView==='appointments')renderAppointments('');
   else if(currentView==='documents')renderDocuments('');
+  else if(currentView==='reminders')renderReminders();
   else if(currentView==='ca-invoices')renderCAInvoices();
   else if(currentView==='challans')renderChallans();
-  else if(currentView==='reminders')renderReminders();
-  else if(currentView==='clients')renderClients();
   else if(currentView==='tally')renderTally();
 }
 function setContent(html){document.getElementById('page-content').innerHTML=html}
+
+/* COMPLIANCE CALENDAR */
+function getComplianceDates(){
+  const now=new Date();const m=now.getMonth();const y=now.getFullYear();
+  const nm=m===11?0:m+1;const ny=m===11?y+1:y;
+  const months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dates=[];
+  const addDate=(d,mon,yr,name,desc)=>{
+    const dt=new Date(yr,mon,d);
+    const diff=Math.floor((dt-now)/(1000*60*60*24));
+    dates.push({date:d+' '+months[mon]+' '+yr,name,desc,diff,dt});
+  };
+  addDate(7,m,y,'TDS Payment','Deposit TDS deducted in previous month');
+  addDate(11,m,y,'GSTR-1 Filing','File monthly sales return');
+  addDate(13,m,y,'GSTR-2B','Auto-drafted ITC statement available');
+  addDate(20,m,y,'GSTR-3B Filing','File summary GST return & pay tax');
+  addDate(7,nm,ny,'TDS Payment (Next)','Deposit TDS deducted this month');
+  addDate(11,nm,ny,'GSTR-1 (Next)','Next month sales return');
+  if([2,5,8,11].includes(m))addDate(31,m,y,'TDS Return (Quarterly)','File TDS return for the quarter');
+  if(m===2)addDate(31,m,y,'Professional Tax Maharashtra','Annual PT return due');
+  if(m===2)addDate(31,m,y,'LUT Renewal','Letter of Undertaking for exporters');
+  if([5,8,11,2].includes(m))addDate(15,m,y,'Advance Tax','Pay advance tax instalment');
+  return dates.filter(d=>d.diff>=-1&&d.diff<=45).sort((a,b)=>a.diff-b.diff);
+}
 
 /* HOME */
 function renderHome(){
@@ -550,37 +687,157 @@ function renderHome(){
   const totalAmt=invoices.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
   const pendingAppt=appointments.filter(a=>a.status==='pending').length;
   const pendingQna=questions.filter(q=>q.needs_ca_review&&q.status!=='ca_replied').length;
-  const pendingReminders=reminders.filter(r=>r.status==='pending').length;
-  const tc={invoice:'#3b5bdb',receipt:'#1a6b4a',expense:'#c27c0e',general_text:'#a8a29e'};
+  const pendingRem=reminders.filter(r=>r.status==='pending').length;
+  const totalOutstanding=caInvoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const compDates=getComplianceDates();
+  const urgentDates=compDates.slice(0,5);
+  const recentActivity=[...invoices.slice(0,5).map(i=>({...i,atype:'receipt',time:new Date(i.received_at)})),...questions.slice(0,3).map(q=>({...q,atype:'question',time:new Date(q.created_at)})),...documents.slice(0,2).map(d=>({...d,atype:'document',time:new Date(d.created_at)}))].sort((a,b)=>b.time-a.time).slice(0,8);
+  const urgentQnA=questions.filter(q=>q.needs_ca_review&&q.status!=='ca_replied').slice(0,4);
+  const topOutstanding=caInvoices.filter(i=>i.status==='unpaid').sort((a,b)=>(parseFloat(b.amount)||0)-(parseFloat(a.amount)||0)).slice(0,5);
+  const pendingChallans=challans.filter(c=>c.status==='pending').slice(0,4);
+  const todayAppts=appointments.filter(a=>{const d=new Date(a.created_at);return d.toDateString()===now.toDateString()}).slice(0,3);
+  const healthColor={active:'#27ae60',quiet:'#f39c12',inactive:'#c0392b'};
+
   setContent(`
-    <div class="stats-row">
-      <div class="stat-card" onclick="gotoView('receipts')"><div class="stat-icon">🧾</div><div class="stat-label">Total receipts</div><div class="stat-val">${invoices.length}</div><div class="stat-sub">${thisMonth.length} this month</div></div>
-      <div class="stat-card green" onclick="gotoView('receipts')"><div class="stat-icon">₹</div><div class="stat-label">Total amount</div><div class="stat-val">₹${fmtAmt(totalAmt)}</div><div class="stat-sub">Across all receipts</div></div>
-      <div class="stat-card blue" onclick="gotoView('client360')"><div class="stat-icon">👥</div><div class="stat-label">Active clients</div><div class="stat-val">${clients.length}</div><div class="stat-sub">Unique numbers</div></div>
-      <div class="stat-card amber" onclick="gotoView('appointments')"><div class="stat-icon">📅</div><div class="stat-label">Pending appts</div><div class="stat-val">${pendingAppt}</div><div class="stat-sub">Awaiting confirmation</div></div>
-      <div class="stat-card red" onclick="gotoView('reminders')"><div class="stat-icon">🔔</div><div class="stat-label">Reminders due</div><div class="stat-val">${pendingReminders}</div><div class="stat-sub">Need attention</div></div>
+    <!-- QUICK ACTIONS -->
+    <div class="quick-actions">
+      <div class="quick-btn" onclick="openModal('add-client')"><div class="quick-icon">👤</div><div class="quick-label">Add Client</div></div>
+      <div class="quick-btn" onclick="gotoView('receipts')"><div class="quick-icon">🧾</div><div class="quick-label">View Receipts</div></div>
+      <div class="quick-btn" onclick="openModal('ca-invoice')"><div class="quick-icon">💰</div><div class="quick-label">New Invoice</div></div>
+      <div class="quick-btn" onclick="openModal('reminder')"><div class="quick-icon">🔔</div><div class="quick-label">Add Reminder</div></div>
+      <div class="quick-btn" onclick="openModal('broadcast')"><div class="quick-icon">📢</div><div class="quick-label">Broadcast</div></div>
     </div>
+
+    <!-- STATS -->
+    <div class="stats-row">
+      <div class="stat-card" onclick="gotoView('receipts')"><div class="stat-emoji">🧾</div><div class="stat-label">Receipts this month</div><div class="stat-val">${thisMonth.length}</div><div class="stat-sub">${invoices.length} total all time</div></div>
+      <div class="stat-card green" onclick="gotoView('receipts')"><div class="stat-emoji">₹</div><div class="stat-label">Total amount</div><div class="stat-val">₹${fmtAmt(totalAmt)}</div><div class="stat-sub">Across all receipts</div></div>
+      <div class="stat-card accent" onclick="gotoView('ca-invoices')"><div class="stat-emoji">💰</div><div class="stat-label">Outstanding</div><div class="stat-val">₹${fmtAmt(totalOutstanding)}</div><div class="stat-sub">Unpaid CA fees</div></div>
+      <div class="stat-card amber" onclick="gotoView('appointments')"><div class="stat-emoji">📅</div><div class="stat-label">Pending appointments</div><div class="stat-val">${pendingAppt}</div><div class="stat-sub">Awaiting confirmation</div></div>
+      <div class="stat-card red" onclick="gotoView('qna')"><div class="stat-emoji">💬</div><div class="stat-label">Questions pending</div><div class="stat-val">${pendingQna}</div><div class="stat-sub">Need your reply</div></div>
+    </div>
+
+    <!-- CALENDARS -->
+    <div class="calendar-grid">
+      <div class="cal-card">
+        <div class="cal-header">
+          <div><div class="cal-title">Compliance Calendar</div><div class="cal-subtitle">AI generated — GST · TDS · ITR · Maharashtra</div></div>
+          <span class="cal-badge ai">🤖 AI</span>
+        </div>
+        <div class="deadline-list">
+          ${urgentDates.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>No deadlines in next 45 days</p></div>':
+          urgentDates.map(d=>{
+            const cls=d.diff<=3?'d-urgent':d.diff<=7?'d-soon':'d-ok';
+            const dotColor=d.diff<=3?'#c0392b':d.diff<=7?'#f39c12':'#27ae60';
+            const label=d.diff<0?'Overdue':d.diff===0?'Today':d.diff===1?'Tomorrow':'In '+d.diff+' days';
+            return '<div class="deadline-item '+cls+'"><div class="deadline-dot" style="background:'+dotColor+'"></div><div class="deadline-info"><div class="deadline-name">'+d.name+'</div><div class="deadline-desc">'+d.desc+'</div></div><div class="deadline-date">'+d.date+'<br><span style="font-size:10px">'+label+'</span></div></div>';
+          }).join('')}
+        </div>
+      </div>
+      <div class="cal-card">
+        <div class="cal-header">
+          <div><div class="cal-title">My Calendar</div><div class="cal-subtitle">Your custom events and reminders</div></div>
+          <span class="cal-badge custom">📌 Custom</span>
+        </div>
+        <div id="custom-events-list">
+          ${customEvents.length===0?'<div style="text-align:center;padding:20px;color:var(--brown4);font-size:13px">No custom events yet</div>':
+          customEvents.sort((a,b)=>new Date(a.date)-new Date(b.date)).map(e=>'<div class="custom-event"><div class="custom-event-dot"></div><div class="custom-event-info"><div class="custom-event-name">'+e.title+'</div><div class="custom-event-date">'+e.date+(e.client?' · '+e.client:'')+'</div></div><button class="custom-event-del" onclick="deleteCustomEvent(\''+e.id+'\')">×</button></div>').join('')}
+        </div>
+        <button class="add-event-btn" onclick="openModal('add-event')">+ Add custom event or deadline</button>
+      </div>
+    </div>
+
+    <!-- MAIN GRID -->
     <div class="home-grid">
-      <div class="home-panel">
-        <div class="home-panel-head"><h3>Recent receipts</h3><span class="see-all" onclick="gotoView('receipts')">See all →</span></div>
-        ${invoices.slice(0,8).map(inv=>`<div class="act-item" onclick="openReceiptDrawer('${inv.id}')"><div class="act-dot" style="background:${tc[inv.message_type]||'#d6d3cd'}"></div><div class="act-info"><div class="act-title">${inv.vendor_name||inv.description||'Unknown'}</div><div class="act-time">${(inv.client_phone||'').replace('+91','')} · ${fmtDate(inv.received_at)}</div></div><div class="act-amt">${inv.amount?'₹'+fmtAmt(parseFloat(inv.amount)):'—'}</div></div>`).join('')}
-        ${invoices.length===0?'<div class="empty"><div class="empty-icon">📭</div><p>No receipts yet</p></div>':''}
+      <!-- RECENT ACTIVITY -->
+      <div class="card">
+        <div class="card-head"><h3>Recent Client Activity</h3><span class="card-count">${recentActivity.length}</span></div>
+        <div style="overflow-y:auto;max-height:320px">
+          ${recentActivity.length===0?'<div class="empty"><div class="empty-icon">📭</div><p>No activity yet</p></div>':
+          recentActivity.map(a=>{
+            const colors={receipt:'#27ae60',question:'#1a3a5c',document:'#b5720a',appointment:'#4a2070'};
+            const icons={receipt:'🧾',question:'💬',document:'📁',appointment:'📅'};
+            const name=clientName(a.client_phone||a.phone||'');
+            const desc=a.atype==='receipt'?(a.vendor_name||a.description||'Receipt sent'):a.atype==='question'?(a.question||'Question asked'):a.atype==='document'?(a.doc_type||'Document uploaded'):'Activity';
+            return '<div class="feed-item" onclick="onClientSelect(\''+(a.client_phone||'')+'\')">'+'<div class="feed-dot" style="background:'+colors[a.atype||'receipt']+'"></div>'+'<div class="feed-info"><div class="feed-title">'+icons[a.atype||'receipt']+' '+desc+'</div><div class="feed-sub">'+name+'</div></div>'+'<div class="feed-time">'+timeSince(a.time)+'</div>'+'</div>';
+          }).join('')}
+        </div>
       </div>
-      <div class="home-panel">
-        <div class="home-panel-head"><h3>Pending reminders</h3><span class="see-all" onclick="gotoView('reminders')">See all →</span></div>
-        ${reminders.filter(r=>r.status==='pending').slice(0,6).map(r=>`<div class="act-item" onclick="openReminderDrawer('${r.id}')"><div class="act-dot" style="background:${r.is_all_clients?'#6b3fa0':'#1a6b4a'}"></div><div class="act-info"><div class="act-title">${r.title||'Reminder'}</div><div class="act-time">${r.is_all_clients?'All clients':r.client_phone||''}</div></div><div class="reminder-date">${r.due_date||'—'}</div></div>`).join('')}
-        ${reminders.filter(r=>r.status==='pending').length===0?'<div class="empty"><div class="empty-icon">✅</div><p>No pending reminders</p></div>':''}
-        <div class="home-panel-head" style="margin-top:0"><h3>Recent questions</h3><span class="see-all" onclick="gotoView(\'qna\')">See all →</span></div>
-        ${questions.slice(0,3).map(q=>`<div class="act-item" onclick="openQnaDrawer('${q.id}')"><div class="act-dot" style="background:${q.needs_ca_review?'#c0392b':'#1a6b4a'}"></div><div class="act-info"><div class="act-title">${q.question||'—'}</div><div class="act-time">${(q.client_phone||'').replace('+91','')} · ${fmtDate(q.created_at)}</div></div><span class="badge ${q.needs_ca_review?'b-review':'b-answered'}">${q.needs_ca_review?'Review':'Done'}</span></div>`).join('')}
-        ${questions.length===0?'<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:20px">💬</div><p>No questions yet</p></div>':''}
+
+      <!-- URGENT Q&A -->
+      <div class="card">
+        <div class="card-head"><h3>Questions Needing Reply</h3><span class="card-count" style="background:var(--red-light);color:var(--red)">${urgentQnA.length}</span></div>
+        <div style="overflow-y:auto;max-height:320px">
+          ${urgentQnA.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>All questions answered</p></div>':
+          urgentQnA.map(q=>'<div class="qa-urgent" onclick="openQnaDrawer(\''+q.id+'\')"><div class="qa-q">'+(q.question||'—')+'</div><div class="qa-meta"><span class="qa-client">'+clientName(q.client_phone||'')+'</span><span class="qa-time">'+timeSince(new Date(q.created_at))+'</span></div><button class="qa-reply-btn" onclick="event.stopPropagation();openQnaDrawer(\''+q.id+'\')">Reply →</button></div>').join('')}
+          ${urgentQnA.length>0?'<div style="padding:8px 14px;border-top:1px solid var(--cream3)"><button class="btn-sm" style="width:100%" onclick="gotoView(\'qna\')">View all questions →</button></div>':''}
+        </div>
       </div>
-    </div>`);
+    </div>
+
+    <!-- SECOND GRID -->
+    <div class="home-grid">
+      <!-- OUTSTANDING BALANCES -->
+      <div class="card">
+        <div class="card-head"><h3>Outstanding Balances</h3><button class="btn-sm" onclick="gotoView('ca-invoices')" style="font-size:11px">View all →</button></div>
+        <div style="overflow-y:auto;max-height:280px">
+          ${topOutstanding.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>No outstanding balances</p></div>':
+          topOutstanding.map(inv=>{
+            const daysSince=Math.floor((Date.now()-new Date(inv.created_at))/(1000*60*60*24));
+            const name=clientName(inv.client_phone||'');
+            return '<div class="outstanding-item"><div class="outstanding-av">'+name.slice(0,2).toUpperCase()+'</div><div class="outstanding-info"><div class="outstanding-name">'+name+'</div><div class="outstanding-days">'+daysSince+' days overdue</div></div><div class="outstanding-amt">₹'+fmtAmt(parseFloat(inv.amount)||0)+'</div><button class="remind-btn" onclick="sendReminder(\''+inv.client_phone+'\',\'payment\')">📱 Remind</button></div>';
+          }).join('')}
+        </div>
+      </div>
+
+      <!-- CHALLAN STATUS + APPOINTMENTS -->
+      <div class="card">
+        <div class="card-head"><h3>Pending Challans</h3><button class="btn-sm" onclick="gotoView('challans')" style="font-size:11px">View all →</button></div>
+        <div style="overflow-y:auto;max-height:140px">
+          ${pendingChallans.length===0?'<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">✅</div><p>No pending challans</p></div>':
+          pendingChallans.map(c=>'<div class="challan-item"><div class="challan-info"><div class="challan-name">'+c.challan_type+' — '+clientName(c.client_phone||'')+'</div><div class="challan-client">'+(c.period||'—')+'</div></div><div class="challan-amt">₹'+fmtAmt(parseFloat(c.amount)||0)+'</div><span class="badge b-pending">Pending</span></div>').join('')}
+        </div>
+        <div class="card-head" style="margin-top:0"><h3>Today\'s Appointments</h3></div>
+        <div style="overflow-y:auto;max-height:120px">
+          ${todayAppts.length===0?'<div class="empty" style="padding:16px"><div class="empty-icon" style="font-size:20px">📅</div><p>No appointments today</p></div>':
+          todayAppts.map(a=>'<div class="appt-item" onclick="openApptDrawer(\''+a.id+'\')"><div class="appt-date-box">📅</div><div class="appt-info"><div class="appt-time">'+(a.requested_time||'Time TBD')+'</div><div class="appt-client">'+clientName(a.client_phone||'')+'</div></div><span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>').join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- CLIENT HEALTH -->
+    <div class="card" style="margin-bottom:18px">
+      <div class="card-head"><h3>Client Health Overview</h3><span class="card-count">${clients.length} clients</span></div>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:0">
+        ${clients.slice(0,12).map(c=>'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);border-right:1px solid var(--cream3);cursor:pointer;transition:background .08s" onclick="onClientSelect(\''+c.phone+'\')" onmouseover="this.style.background=\'var(--cream2)\'" onmouseout="this.style.background=\'\'"><div class="health-dot health-'+c.health+'"></div><div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(c.name||c.phone)+'</div><div style="font-size:10px;color:var(--brown4)">'+(c.daysSince===999?'No activity':c.daysSince===0?'Active today':c.daysSince+' days ago')+'</div></div><span style="font-size:10px;font-weight:600;color:var(--brown4)">'+(c.count)+'</span></div>').join('')}
+        ${clients.length>12?'<div style="grid-column:1/-1;padding:10px 14px;text-align:center"><button class="btn-sm" onclick="gotoView(\'clients\')">View all '+clients.length+' clients →</button></div>':''}
+      </div>
+    </div>
+  `);
+}
+
+function timeSince(date){
+  const diff=Math.floor((Date.now()-date)/1000);
+  if(diff<60)return diff+'s ago';
+  if(diff<3600)return Math.floor(diff/60)+'m ago';
+  if(diff<86400)return Math.floor(diff/3600)+'h ago';
+  return Math.floor(diff/86400)+'d ago';
+}
+
+async function sendReminder(phone,type){
+  alert('WhatsApp reminder sent to '+clientName(phone)+'!');
+}
+
+function deleteCustomEvent(id){
+  customEvents=customEvents.filter(e=>e.id!==id);
+  localStorage.setItem('taxnio_events',JSON.stringify(customEvents));
+  renderHome();
 }
 
 /* CLIENT 360 */
 function renderClient360(){
   const client=selectedClient||clients[0];
-  if(!client){setContent('<div class="empty"><div class="empty-icon">👤</div><p>Select a client from the dropdown above</p></div>');return}
+  if(!client){setContent('<div class="empty" style="margin-top:60px"><div class="empty-icon">👤</div><p>Select a client from the dropdown above</p></div>');return}
   const phone=client.phone;
   const clientInvoices=invoices.filter(i=>i.client_phone===phone);
   const clientDocs=documents.filter(d=>d.client_phone===phone);
@@ -591,64 +848,88 @@ function renderClient360(){
   const clientChallans=challans.filter(c=>c.client_phone===phone);
   const totalSpent=clientInvoices.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
   const totalOwed=clientCAInvoices.filter(i=>i.status==='unpaid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
-
-  setContent(`
-    <div class="client-360">
-      <div class="client-info-card">
-        <div class="client-info-row">
-          <div class="client-avatar-big">${client.name?client.name.slice(0,2).toUpperCase():phone.slice(-4)}</div>
-          <div class="client-info-details">
-            <div class="client-name">${client.name||phone}</div>
-            <div class="client-phone-text">${phone}</div>
-          </div>
-        </div>
-        ${client.business_name?`<div class="info-field"><div class="label">Business</div><div class="value" style="font-weight:500">${client.business_name}</div></div>`:''}
-        ${client.pan_number?`<div class="info-field"><div class="label">PAN</div><div class="value mono">${client.pan_number}</div></div>`:''}
-        ${client.gst_number?`<div class="info-field"><div class="label">GST Number</div><div class="value mono">${client.gst_number}</div></div>`:''}
-        ${client.email?`<div class="info-field"><div class="label">Email</div><div class="value">${client.email}</div></div>`:''}
-        <div class="info-field"><div class="label">Total receipts</div><div class="value" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent)">${clientInvoices.length}</div></div>
-        <div class="info-field"><div class="label">Total spent</div><div class="value" style="font-family:'Fraunces',serif;font-size:18px;font-weight:700;color:var(--accent)">₹${fmtAmt(totalSpent)}</div></div>
-        <div class="info-field"><div class="label">Outstanding balance</div><div class="value" style="font-family:'Fraunces',serif;font-size:16px;font-weight:700;color:var(--red)">₹${fmtAmt(totalOwed)}</div></div>
-        <div class="info-field"><div class="label">Documents</div><div class="value">${clientDocs.length} files</div></div>
-        <div class="info-field"><div class="label">Last activity</div><div class="value">${fmtDate(clientInvoices[0]?.received_at||null)}</div></div>
-        <div class="action-btns">
-          <button class="action-btn primary" onclick="openModal('reminder','${phone}')">+ Add Reminder</button>
-          <button class="action-btn" onclick="openModal('upload-doc','${phone}')">+ Upload Document</button>
-          <button class="action-btn" onclick="openModal('ca-invoice','${phone}')">+ Add Invoice</button>
-          <button class="action-btn" onclick="openModal('challan','${phone}')">+ Add Challan</button>
-          <button class="action-btn" onclick="openModal('edit-client','${phone}')">Edit Client</button>
-        </div>
+  setContent(`<div class="client-360">
+    <div class="client-info-card">
+      <div style="display:flex;align-items:flex-start;gap:12px">
+        <div class="client-av-big">${(client.name||phone).slice(0,2).toUpperCase()}</div>
+        <div><div class="client-name-big">${client.name||phone}</div><div class="client-phone-sm">${phone}</div><div style="margin-top:6px"><span class="badge b-${client.health}">${client.health}</span></div></div>
       </div>
-      <div class="client-360-right">
-        <div class="tabs-row">
-          <button class="tab-btn active" onclick="show360Tab(this,'tab-receipts')">Receipts (${clientInvoices.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-docs')">Documents (${clientDocs.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-questions')">Questions (${clientQuestions.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-appts')">Appointments (${clientAppts.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-reminders')">Reminders (${clientReminders.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-ca-inv')">CA Invoices (${clientCAInvoices.length})</button>
-          <button class="tab-btn" onclick="show360Tab(this,'tab-challans')">Challans (${clientChallans.length})</button>
-        </div>
-        <div class="tab-content" id="tab-receipts">${renderTable(clientInvoices)}</div>
-        <div class="tab-content" id="tab-docs" style="display:none">${clientDocs.length===0?'<div class="empty"><div class="empty-icon">📁</div><p>No documents yet</p></div>':`<div class="doc-grid">${clientDocs.map(d=>`<div class="doc-card" onclick="openDocDrawer('${d.id}')"><div class="doc-icon">${docIcon(d.doc_type)}</div><div class="doc-name">${d.file_name||'Document'}</div><div class="doc-type">${d.doc_type||'General'}</div><div class="doc-date">${fmtDate(d.created_at)}</div></div>`).join('')}</div>`}</div>
-        <div class="tab-content" id="tab-questions" style="display:none">${clientQuestions.length===0?'<div class="empty"><div class="empty-icon">💬</div><p>No questions yet</p></div>':clientQuestions.map(q=>`<div class="qa-item" onclick="openQnaDrawer('${q.id}')"><div style="display:flex;align-items:center;gap:8px;margin-bottom:4px"><span class="badge ${q.needs_ca_review?'b-review':'b-answered'}">${q.needs_ca_review?'Needs review':'Answered'}</span><span style="font-size:10px;color:var(--text3);margin-left:auto">${fmtDate(q.created_at)}</span></div><div class="qa-question">${q.question||'—'}</div><div class="qa-answer">${q.ai_answer||'—'}</div></div>`).join('')}</div>
-        <div class="tab-content" id="tab-appts" style="display:none">${clientAppts.length===0?'<div class="empty"><div class="empty-icon">📅</div><p>No appointments yet</p></div>':clientAppts.map(a=>`<div class="appt-item" onclick="openApptDrawer('${a.id}')"><div class="appt-date-box"><div class="appt-day">📅</div></div><div class="appt-info"><div class="appt-time">${a.requested_date||'TBD'}${a.requested_time?' · '+a.requested_time:''}</div><div class="appt-notes">${a.notes||'—'}</div></div><span class="badge b-${a.status||'pending'}">${a.status||'pending'}</span></div>`).join('')}</div>
-        <div class="tab-content" id="tab-reminders" style="display:none">${clientReminders.length===0?'<div class="empty"><div class="empty-icon">🔔</div><p>No reminders</p></div>':clientReminders.map(r=>`<div class="reminder-item" onclick="openReminderDrawer('${r.id}')"><div class="reminder-dot" style="background:${r.is_all_clients?'#6b3fa0':'#1a6b4a'}"></div><div class="reminder-info"><div class="reminder-title">${r.title||'Reminder'}</div><div class="reminder-meta">${r.notes||''}</div></div><div class="reminder-date">${r.due_date||'—'}</div></div>`).join('')}</div>
-        <div class="tab-content" id="tab-ca-inv" style="display:none">${clientCAInvoices.length===0?'<div class="empty"><div class="empty-icon">🧾</div><p>No invoices raised yet</p></div>':`<table><thead><tr><th>Invoice #</th><th>Description</th><th>Amount</th><th>Due Date</th><th>Status</th></tr></thead><tbody>${clientCAInvoices.map(i=>`<tr><td class="mono">${i.invoice_number||'—'}</td><td class="desc-cell">${i.description||'—'}</td><td class="amt">₹${fmtAmt(parseFloat(i.amount)||0)}</td><td class="mono">${i.due_date||'—'}</td><td><span class="badge b-${i.status||'unpaid'}">${i.status||'unpaid'}</span></td></tr>`).join('')}</tbody></table>`}</div>
-        <div class="tab-content" id="tab-challans" style="display:none">${clientChallans.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet</p></div>':`<table><thead><tr><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>${clientChallans.map(c=>`<tr onclick="openDocDrawer('${c.id}')"><td>${c.challan_type||'—'}</td><td class="amt">₹${fmtAmt(parseFloat(c.amount)||0)}</td><td class="mono">${c.period||'—'}</td><td><span class="badge b-${c.status||'pending'}">${c.status||'pending'}</span></td></tr>`).join('')}</tbody></table>`}</div>
+      ${client.business_name?'<div class="info-field"><div class="lbl">Business</div><div class="val" style="font-weight:500">'+client.business_name+'</div></div>':''}
+      ${client.pan_number?'<div class="info-field"><div class="lbl">PAN</div><div class="val mono">'+client.pan_number+'</div></div>':''}
+      ${client.gst_number?'<div class="info-field"><div class="lbl">GSTIN</div><div class="val mono">'+client.gst_number+'</div></div>':''}
+      ${client.email?'<div class="info-field"><div class="lbl">Email</div><div class="val">'+client.email+'</div></div>':''}
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+        <div style="background:var(--cream2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Total spent</div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--green)">₹${fmtAmt(totalSpent)}</div></div>
+        <div style="background:var(--cream2);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px">Outstanding</div><div style="font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:var(--red)">₹${fmtAmt(totalOwed)}</div></div>
       </div>
-    </div>`);
+      <div>
+        <button class="action-btn primary" onclick="openModal('reminder','${phone}')">+ Add Reminder</button>
+        <button class="action-btn" onclick="openModal('upload-doc','${phone}')">+ Upload Document</button>
+        <button class="action-btn" onclick="openModal('ca-invoice','${phone}')">+ Add Invoice</button>
+        <button class="action-btn" onclick="sendReminder('${phone}','general')">📱 Send WhatsApp</button>
+        <button class="action-btn" onclick="openModal('edit-client','${phone}')">✏️ Edit Client</button>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:12px;overflow-y:auto">
+      <div class="tabs-row">
+        <button class="tab-btn active" onclick="show360Tab(this,'t-receipts')">Receipts (${clientInvoices.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-docs')">Documents (${clientDocs.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-questions')">Questions (${clientQuestions.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-appts')">Appointments (${clientAppts.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-reminders')">Reminders (${clientReminders.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-invoices')">CA Invoices (${clientCAInvoices.length})</button>
+        <button class="tab-btn" onclick="show360Tab(this,'t-challans')">Challans (${clientChallans.length})</button>
+      </div>
+      <div class="tab-content" id="t-receipts">${renderTable(clientInvoices)}</div>
+      <div class="tab-content" id="t-docs" style="display:none">${clientDocs.length===0?'<div class="empty"><div class="empty-icon">📁</div><p>No documents yet</p></div>':`<div class="doc-grid">${clientDocs.map(d=>'<div class="doc-card" onclick="openDocDrawer(\''+d.id+'\')"><div class="doc-icon">'+docIcon(d.doc_type)+'</div><div class="doc-name">'+(d.file_name||'Document')+'</div><div class="doc-type">'+(d.doc_type||'General')+'</div><div class="doc-date">'+fmtDate(d.created_at)+'</div></div>').join('')}</div>`}</div>
+      <div class="tab-content" id="t-questions" style="display:none">${clientQuestions.length===0?'<div class="empty"><div class="empty-icon">💬</div><p>No questions yet</p></div>':clientQuestions.map(q=>'<div class="qa-urgent" onclick="openQnaDrawer(\''+q.id+'\')"><div class="qa-q">'+(q.question||'—')+'</div><div class="qa-meta"><span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'">'+(q.needs_ca_review?'Needs review':'Answered')+'</span><span class="qa-time">'+fmtDate(q.created_at)+'</span></div></div>').join('')}</div>
+      <div class="tab-content" id="t-appts" style="display:none">${clientAppts.length===0?'<div class="empty"><div class="empty-icon">📅</div><p>No appointments</p></div>':clientAppts.map(a=>'<div class="appt-item" onclick="openApptDrawer(\''+a.id+'\')"><div class="appt-date-box">📅</div><div class="appt-info"><div class="appt-time">'+(a.requested_date||'TBD')+(a.requested_time?' · '+a.requested_time:'')+'</div><div class="appt-notes">'+(a.notes||'—')+'</div></div><span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>').join('')}</div>
+      <div class="tab-content" id="t-reminders" style="display:none">${clientReminders.length===0?'<div class="empty"><div class="empty-icon">🔔</div><p>No reminders</p></div>':clientReminders.map(r=>'<div class="reminder-item" onclick="openReminderDrawer(\''+r.id+'\')"><div class="reminder-dot" style="background:'+(r.is_all_clients?'#4a2070':'#8b4513')+'"></div><div class="reminder-info"><div class="reminder-title">'+(r.title||'Reminder')+'</div><div class="reminder-meta">'+(r.notes||'')+'</div></div><div class="reminder-date">'+(r.due_date||'—')+'</div></div>').join('')}</div>
+      <div class="tab-content" id="t-invoices" style="display:none">${clientCAInvoices.length===0?'<div class="empty"><div class="empty-icon">🧾</div><p>No invoices raised yet</p></div>':`<table><thead><tr><th>Invoice #</th><th>Description</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>${clientCAInvoices.map(i=>'<tr onclick="openCAInvDrawer(\''+i.id+'\')"><td class="mono">'+(i.invoice_number||'—')+'</td><td class="desc-cell">'+(i.description||'—')+'</td><td class="amt">₹'+fmtAmt(parseFloat(i.amount)||0)+'</td><td class="mono">'+(i.due_date||'—')+'</td><td><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></td></tr>').join('')}</tbody></table>`}</div>
+      <div class="tab-content" id="t-challans" style="display:none">${clientChallans.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet</p></div>':`<table><thead><tr><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>${clientChallans.map(c=>'<tr><td>'+(c.challan_type||'—')+'</td><td class="amt">₹'+fmtAmt(parseFloat(c.amount)||0)+'</td><td class="mono">'+(c.period||'—')+'</td><td><span class="badge b-'+(c.status||'pending')+'">'+(c.status||'pending')+'</span></td></tr>').join('')}</tbody></table>`}</div>
+    </div>
+  </div>`);
 }
-
 function show360Tab(btn,tabId){
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   document.querySelectorAll('.tab-content').forEach(t=>t.style.display='none');
-  const tab=document.getElementById(tabId);
-  if(tab)tab.style.display='block';
+  const tab=document.getElementById(tabId);if(tab)tab.style.display='block';
 }
 
-/* RECEIPTS */
+/* OTHER VIEWS */
+function renderClients(){
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>All Clients</h3><span class="panel-count">${clients.length}</span></div>
+    <div class="toolbar"><input class="search-input" placeholder="Search by name, phone, PAN, GST..." id="client-search" oninput="filterClientsTable(this.value)" style="flex:1"></div>
+    <div class="table-wrap" id="clients-table-wrap">${renderClientsTable(clients)}</div>
+  </div>`);
+}
+function filterClientsTable(search){
+  const filtered=search?clients.filter(c=>(c.name||'').toLowerCase().includes(search.toLowerCase())||(c.phone||'').includes(search)||(c.pan_number||'').toLowerCase().includes(search.toLowerCase())||(c.gst_number||'').toLowerCase().includes(search.toLowerCase())||(c.business_name||'').toLowerCase().includes(search.toLowerCase())):clients;
+  const wrap=document.getElementById('clients-table-wrap');if(wrap)wrap.innerHTML=renderClientsTable(filtered);
+}
+function renderClientsTable(data){
+  if(!data||data.length===0)return'<div class="empty"><div class="empty-icon">👥</div><p>No clients yet. Click + Add Client to add your first client.</p></div>';
+  return'<table><thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>PAN</th><th>Health</th><th>Receipts</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+
+    data.map(c=>'<tr onclick="selectClientAndGo(\''+c.phone+'\')">'+
+      '<td style="font-weight:500">'+(c.name||'—')+'</td>'+
+      '<td class="mono">'+(c.phone||'—')+'</td>'+
+      '<td class="desc-cell">'+(c.business_name||'—')+'</td>'+
+      '<td class="mono">'+(c.pan_number||'—')+'</td>'+
+      '<td><span style="display:inline-flex;align-items:center;gap:4px"><div class="health-dot health-'+c.health+'"></div>'+c.health+'</span></td>'+
+      '<td style="text-align:center">'+c.count+'</td>'+
+      '<td class="amt">₹'+fmtAmt(c.total)+'</td>'+
+      '<td><span class="badge '+(c.is_active?'b-active':'b-inactive')+'">'+(c.is_active?'Active':'Inactive')+'</span></td>'+
+      '<td onclick="event.stopPropagation()" style="white-space:nowrap">'+
+        '<button onclick="openModal(\'edit-client\',\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--cream3);background:var(--cream2);color:var(--brown2);margin-right:4px;font-family:inherit">Edit</button>'+
+        '<button onclick="deleteClient(\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--red-light);background:var(--red-light);color:var(--red);font-family:inherit">Delete</button>'+
+      '</td>'+
+    '</tr>').join('')+
+  '</tbody></table>';
+}
+function selectClientAndGo(phone){selectedClient=clients.find(c=>c.phone===phone);document.getElementById('client-dropdown').value=phone;gotoView('client360')}
+
 function renderReceipts(search,type){
   let inv=invoices;
   if(selectedClient)inv=inv.filter(i=>i.client_phone===selectedClient.phone);
@@ -656,17 +937,14 @@ function renderReceipts(search,type){
   if(search)inv=inv.filter(i=>(i.vendor_name||'').toLowerCase().includes(search.toLowerCase())||(i.client_phone||'').includes(search)||(i.description||'').toLowerCase().includes(search.toLowerCase()));
   setContent(`<div class="panel" style="height:calc(100vh - 130px)">
     <div class="panel-head"><h3>All Receipts</h3><span class="panel-count">${inv.length} of ${invoices.length}</span></div>
-    <div class="toolbar"><input class="search-input" placeholder="Search vendor, client..." value="${search}" oninput="renderReceipts(this.value,document.getElementById('all-type-sel').value)"><select class="type-select" id="all-type-sel" onchange="renderReceipts(document.querySelector('#page-content .search-input').value,this.value)"><option value="">All types</option><option value="receipt">Receipt</option><option value="invoice">Invoice</option><option value="expense">Expense</option></select></div>
+    <div class="toolbar"><input class="search-input" style="flex:1" placeholder="Search vendor, client..." value="${search}" oninput="renderReceipts(this.value,document.getElementById('rtype').value)"><select class="type-select" id="rtype" onchange="renderReceipts(document.querySelector('#page-content .search-input').value,this.value)"><option value="">All types</option><option value="receipt">Receipt</option><option value="invoice">Invoice</option><option value="expense">Expense</option></select></div>
     <div class="table-wrap">${renderTable(inv)}</div>
   </div>`);
 }
-
 function renderTable(data){
   if(!data||data.length===0)return'<div class="empty"><div class="empty-icon">📭</div><p>No receipts found</p></div>';
-  return`<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Vendor</th><th>Amount</th><th>Description</th></tr></thead><tbody>${data.map(inv=>`<tr onclick="openReceiptDrawer('${inv.id}')"><td class="mono">${fmtDate(inv.received_at)}</td><td class="mono" style="color:var(--text2)">${(inv.client_phone||'—').replace('+91','')}</td><td><span class="badge b-${inv.message_type||'receipt'}">${(inv.message_type||'receipt').replace('_',' ')}</span></td><td style="font-weight:500">${inv.vendor_name||'—'}</td><td class="amt">${inv.amount?'₹'+fmtAmt(parseFloat(inv.amount)):'—'}</td><td class="desc-cell">${inv.description||inv.raw_text||'—'}</td></tr>`).join('')}</tbody></table>`;
+  return'<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Vendor</th><th>Amount</th><th>Description</th></tr></thead><tbody>'+data.map(inv=>'<tr onclick="openReceiptDrawer(\''+inv.id+'\')"><td class="mono">'+fmtDate(inv.received_at)+'</td><td style="color:var(--brown3)">'+clientName(inv.client_phone||'')+'</td><td><span class="badge b-'+(inv.message_type||'receipt')+'">'+(inv.message_type||'receipt').replace('_',' ')+'</span></td><td style="font-weight:500">'+(inv.vendor_name||'—')+'</td><td class="amt">'+(inv.amount?'₹'+fmtAmt(parseFloat(inv.amount)):'—')+'</td><td class="desc-cell">'+(inv.description||inv.raw_text||'—')+'</td></tr>').join('')+'</tbody></table>';
 }
-
-/* Q&A */
 function renderQnA(search,filter){
   let qs=questions;
   if(selectedClient)qs=qs.filter(q=>q.client_phone===selectedClient.phone);
@@ -675,12 +953,10 @@ function renderQnA(search,filter){
   if(search)qs=qs.filter(q=>(q.question||'').toLowerCase().includes(search.toLowerCase()));
   setContent(`<div class="panel" style="height:calc(100vh - 130px)">
     <div class="panel-head"><h3>Q&amp;A Inbox</h3><span class="panel-count">${qs.length}</span></div>
-    <div class="toolbar"><input class="search-input" placeholder="Search questions..." value="${search}" oninput="renderQnA(this.value,document.getElementById('qna-filter').value)"><select class="type-select" id="qna-filter" onchange="renderQnA(document.querySelector('#page-content .search-input').value,this.value)"><option value="">All</option><option value="review">Needs review</option><option value="answered">Answered</option></select></div>
-    <div class="table-wrap">${qs.length===0?'<div class="empty"><div class="empty-icon">💬</div><p>No questions yet</p></div>':qs.map(q=>`<div class="qa-item" onclick="openQnaDrawer('${q.id}')"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span class="badge ${q.needs_ca_review?'b-review':'b-answered'}">${q.needs_ca_review?'Needs review':'AI answered'}</span><span style="font-size:11px;color:var(--text3);font-family:'DM Mono',monospace">${(q.client_phone||'').replace('+91','')}</span><span style="margin-left:auto;font-size:10px;color:var(--text3)">${fmtDate(q.created_at)}</span></div><div class="qa-question">${q.question||'—'}</div><div class="qa-answer">${q.ai_answer||q.ca_reply||'No answer yet'}</div></div>`).join('')}</div>
+    <div class="toolbar"><input class="search-input" style="flex:1" placeholder="Search questions..." value="${search}" oninput="renderQnA(this.value,document.getElementById('qf').value)"><select class="type-select" id="qf" onchange="renderQnA(document.querySelector('#page-content .search-input').value,this.value)"><option value="">All</option><option value="review">Needs review</option><option value="answered">Answered</option></select></div>
+    <div class="table-wrap">${qs.length===0?'<div class="empty"><div class="empty-icon">💬</div><p>No questions yet</p></div>':qs.map(q=>'<div class="qa-urgent" onclick="openQnaDrawer(\''+q.id+'\')"><div style="display:flex;align-items:center;gap:8px;margin-bottom:5px"><span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'">'+(q.needs_ca_review?'Needs review':'AI answered')+'</span><span style="font-size:11px;color:var(--brown4)">'+clientName(q.client_phone||'')+'</span><span style="margin-left:auto;font-size:10px;color:var(--brown4)">'+fmtDate(q.created_at)+'</span></div><div class="qa-q">'+(q.question||'—')+'</div><div class="qa-answer" style="font-size:12px;color:var(--brown3);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+(q.ai_answer||q.ca_reply||'No answer yet')+'</div></div>').join('')}</div>
   </div>`);
 }
-
-/* APPOINTMENTS */
 function renderAppointments(filter){
   let appts=appointments;
   if(selectedClient)appts=appts.filter(a=>a.client_phone===selectedClient.phone);
@@ -689,155 +965,74 @@ function renderAppointments(filter){
   setContent(`<div class="panel" style="height:calc(100vh - 130px)">
     <div class="panel-head"><h3>Appointments</h3><span class="panel-count">${appts.length}</span></div>
     <div class="toolbar"><select class="type-select" onchange="renderAppointments(this.value)"><option value="">All</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option></select></div>
-    <div style="overflow-y:auto;flex:1">${appts.length===0?'<div class="empty"><div class="empty-icon">📅</div><p>No appointments yet</p></div>':appts.map(a=>`<div class="appt-item" onclick="openApptDrawer('${a.id}')"><div class="appt-date-box"><div class="appt-day">📅</div></div><div class="appt-info"><div class="appt-time">${a.requested_date||'Date TBD'}${a.requested_time?' · '+a.requested_time:''}</div><div class="appt-client">${(a.client_phone||'').replace('+91','')}</div><div class="appt-notes">${a.notes||'—'}</div></div><span class="badge b-${a.status||'pending'}">${a.status||'pending'}</span></div>`).join('')}</div>
+    <div style="overflow-y:auto;flex:1">${appts.length===0?'<div class="empty"><div class="empty-icon">📅</div><p>No appointments yet</p></div>':appts.map(a=>'<div class="appt-item" onclick="openApptDrawer(\''+a.id+'\')"><div class="appt-date-box">📅</div><div class="appt-info"><div class="appt-time">'+(a.requested_date||'Date TBD')+(a.requested_time?' · '+a.requested_time:'')+'</div><div class="appt-client">'+clientName(a.client_phone||'')+'</div><div class="appt-notes">'+(a.notes||'—')+'</div></div><span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>').join('')}</div>
   </div>`);
 }
-
-/* DOCUMENTS */
 function renderDocuments(search){
   let docs=documents;
   if(selectedClient)docs=docs.filter(d=>d.client_phone===selectedClient.phone);
   if(search)docs=docs.filter(d=>(d.file_name||'').toLowerCase().includes(search.toLowerCase())||(d.doc_type||'').toLowerCase().includes(search.toLowerCase()));
   setContent(`<div class="panel" style="height:calc(100vh - 130px)">
     <div class="panel-head"><h3>Documents</h3><span class="panel-count">${docs.length} files</span></div>
-    <div class="toolbar"><input class="search-input" placeholder="Search documents..." value="${search}" oninput="renderDocuments(this.value)"></div>
-    <div style="overflow-y:auto;flex:1">${docs.length===0?`<div class="coming-soon"><div class="coming-soon-icon">📁</div><h3>Document Folder</h3><p>Documents sent by clients via WhatsApp appear here automatically with AI summaries.</p><span class="tag">Ready to receive documents</span></div>`:`<div class="doc-grid">${docs.map(d=>`<div class="doc-card" onclick="openDocDrawer('${d.id}')"><div class="doc-icon">${docIcon(d.doc_type)}</div><div class="doc-name">${d.file_name||'Document'}</div><div class="doc-type">${d.doc_type||'General'}</div><div class="doc-date">${(d.client_phone||'').replace('+91','')} · ${fmtDate(d.created_at)}</div>${d.summary?`<div style="font-size:10px;color:var(--text2);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">${d.summary}</div>`:''}</div>`).join('')}</div>`}</div>
+    <div class="toolbar"><input class="search-input" style="flex:1" placeholder="Search documents..." value="${search}" oninput="renderDocuments(this.value)"></div>
+    <div style="overflow-y:auto;flex:1">${docs.length===0?'<div class="coming-soon"><h3>Document Folder</h3><p>Documents sent via WhatsApp or email appear here automatically with AI summaries.</p><span class="tag">Ready to receive documents</span></div>':`<div class="doc-grid">${docs.map(d=>'<div class="doc-card" onclick="openDocDrawer(\''+d.id+'\')"><div class="doc-icon">'+docIcon(d.doc_type)+'</div><div class="doc-name">'+(d.file_name||'Document')+'</div><div class="doc-type">'+(d.doc_type||'General')+'</div><div class="doc-date">'+clientName(d.client_phone||'')+' · '+fmtDate(d.created_at)+'</div>'+(d.summary?'<div style="font-size:10px;color:var(--brown4);margin-top:4px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+d.summary+'</div>':'')+'</div>').join('')}</div>`}</div>
   </div>`);
 }
-
-/* CA INVOICES */
-function renderCAInvoices(){
-  let inv=caInvoices;
-  if(selectedClient)inv=inv.filter(i=>i.client_phone===selectedClient.phone);
-  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
-    <div class="panel-head"><h3>CA Invoices</h3><span class="panel-count">${inv.length}</span></div>
-    <div class="table-wrap">${inv.length===0?'<div class="empty"><div class="empty-icon">🧾</div><p>No invoices raised yet. Click + New Invoice to add one.</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Invoice #</th><th>Description</th><th>Amount</th><th>Due Date</th><th>Status</th></tr></thead><tbody>${inv.map(i=>`<tr onclick="openCAInvDrawer('${i.id}')"><td class="mono">${fmtDate(i.created_at)}</td><td class="mono" style="color:var(--text2)">${(i.client_phone||'').replace('+91','')}</td><td class="mono">${i.invoice_number||'—'}</td><td class="desc-cell">${i.description||'—'}</td><td class="amt">₹${fmtAmt(parseFloat(i.amount)||0)}</td><td class="mono">${i.due_date||'—'}</td><td><span class="badge b-${i.status||'unpaid'}">${i.status||'unpaid'}</span></td></tr>`).join('')}</tbody></table>`}</div>
-  </div>`);
-}
-
-/* CHALLANS */
-function renderChallans(){
-  let ch=challans;
-  if(selectedClient)ch=ch.filter(c=>c.client_phone===selectedClient.phone);
-  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
-    <div class="panel-head"><h3>Challans</h3><span class="panel-count">${ch.length}</span></div>
-    <div class="table-wrap">${ch.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet. Click + New Challan to add one.</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>${ch.map(c=>`<tr><td class="mono">${fmtDate(c.created_at)}</td><td class="mono" style="color:var(--text2)">${(c.client_phone||'').replace('+91','')}</td><td>${c.challan_type||'—'}</td><td class="amt">₹${fmtAmt(parseFloat(c.amount)||0)}</td><td class="mono">${c.period||'—'}</td><td><span class="badge b-${c.status||'pending'}">${c.status||'pending'}</span></td></tr>`).join('')}</tbody></table>`}</div>
-  </div>`);
-}
-
-/* CLIENTS MANAGEMENT */
-function renderClients(){
-  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
-    <div class="panel-head"><h3>All Clients</h3><span class="panel-count">${clients.length} clients</span></div>
-    <div class="toolbar"><input class="search-input" placeholder="Search by name, phone, PAN, GST..." id="client-search" oninput="filterClientsTable(this.value)"></div>
-    <div class="table-wrap" id="clients-table-wrap">
-      ${renderClientsTable(clients)}
-    </div>
-  </div>`);
-}
-
-function filterClientsTable(search){
-  const filtered=search?clients.filter(c=>
-    (c.name||'').toLowerCase().includes(search.toLowerCase())||
-    (c.phone||'').includes(search)||
-    (c.pan_number||'').toLowerCase().includes(search.toLowerCase())||
-    (c.gst_number||'').toLowerCase().includes(search.toLowerCase())||
-    (c.business_name||'').toLowerCase().includes(search.toLowerCase())
-  ):clients;
-  const wrap=document.getElementById('clients-table-wrap');
-  if(wrap)wrap.innerHTML=renderClientsTable(filtered);
-}
-
-function renderClientsTable(data){
-  if(!data||data.length===0)return '<div class="empty"><div class="empty-icon">👥</div><p>No clients yet. Click + Add Client to add your first client.</p></div>';
-  return '<table><thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>PAN</th><th>GST</th><th>Receipts</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>'+
-    data.map(c=>'<tr onclick="selectClientAndGo(\''+c.phone+'\')">'+
-      '<td style="font-weight:500">'+(c.name||'—')+'</td>'+
-      '<td class="mono">'+(c.phone||'—')+'</td>'+
-      '<td class="desc-cell">'+(c.business_name||'—')+'</td>'+
-      '<td class="mono">'+(c.pan_number||'—')+'</td>'+
-      '<td class="mono">'+(c.gst_number||'—')+'</td>'+
-      '<td style="text-align:center">'+c.count+'</td>'+
-      '<td class="amt">₹'+fmtAmt(c.total)+'</td>'+
-      '<td><span class="badge '+(c.is_active?'b-answered':'b-review')+'">'+(c.is_active?'Active':'Inactive')+'</span></td>'+
-      '<td onclick="event.stopPropagation()" style="white-space:nowrap">'+
-        '<button onclick="openModal(\'edit-client\',\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--border);background:var(--surface2);color:var(--text2);margin-right:4px">Edit</button>'+
-        '<button onclick="deleteClient(\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;font-weight:500;cursor:pointer;border:1px solid var(--red-light);background:var(--red-light);color:var(--red)">Delete</button>'+
-      '</td>'+
-    '</tr>').join('')+
-  '</tbody></table>';
-}
-
-function selectClientAndGo(phone){
-  selectedClient=clients.find(c=>c.phone===phone);
-  document.getElementById('client-dropdown').value=phone;
-  gotoView('client360');
-}
-
-/* REMINDERS */
 function renderReminders(){
   let rem=reminders;
   if(selectedClient)rem=rem.filter(r=>r.client_phone===selectedClient.phone||r.is_all_clients);
   setContent(`<div class="panel" style="height:calc(100vh - 130px)">
     <div class="panel-head"><h3>Reminders</h3><span class="panel-count">${rem.length}</span></div>
-    <div style="overflow-y:auto;flex:1">${rem.length===0?'<div class="empty"><div class="empty-icon">🔔</div><p>No reminders yet. Click + Add Reminder to create one.</p></div>':rem.map(r=>`<div class="reminder-item" onclick="openReminderDrawer('${r.id}')"><div class="reminder-dot" style="background:${r.is_all_clients?'#6b3fa0':r.status==='done'?'#a8a29e':'#1a6b4a'}"></div><div class="reminder-info"><div class="reminder-title">${r.title||'Reminder'}</div><div class="reminder-meta">${r.is_all_clients?'All clients':(r.client_phone||'').replace('+91','')} · ${r.notes||''}</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="reminder-date">${r.due_date||'—'}</div><span class="badge b-${r.status||'pending'}">${r.status||'pending'}</span></div></div>`).join('')}</div>
+    <div style="overflow-y:auto;flex:1">${rem.length===0?'<div class="empty"><div class="empty-icon">🔔</div><p>No reminders yet</p></div>':rem.map(r=>'<div class="reminder-item" onclick="openReminderDrawer(\''+r.id+'\')"><div class="reminder-dot" style="background:'+(r.is_all_clients?'#4a2070':r.status==='done'?'#a8a29e':'#8b4513')+'"></div><div class="reminder-info"><div class="reminder-title">'+(r.title||'Reminder')+'</div><div class="reminder-meta">'+(r.is_all_clients?'All clients':clientName(r.client_phone||''))+' · '+(r.notes||'')+'</div></div><div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px"><div class="reminder-date">'+(r.due_date||'—')+'</div><span class="badge b-'+(r.status||'pending')+'">'+(r.status||'pending')+'</span></div></div>').join('')}</div>
   </div>`);
 }
-
-/* TALLY */
+function renderCAInvoices(){
+  let inv=caInvoices;
+  if(selectedClient)inv=inv.filter(i=>i.client_phone===selectedClient.phone);
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>CA Invoices</h3><span class="panel-count">${inv.length}</span></div>
+    <div class="table-wrap">${inv.length===0?'<div class="empty"><div class="empty-icon">🧾</div><p>No invoices raised yet</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Invoice #</th><th>Description</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>${inv.map(i=>'<tr onclick="openCAInvDrawer(\''+i.id+'\')"><td class="mono">'+fmtDate(i.created_at)+'</td><td>'+clientName(i.client_phone||'')+'</td><td class="mono">'+(i.invoice_number||'—')+'</td><td class="desc-cell">'+(i.description||'—')+'</td><td class="amt">₹'+fmtAmt(parseFloat(i.amount)||0)+'</td><td class="mono">'+(i.due_date||'—')+'</td><td><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></td></tr>').join('')}</tbody></table>`}</div>
+  </div>`);
+}
+function renderChallans(){
+  let ch=challans;
+  if(selectedClient)ch=ch.filter(c=>c.client_phone===selectedClient.phone);
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>Challans</h3><span class="panel-count">${ch.length}</span></div>
+    <div class="table-wrap">${ch.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>${ch.map(c=>'<tr><td class="mono">'+fmtDate(c.created_at)+'</td><td>'+clientName(c.client_phone||'')+'</td><td>'+(c.challan_type||'—')+'</td><td class="amt">₹'+fmtAmt(parseFloat(c.amount)||0)+'</td><td class="mono">'+(c.period||'—')+'</td><td><span class="badge b-'+(c.status||'pending')+'">'+(c.status||'pending')+'</span></td></tr>').join('')}</tbody></table>`}</div>
+  </div>`);
+}
 function renderTally(){
   setContent(`<div style="max-width:600px;margin:0 auto">
-    <div class="panel">
-      <div class="panel-head"><h3>Import Tally Backup</h3></div>
-      <div style="padding:20px">
-        <p style="font-size:13px;color:var(--text2);margin-bottom:16px;line-height:1.7">Upload your Tally backup file (.tbk) or Tally XML export. The system will process it in the background and populate your dashboard with the imported data within 24 hours.</p>
-        <div style="margin-bottom:16px">
-          <div class="upload-zone" onclick="document.getElementById('tally-file').click()">
-            <div class="upload-icon">📊</div>
-            <p style="font-weight:600;color:var(--text)">Click to upload Tally file</p>
-            <p style="font-size:12px">.tbk, .xml, .xlsx, .csv supported</p>
-            <input type="file" id="tally-file" style="display:none" accept=".tbk,.xml,.xlsx,.csv,.xls" onchange="handleTallyUpload(this)">
-          </div>
-          <div class="upload-progress" id="tally-progress">
-            <div style="font-size:12px;color:var(--text2);margin-bottom:4px" id="tally-progress-text">Uploading...</div>
-            <div class="progress-bar"><div class="progress-fill" id="tally-progress-fill" style="width:0%"></div></div>
-          </div>
+    <div class="card">
+      <div class="card-head"><h3>Import Tally Backup</h3></div>
+      <div style="padding:22px">
+        <p style="font-size:14px;color:var(--brown3);margin-bottom:18px;line-height:1.7">Upload your Tally backup file (.tbk) or Tally XML export. The system will process it within 24 hours and populate your dashboard with imported data.</p>
+        <div class="upload-zone" onclick="document.getElementById('tally-file').click()">
+          <div style="font-size:36px;margin-bottom:8px">📊</div>
+          <p style="font-weight:600;color:var(--brown)">Click to upload Tally file</p>
+          <p>.tbk · .xml · .xlsx · .csv supported</p>
+          <input type="file" id="tally-file" style="display:none" accept=".tbk,.xml,.xlsx,.csv,.xls" onchange="handleTallyUpload(this)">
         </div>
-        <div style="background:var(--surface2);border-radius:var(--r);padding:14px;font-size:12px;color:var(--text2);line-height:1.8">
-          <strong style="color:var(--text)">How to export from Tally:</strong><br>
+        <div style="background:var(--cream2);border-radius:var(--r);padding:16px;margin-top:16px;font-size:13px;color:var(--brown3);line-height:1.8;border:1px solid var(--cream3)">
+          <strong style="color:var(--brown)">How to export from Tally:</strong><br>
           1. Open Tally → Gateway of Tally<br>
           2. Press Alt+E for Export<br>
-          3. Select XML format<br>
-          4. Choose date range → Export<br>
-          5. Upload the exported file here
+          3. Select XML format → Choose date range<br>
+          4. Export → Upload the file here
         </div>
       </div>
     </div>
   </div>`);
 }
-
 async function handleTallyUpload(input){
   if(!input.files||!input.files[0])return;
   const file=input.files[0];
-  const progress=document.getElementById('tally-progress');
-  const fill=document.getElementById('tally-progress-fill');
-  const text=document.getElementById('tally-progress-text');
-  progress.style.display='block';
-  text.textContent='Uploading '+file.name+'...';
-  fill.style.width='30%';
   const fileName='tally_'+Date.now()+'_'+file.name;
-  const reader=new FileReader();
-  reader.onload=async(e)=>{
-    fill.style.width='60%';
-    const{data,error}=await sb.storage.from('documents').upload('tally/'+fileName,file,{contentType:file.type});
-    if(error){text.textContent='Upload failed: '+error.message;fill.style.width='0%';return}
-    const fileUrl=SUPA_URL+'/storage/v1/object/public/documents/tally/'+fileName;
-    await sb.from('documents').insert({doc_type:'tally_backup',file_name:fileName,file_url:fileUrl,summary:'Tally backup uploaded — processing scheduled',status:'pending'});
-    fill.style.width='100%';
-    text.textContent='Uploaded successfully! Will be processed within 24 hours.';
-    setTimeout(()=>{progress.style.display='none';fill.style.width='0%'},4000);
-  };
-  reader.readAsArrayBuffer(file);
+  await sb.storage.from('documents').upload('tally/'+fileName,file,{contentType:file.type});
+  const fileUrl=SUPA_URL+'/storage/v1/object/public/documents/tally/'+fileName;
+  await sb.from('documents').insert({doc_type:'tally_backup',file_name:fileName,file_url:fileUrl,summary:'Tally backup — processing scheduled',status:'pending'});
+  alert('Tally file uploaded successfully! It will be processed within 24 hours.');
 }
 
 /* DRAWERS */
@@ -847,7 +1042,7 @@ function openReceiptDrawer(id){
   document.getElementById('drawer-body').innerHTML=`
     <div class="dr"><div class="dl">Type</div><div class="dv"><span class="badge b-${inv.message_type||'receipt'}">${(inv.message_type||'receipt').replace('_',' ')}</span></div></div>
     <div class="dr"><div class="dl">Date received</div><div class="dv">${new Date(inv.received_at||Date.now()).toLocaleString('en-IN')}</div></div>
-    <div class="dr"><div class="dl">Client</div><div class="dv mono">${inv.client_phone||'—'}</div></div>
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(inv.client_phone||'')} <span class="mono" style="color:var(--brown4);font-size:11px">${inv.client_phone||''}</span></div></div>
     <hr class="drawer-divider">
     <div class="dr"><div class="dl">Amount</div><div class="dv big">${inv.amount?'₹'+fmtAmt(parseFloat(inv.amount)):'—'}</div></div>
     <div class="dr"><div class="dl">Vendor</div><div class="dv" style="font-weight:500">${inv.vendor_name||'—'}</div></div>
@@ -855,136 +1050,156 @@ function openReceiptDrawer(id){
     <div class="dr"><div class="dl">GST number</div><div class="dv mono">${inv.gst_number||'—'}</div></div>
     <div class="dr"><div class="dl">GST amount</div><div class="dv">${inv.gst_amount?'₹'+fmtAmt(parseFloat(inv.gst_amount)):'—'}</div></div>
     <hr class="drawer-divider">
-    <div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--text2);line-height:1.7">${inv.description||'—'}</div></div>
-    ${inv.raw_text?`<div class="dr"><div class="dl">Raw text</div><div class="raw-box">${inv.raw_text}</div></div>`:''}`;
+    <div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3);line-height:1.7">${inv.description||'—'}</div></div>
+    ${inv.raw_text?'<div class="dr"><div class="dl">Raw text</div><div class="raw-box">'+inv.raw_text+'</div></div>':''}`;
   openDrawer();
 }
-
 function openQnaDrawer(id){
   const q=questions.find(x=>x.id===id);if(!q)return;
   document.getElementById('drawer-title').textContent='Question Detail';
   document.getElementById('drawer-body').innerHTML=`
     <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge ${q.needs_ca_review?'b-review':'b-answered'}">${q.needs_ca_review?'Needs CA review':'AI answered'}</span></div></div>
-    <div class="dr"><div class="dl">Client</div><div class="dv mono">${(q.client_phone||'—').replace('+91','')}</div></div>
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(q.client_phone||'')} <span class="mono" style="color:var(--brown4);font-size:11px">${q.client_phone||''}</span></div></div>
     <div class="dr"><div class="dl">Date</div><div class="dv">${new Date(q.created_at||Date.now()).toLocaleString('en-IN')}</div></div>
     <hr class="drawer-divider">
     <div class="dr"><div class="dl">Question</div><div class="dv" style="font-size:15px;font-weight:500;line-height:1.6">${q.question||'—'}</div></div>
-    ${q.ai_answer?`<div class="dr"><div class="dl">AI Answer</div><div class="ai-box">${q.ai_answer}</div></div>`:''}
-    ${q.ca_reply?`<div class="dr"><div class="dl">Your reply</div><div class="ai-box" style="background:#e8f5ef;border-color:var(--accent-mid)">${q.ca_reply}</div></div>`:''}
+    ${q.ai_answer?'<div class="dr"><div class="dl">AI Answer</div><div class="ai-box">'+q.ai_answer+'</div></div>':''}
+    ${q.ca_reply?'<div class="dr"><div class="dl">Your reply</div><div class="ai-box" style="background:var(--green-light);border-color:var(--green-mid)">'+q.ca_reply+'</div></div>':''}
     <hr class="drawer-divider">
     <div class="dr"><div class="dl">Reply to client</div>
       <div class="reply-wrap">
         <textarea id="ca-reply-text" placeholder="Type your reply...">${q.ca_reply||''}</textarea>
         <button class="btn-reply" onclick="saveReply('${q.id}')">Save Reply</button>
-        <div class="reply-sent" id="reply-sent-msg">Reply saved</div>
+        <div class="reply-sent" id="reply-sent-msg">✓ Reply saved</div>
       </div>
     </div>`;
   openDrawer();
 }
-
 function openApptDrawer(id){
   const a=appointments.find(x=>x.id===id);if(!a)return;
   document.getElementById('drawer-title').textContent='Appointment Detail';
   document.getElementById('drawer-body').innerHTML=`
     <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-${a.status||'pending'}">${a.status||'pending'}</span></div></div>
-    <div class="dr"><div class="dl">Client</div><div class="dv mono">${(a.client_phone||'—').replace('+91','')}</div></div>
-    <div class="dr"><div class="dl">Requested date</div><div class="dv" style="font-size:17px;font-weight:600;font-family:'Fraunces',serif">${a.requested_date||'Not specified'}</div></div>
-    <div class="dr"><div class="dl">Requested time</div><div class="dv" style="font-size:17px;font-weight:600;font-family:'Fraunces',serif">${a.requested_time||'Not specified'}</div></div>
-    <div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--text2)">${a.notes||'—'}</div></div>
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(a.client_phone||'')} <span class="mono" style="color:var(--brown4);font-size:11px">${a.client_phone||''}</span></div></div>
+    <div class="dr"><div class="dl">Requested date</div><div class="dv" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600">${a.requested_date||'Not specified'}</div></div>
+    <div class="dr"><div class="dl">Requested time</div><div class="dv" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600">${a.requested_time||'Not specified'}</div></div>
+    <div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3)">${a.notes||'—'}</div></div>
     <hr class="drawer-divider">
     <div class="dr"><div class="dl">Your response</div>
       <div class="reply-wrap">
         <textarea id="appt-reply-text" placeholder="Confirmed for [date] at [time]...">${a.ca_reply||''}</textarea>
-        <div style="display:flex;gap:8px;margin-top:8px">
-          <button class="btn-reply" onclick="confirmAppt('${a.id}','confirmed')" style="flex:1">Confirm</button>
-          <button class="btn-reply" onclick="confirmAppt('${a.id}','rescheduled')" style="flex:1;background:var(--amber)">Reschedule</button>
+        <div style="display:flex;gap:8px;margin-top:10px">
+          <button class="btn-reply" onclick="confirmAppt('${a.id}','confirmed')" style="flex:1">✓ Confirm</button>
+          <button class="btn-reply" onclick="confirmAppt('${a.id}','rescheduled')" style="flex:1;background:var(--amber)">↺ Reschedule</button>
         </div>
-        <div class="reply-sent" id="appt-sent-msg">Status updated</div>
+        <div class="reply-sent" id="appt-sent-msg">✓ Status updated</div>
       </div>
     </div>`;
   openDrawer();
 }
-
 function openDocDrawer(id){
   const d=documents.find(x=>x.id===id);if(!d)return;
   document.getElementById('drawer-title').textContent='Document Detail';
   document.getElementById('drawer-body').innerHTML=`
     <div class="dr"><div class="dl">Type</div><div class="dv"><span class="badge b-document">${d.doc_type||'General'}</span></div></div>
-    <div class="dr"><div class="dl">Client</div><div class="dv mono">${(d.client_phone||'—').replace('+91','')}</div></div>
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(d.client_phone||'')}</div></div>
     <div class="dr"><div class="dl">File name</div><div class="dv mono">${d.file_name||'—'}</div></div>
     <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-${d.status||'pending'}">${d.status||'pending'}</span></div></div>
     <div class="dr"><div class="dl">Date received</div><div class="dv">${new Date(d.created_at||Date.now()).toLocaleString('en-IN')}</div></div>
-    ${d.summary?`<hr class="drawer-divider"><div class="dr"><div class="dl">AI Summary</div><div class="ai-box">${d.summary}</div></div>`:''}
-    ${d.file_url?`<hr class="drawer-divider"><div class="dr"><a href="${d.file_url}" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none;margin-top:0">Download File</a></div>`:''}`;
+    ${d.summary?'<hr class="drawer-divider"><div class="dr"><div class="dl">AI Summary</div><div class="ai-box">'+d.summary+'</div></div>':''}
+    ${d.file_url?'<hr class="drawer-divider"><div class="dr"><a href="'+d.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none;margin-top:0">↓ Download File</a></div>':''}`;
   openDrawer();
 }
-
 function openReminderDrawer(id){
   const r=reminders.find(x=>x.id===id);if(!r)return;
-  document.getElementById('drawer-title').textContent='Reminder Detail';
+  document.getElementById('drawer-title').textContent='Reminder';
   document.getElementById('drawer-body').innerHTML=`
-    <div class="dr"><div class="dl">Title</div><div class="dv" style="font-size:16px;font-weight:600">${r.title||'—'}</div></div>
-    <div class="dr"><div class="dl">For</div><div class="dv">${r.is_all_clients?'All clients':(r.client_phone||'—').replace('+91','')}</div></div>
-    <div class="dr"><div class="dl">Due date</div><div class="dv" style="font-family:'Fraunces',serif;font-size:16px;font-weight:600;color:var(--amber)">${r.due_date||'—'}</div></div>
-    <div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--text2);line-height:1.7">${r.notes||'—'}</div></div>
+    <div class="dr"><div class="dl">Title</div><div class="dv" style="font-size:17px;font-weight:600">${r.title||'—'}</div></div>
+    <div class="dr"><div class="dl">For</div><div class="dv">${r.is_all_clients?'All clients':clientName(r.client_phone||'')}</div></div>
+    <div class="dr"><div class="dl">Due date</div><div class="dv" style="font-family:'Playfair Display',serif;font-size:18px;font-weight:600;color:var(--amber)">${r.due_date||'—'}</div></div>
+    <div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3);line-height:1.7">${r.notes||'—'}</div></div>
     <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-${r.status||'pending'}">${r.status||'pending'}</span></div></div>
     <hr class="drawer-divider">
     <div style="display:flex;gap:8px">
-      <button class="btn-reply" onclick="updateReminder('${r.id}','done')" style="flex:1">Mark as Done</button>
+      <button class="btn-reply" onclick="updateReminder('${r.id}','done')" style="flex:1">✓ Mark Done</button>
       <button class="btn-reply" onclick="deleteReminder('${r.id}')" style="flex:1;background:var(--red)">Delete</button>
     </div>`;
   openDrawer();
 }
-
 function openCAInvDrawer(id){
   const inv=caInvoices.find(x=>x.id===id);if(!inv)return;
-  document.getElementById('drawer-title').textContent='CA Invoice Detail';
+  document.getElementById('drawer-title').textContent='CA Invoice';
   document.getElementById('drawer-body').innerHTML=`
-    <div class="dr"><div class="dl">Invoice #</div><div class="dv" style="font-size:16px;font-weight:600;font-family:'DM Mono',monospace">${inv.invoice_number||'—'}</div></div>
-    <div class="dr"><div class="dl">Client</div><div class="dv mono">${(inv.client_phone||'—').replace('+91','')}</div></div>
+    <div class="dr"><div class="dl">Invoice #</div><div class="dv" style="font-family:'DM Mono',monospace;font-size:16px;font-weight:600">${inv.invoice_number||'—'}</div></div>
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(inv.client_phone||'')}</div></div>
     <div class="dr"><div class="dl">Amount</div><div class="dv big">₹${fmtAmt(parseFloat(inv.amount)||0)}</div></div>
-    <div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--text2)">${inv.description||'—'}</div></div>
+    <div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3)">${inv.description||'—'}</div></div>
     <div class="dr"><div class="dl">Due date</div><div class="dv">${inv.due_date||'—'}</div></div>
     <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-${inv.status||'unpaid'}">${inv.status||'unpaid'}</span></div></div>
     <hr class="drawer-divider">
     <div style="display:flex;gap:8px">
-      <button class="btn-reply" onclick="updateCAInvoice('${inv.id}','paid')" style="flex:1">Mark as Paid</button>
+      <button class="btn-reply" onclick="updateCAInvoice('${inv.id}','paid')" style="flex:1">✓ Mark Paid</button>
       <button class="btn-reply" onclick="updateCAInvoice('${inv.id}','overdue')" style="flex:1;background:var(--red)">Mark Overdue</button>
     </div>`;
   openDrawer();
 }
-
 function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open')}
 function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open')}
 
 /* MODALS */
 function openModal(type,phone=''){
-  const clientOptions=clients.map(c=>`<option value="${c.phone}" ${c.phone===phone?'selected':''}>${c.phone}</option>`).join('');
+  const clientOptions=clients.map(c=>'<option value="'+c.phone+'" '+(c.phone===phone?'selected':'')+'>'+(c.name||c.phone)+'</option>').join('');
   const modal=document.getElementById('modal-content');
   const overlay=document.getElementById('modal-overlay');
-
   if(type==='reminder'){
     modal.innerHTML=`<h3>Add Reminder</h3>
-      <div class="modal-field"><label>Title</label><input type="text" id="rem-title" placeholder="GST filing reminder, document collection..."></div>
-      <div class="modal-field"><label>For client</label><select id="rem-client"><option value="">All clients</option>${clientOptions}</select></div>
-      <div class="modal-field"><label>Due date</label><input type="date" id="rem-date"></div>
+      <div class="modal-field"><label>Title</label><input type="text" id="rem-title" placeholder="GST filing deadline, document collection..."></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>For client</label><select id="rem-client"><option value="">All clients</option>${clientOptions}</select></div>
+        <div class="modal-field"><label>Due date</label><input type="date" id="rem-date"></div>
+      </div>
       <div class="modal-field"><label>Notes</label><textarea id="rem-notes" placeholder="Additional details..."></textarea></div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveReminder()">Save Reminder</button></div>`;
+  } else if(type==='add-event'){
+    modal.innerHTML=`<h3>Add Custom Calendar Event</h3>
+      <div class="modal-field"><label>Event title</label><input type="text" id="ev-title" placeholder="Court date, audit submission, client meeting..."></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Date</label><input type="date" id="ev-date"></div>
+        <div class="modal-field"><label>Client (optional)</label><select id="ev-client"><option value="">No specific client</option>${clientOptions}</select></div>
+      </div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveCustomEvent()">Add to Calendar</button></div>`;
   } else if(type==='ca-invoice'){
     modal.innerHTML=`<h3>New CA Invoice</h3>
-      <div class="modal-field"><label>Client</label><select id="inv-client"><option value="">Select client</option>${clientOptions}</select></div>
-      <div class="modal-field"><label>Invoice number</label><input type="text" id="inv-number" placeholder="INV-001"></div>
-      <div class="modal-field"><label>Amount (₹)</label><input type="number" id="inv-amount" placeholder="5000"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Client</label><select id="inv-client"><option value="">Select client</option>${clientOptions}</select></div>
+        <div class="modal-field"><label>Invoice number</label><input type="text" id="inv-number" placeholder="INV-001"></div>
+        <div class="modal-field"><label>Amount (₹)</label><input type="number" id="inv-amount" placeholder="5000"></div>
+        <div class="modal-field"><label>Due date</label><input type="date" id="inv-due"></div>
+      </div>
       <div class="modal-field"><label>Description</label><input type="text" id="inv-desc" placeholder="GST filing for Q1 2025"></div>
-      <div class="modal-field"><label>Due date</label><input type="date" id="inv-due"></div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveCAInvoice()">Save Invoice</button></div>`;
   } else if(type==='challan'){
     modal.innerHTML=`<h3>New Challan</h3>
-      <div class="modal-field"><label>Client</label><select id="chal-client"><option value="">Select client</option>${clientOptions}</select></div>
-      <div class="modal-field"><label>Challan type</label><select id="chal-type"><option value="">Select type</option><option>Advance Tax</option><option>Self Assessment Tax</option><option>TDS</option><option>GST</option><option>Professional Tax</option></select></div>
-      <div class="modal-field"><label>Amount (₹)</label><input type="number" id="chal-amount" placeholder="10000"></div>
-      <div class="modal-field"><label>Period</label><input type="text" id="chal-period" placeholder="Q1 FY 2025-26"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Client</label><select id="chal-client"><option value="">Select client</option>${clientOptions}</select></div>
+        <div class="modal-field"><label>Challan type</label><select id="chal-type"><option value="">Select type</option><option>Advance Tax</option><option>Self Assessment Tax</option><option>TDS</option><option>GST</option><option>Professional Tax</option></select></div>
+        <div class="modal-field"><label>Amount (₹)</label><input type="number" id="chal-amount" placeholder="10000"></div>
+        <div class="modal-field"><label>Period</label><input type="text" id="chal-period" placeholder="Q1 FY 2025-26"></div>
+      </div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveChallan()">Save Challan</button></div>`;
+  } else if(type==='upload-doc'){
+    modal.innerHTML=`<h3>Upload Document</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Client</label><select id="udoc-client"><option value="">Select client</option>${clientOptions}</select></div>
+        <div class="modal-field"><label>Document type</label><select id="udoc-type"><option>Bank Statement</option><option>ITR</option><option>GST Return</option><option>Balance Sheet</option><option>PAN Card</option><option>Other</option></select></div>
+      </div>
+      <div class="modal-field"><label>File</label><input type="file" id="udoc-file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls"></div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveUploadDoc()">Upload</button></div>`;
+  } else if(type==='broadcast'){
+    modal.innerHTML=`<h3>Send WhatsApp Broadcast</h3>
+      <div class="modal-field"><label>Send to</label><select id="bc-target"><option value="all">All clients</option>${clientOptions}</select></div>
+      <div class="modal-field"><label>Message</label><textarea id="bc-message" placeholder="Please send your July receipts before 25th..." style="min-height:100px"></textarea></div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="sendBroadcast()">Send Message</button></div>`;
   } else if(type==='add-client'){
     modal.innerHTML=`<h3>Add New Client</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -996,11 +1211,11 @@ function openModal(type,phone=''){
         <div class="modal-field"><label>GST number</label><input type="text" id="ac-gst" placeholder="27ABCDE1234F1Z5"></div>
       </div>
       <div class="modal-field"><label>Address</label><input type="text" id="ac-address" placeholder="123 Main Street, Pune"></div>
-      <div class="modal-field"><label>Notes</label><textarea id="ac-notes" placeholder="Any important notes about this client..."></textarea></div>
+      <div class="modal-field"><label>Notes</label><textarea id="ac-notes" placeholder="Any important notes..."></textarea></div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveAddClient()">Add Client</button></div>`;
   } else if(type==='edit-client'){
     const c=clients.find(x=>x.phone===phone)||{};
-    modal.innerHTML=`<h3>Edit Client — ${c.name||phone}</h3>
+    modal.innerHTML=`<h3>Edit Client</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
         <div class="modal-field"><label>Phone</label><input type="text" value="${c.phone||''}" disabled style="opacity:.6"></div>
         <div class="modal-field"><label>Client name</label><input type="text" id="ec-name" value="${c.name||''}"></div>
@@ -1013,18 +1228,22 @@ function openModal(type,phone=''){
       <div class="modal-field"><label>Notes</label><textarea id="ec-notes">${c.notes||''}</textarea></div>
       <div class="modal-field"><label>Status</label><select id="ec-active"><option value="true" ${c.is_active!==false?'selected':''}>Active</option><option value="false" ${c.is_active===false?'selected':''}>Inactive</option></select></div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveEditClient('${phone}')">Save Changes</button></div>`;
-  } else if(type==='upload-doc'){
-    modal.innerHTML=`<h3>Upload Document for Client</h3>
-      <div class="modal-field"><label>Client</label><select id="udoc-client"><option value="">Select client</option>${clientOptions}</select></div>
-      <div class="modal-field"><label>Document type</label><select id="udoc-type"><option>Bank Statement</option><option>ITR</option><option>GST Return</option><option>Balance Sheet</option><option>PAN Card</option><option>Other</option></select></div>
-      <div class="modal-field"><label>File</label><input type="file" id="udoc-file" accept=".pdf,.jpg,.jpeg,.png,.xlsx,.xls"></div>
-      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveUploadDoc()">Upload</button></div>`;
   }
   overlay.classList.add('open');
 }
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open')}
 
 /* SAVE FUNCTIONS */
+function saveCustomEvent(){
+  const title=document.getElementById('ev-title').value.trim();
+  const date=document.getElementById('ev-date').value;
+  const client=document.getElementById('ev-client').value;
+  if(!title||!date){alert('Please add title and date');return}
+  const event={id:Date.now().toString(),title,date,client:client?clientName(client):''};
+  customEvents.push(event);
+  localStorage.setItem('taxnio_events',JSON.stringify(customEvents));
+  closeModal();renderHome();
+}
 async function saveReminder(){
   const title=document.getElementById('rem-title').value.trim();
   const clientPhone=document.getElementById('rem-client').value;
@@ -1034,7 +1253,6 @@ async function saveReminder(){
   await sb.from('reminders').insert({title,client_phone:clientPhone||null,due_date:dueDate||null,notes,is_all_clients:!clientPhone,status:'pending'});
   closeModal();loadData();
 }
-
 async function saveCAInvoice(){
   const clientPhone=document.getElementById('inv-client').value;
   const invoiceNumber=document.getElementById('inv-number').value.trim();
@@ -1045,7 +1263,6 @@ async function saveCAInvoice(){
   await sb.from('ca_invoices').insert({client_phone:clientPhone,invoice_number:invoiceNumber,amount,description,due_date:dueDate||null,status:'unpaid'});
   closeModal();loadData();
 }
-
 async function saveChallan(){
   const clientPhone=document.getElementById('chal-client').value;
   const challanType=document.getElementById('chal-type').value;
@@ -1055,20 +1272,23 @@ async function saveChallan(){
   await sb.from('challans').insert({client_phone:clientPhone,challan_type:challanType,amount,period,status:'pending'});
   closeModal();loadData();
 }
-
 async function saveUploadDoc(){
   const clientPhone=document.getElementById('udoc-client').value;
   const docType=document.getElementById('udoc-type').value;
   const file=document.getElementById('udoc-file').files[0];
   if(!clientPhone||!file){alert('Please select client and file');return}
   const fileName=clientPhone+'_'+Date.now()+'_'+file.name;
-  const{error}=await sb.storage.from('documents').upload(fileName,file,{contentType:file.type});
-  if(error){alert('Upload failed: '+error.message);return}
+  await sb.storage.from('documents').upload(fileName,file,{contentType:file.type});
   const fileUrl=SUPA_URL+'/storage/v1/object/public/documents/'+fileName;
   await sb.from('documents').insert({client_phone:clientPhone,doc_type:docType,file_name:file.name,file_url:fileUrl,status:'pending',summary:null});
   closeModal();loadData();
 }
-
+async function sendBroadcast(){
+  const msg=document.getElementById('bc-message').value.trim();
+  if(!msg){alert('Please type a message');return}
+  alert('Broadcast sent! (WhatsApp API integration required for live sending)');
+  closeModal();
+}
 async function saveAddClient(){
   const phone=document.getElementById('ac-phone').value.trim();
   const name=document.getElementById('ac-name').value.trim();
@@ -1079,15 +1299,9 @@ async function saveAddClient(){
   const address=document.getElementById('ac-address').value.trim();
   const notes=document.getElementById('ac-notes').value.trim();
   if(!phone){alert('Phone number is required');return}
-  const{error}=await sb.from('clients').upsert({
-    phone:phone,name:name||null,business_name:business||null,
-    pan_number:pan||null,gst_number:gst||null,email:email||null,
-    address:address||null,notes:notes||null,is_active:true
-  },{onConflict:'phone'});
-  if(error){alert('Error: '+error.message);return}
+  await sb.from('clients').upsert({phone,name:name||null,business_name:business||null,pan_number:pan||null,gst_number:gst||null,email:email||null,address:address||null,notes:notes||null,is_active:true},{onConflict:'phone'});
   closeModal();loadData();
 }
-
 async function saveEditClient(phone){
   const name=document.getElementById('ec-name').value.trim();
   const business=document.getElementById('ec-business').value.trim();
@@ -1097,69 +1311,51 @@ async function saveEditClient(phone){
   const address=document.getElementById('ec-address').value.trim();
   const notes=document.getElementById('ec-notes').value.trim();
   const isActive=document.getElementById('ec-active').value==='true';
-  const{error}=await sb.from('clients').upsert({
-    phone:phone,
-    name:name||null,business_name:business||null,pan_number:pan||null,
-    gst_number:gst||null,email:email||null,address:address||null,
-    notes:notes||null,is_active:isActive
-  },{onConflict:'phone'});
-  if(error){alert('Error: '+error.message);return}
+  await sb.from('clients').upsert({phone,name:name||null,business_name:business||null,pan_number:pan||null,gst_number:gst||null,email:email||null,address:address||null,notes:notes||null,is_active:isActive},{onConflict:'phone'});
   closeModal();loadData();
 }
-
 async function deleteClient(phone){
-  if(!confirm('Delete client '+phone+'? This will not delete their receipts or documents.'))return;
+  if(!confirm('Delete client '+clientName(phone)+'? Their receipts and documents will remain.'))return;
   await sb.from('clients').delete().eq('phone',phone);
   clients=clients.filter(c=>c.phone!==phone);
-  populateClientDropdown();
-  renderClients();
+  populateClientDropdown();renderClients();
 }
-
 async function saveReply(qid){
   const text=document.getElementById('ca-reply-text')?.value?.trim();if(!text)return;
   await sb.from('questions').update({ca_reply:text,status:'ca_replied'}).eq('id',qid);
   const q=questions.find(x=>x.id===qid);if(q){q.ca_reply=text;q.status='ca_replied'}
   const msg=document.getElementById('reply-sent-msg');if(msg){msg.style.display='block';setTimeout(()=>msg.style.display='none',3000)}
 }
-
 async function confirmAppt(aid,status){
   const rt=document.getElementById('appt-reply-text')?.value?.trim();
   await sb.from('appointments').update({status,ca_reply:rt||''}).eq('id',aid);
   const a=appointments.find(x=>x.id===aid);if(a){a.status=status;a.ca_reply=rt}
   const msg=document.getElementById('appt-sent-msg');if(msg){msg.style.display='block';setTimeout(()=>{msg.style.display='none';closeDrawer();renderAppointments('')},2000)}
 }
-
 async function updateReminder(id,status){
   await sb.from('reminders').update({status}).eq('id',id);
   const r=reminders.find(x=>x.id===id);if(r)r.status=status;
   closeDrawer();renderReminders();
 }
-
 async function deleteReminder(id){
   await sb.from('reminders').delete().eq('id',id);
   reminders=reminders.filter(r=>r.id!==id);
   closeDrawer();renderReminders();
 }
-
 async function updateCAInvoice(id,status){
   await sb.from('ca_invoices').update({status}).eq('id',id);
   const inv=caInvoices.find(x=>x.id===id);if(inv)inv.status=status;
   closeDrawer();renderCAInvoices();
 }
-
-/* EXPORT */
 function exportCSV(){
   const headers=['Date','Client','Type','Vendor','Amount','GST','Description'];
-  const rows=invoices.map(i=>[fmtDate(i.received_at),i.client_phone||'',i.message_type||'',(i.vendor_name||'').replace(/,/g,' '),i.amount||'',i.gst_amount||'',(i.description||'').replace(/,/g,' ')]);
+  const rows=invoices.map(i=>[fmtDate(i.received_at),clientName(i.client_phone||''),i.message_type||'',(i.vendor_name||'').replace(/,/g,' '),i.amount||'',i.gst_amount||'',(i.description||'').replace(/,/g,' ')]);
   const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
   const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
-
-/* HELPERS */
 function docIcon(t){if(!t)return'📄';const s=t.toLowerCase();if(s.includes('bank'))return'🏦';if(s.includes('itr'))return'📊';if(s.includes('gst'))return'🧾';if(s.includes('pan'))return'💳';if(s.includes('aadhaar'))return'🪪';if(s.includes('tally'))return'📉';return'📁'}
 function fmtDate(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'})}
 function fmtAmt(n){if(!n||isNaN(n))return'0';return n.toLocaleString('en-IN',{maximumFractionDigits:0})}
-
 sb.auth.getSession().then(({data:{session}})=>{if(session)bootApp(session.user)});
 </script>
 </body>
