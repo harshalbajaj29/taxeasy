@@ -383,6 +383,55 @@ tbody tr:last-child td{border-bottom:none}
 .appt-client{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
 .appt-notes{font-size:11px;color:var(--brown3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .two-col{display:grid;grid-template-columns:260px 1fr;gap:14px}
+
+/* CATEGORY COLORS */
+.cat-fuel{background:#fef3dc;color:#b5720a;border:1px solid #e8d090}
+.cat-groceries{background:#e8f5ee;color:#2d6a4f;border:1px solid #95c4a8}
+.cat-salary{background:#e8f0f8;color:#1a3a5c;border:1px solid #90b4d8}
+.cat-rent{background:#f0eaf8;color:#4a2070;border:1px solid #c0a0e0}
+.cat-office{background:#fdecea;color:#8b1a1a;border:1px solid #e0a0a0}
+.cat-travel{background:#e8edff;color:#3b5bdb;border:1px solid #a0b0f0}
+.cat-medical{background:#fff0e8;color:#8b4513;border:1px solid #d4906a}
+.cat-utilities{background:#f0f8e8;color:#3d6b1f;border:1px solid #a0c480}
+.cat-gst{background:#fef3dc;color:#8b6010;border:1px solid #d4b060}
+.cat-tds{background:#f8e8f0;color:#6b1a50;border:1px solid #d090b8}
+.cat-entertainment{background:#e8f8f8;color:#1a6b6b;border:1px solid #80c4c4}
+.cat-bank_charges{background:#f4f4f4;color:#555;border:1px solid #ccc}
+.cat-suspense{background:#fff0e0;color:#c05000;border:1px solid #e09060}
+.cat-insurance{background:#e8f0e8;color:#2d502d;border:1px solid #90b490}
+.cat-other{background:#f0f0f0;color:#666;border:1px solid #ccc}
+
+/* SPENDING CHART */
+.spend-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow)}
+.spend-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.spend-bar-label{font-size:12px;font-weight:500;color:var(--brown);width:110px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spend-bar-track{flex:1;height:10px;background:var(--cream3);border-radius:5px;overflow:hidden}
+.spend-bar-fill{height:100%;border-radius:5px;transition:width .5s}
+.spend-bar-amt{font-size:12px;font-weight:600;color:var(--brown2);font-family:'DM Mono',monospace;width:80px;text-align:right;flex-shrink:0}
+.spend-bar-pct{font-size:10px;color:var(--brown4);width:32px;text-align:right;flex-shrink:0}
+
+/* TRANSACTION TABLE */
+.txn-cat-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;cursor:pointer;transition:opacity .12s}
+.txn-cat-badge:hover{opacity:.8}
+.txn-debit{color:var(--red);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
+.txn-credit{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
+
+/* PROGRESS RING */
+.progress-ring{position:relative;display:inline-flex;align-items:center;justify-content:center}
+
+/* UPLOAD PROGRESS */
+.upload-progress-bar{height:6px;background:var(--cream3);border-radius:3px;overflow:hidden;margin-top:12px}
+.upload-progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s}
+.upload-status{font-size:12px;color:var(--brown3);margin-top:8px;text-align:center}
+
+/* CLIENT DASHBOARD HEADER */
+.client-dash-header{background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 100%);border-radius:var(--r-lg);padding:22px;color:var(--cream);margin-bottom:16px;box-shadow:var(--shadow-md)}
+.client-dash-name{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:white;margin-bottom:4px}
+.client-dash-meta{font-size:13px;color:rgba(255,240,220,.7)}
+.client-dash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.client-dash-stat{background:rgba(255,255,255,.12);border-radius:var(--r);padding:12px;text-align:center}
+.client-dash-stat-val{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:white}
+.client-dash-stat-label{font-size:10px;color:rgba(255,240,220,.6);text-transform:uppercase;letter-spacing:.5px;margin-top:3px}
 </style>
 </head>
 <body>
@@ -475,6 +524,18 @@ tbody tr:last-child td{border-bottom:none}
         </button>
       </div>
       <div class="sb-section">
+        <div class="sb-label">Bank & Spending</div>
+        <button class="nav-btn" data-view="bank-statements" onclick="gotoView('bank-statements')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Bank Statements
+        </button>
+        <button class="nav-btn" data-view="transactions" onclick="gotoView('transactions')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Transactions
+        </button>
+        <button class="nav-btn" data-view="spending" onclick="gotoView('spending')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>Spending Analysis
+        </button>
+      </div>
+      <div class="sb-section">
         <div class="sb-label">Tools</div>
         <button class="nav-btn" data-view="tally" onclick="gotoView('tally')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tally Import
@@ -519,7 +580,7 @@ tbody tr:last-child td{border-bottom:none}
 const SUPA_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
 const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
 const sb=window.supabase.createClient(SUPA_URL,SUPA_KEY);
-let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[],customEvents=[];
+let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[],customEvents=[],transactions=[],bankStatements=[];
 let currentView='home',selectedClient=null;
 
 /* AUTH */
@@ -550,7 +611,7 @@ function bootApp(user){
 /* DATA */
 async function loadData(){
   setContent('<div class="spin-wrap"><div class="spinner"></div></div>');
-  const[invRes,qRes,apptRes,docRes,remRes,caInvRes,chalRes,cliRes]=await Promise.all([
+  const[invRes,qRes,apptRes,docRes,remRes,caInvRes,chalRes,cliRes,txnRes,bsRes]=await Promise.all([
     sb.from('invoices').select('*').order('received_at',{ascending:false}),
     sb.from('questions').select('*').order('created_at',{ascending:false}),
     sb.from('appointments').select('*').order('created_at',{ascending:false}),
@@ -558,10 +619,13 @@ async function loadData(){
     sb.from('reminders').select('*').order('due_date',{ascending:true}),
     sb.from('ca_invoices').select('*').order('created_at',{ascending:false}),
     sb.from('challans').select('*').order('created_at',{ascending:false}),
-    sb.from('clients').select('*').order('name',{ascending:true})
+    sb.from('clients').select('*').order('name',{ascending:true}),
+    sb.from('transactions').select('*').order('transaction_date',{ascending:false}),
+    sb.from('bank_statements').select('*').order('created_at',{ascending:false})
   ]);
   invoices=invRes.data||[];questions=qRes.data||[];appointments=apptRes.data||[];
   documents=docRes.data||[];reminders=remRes.data||[];caInvoices=caInvRes.data||[];challans=chalRes.data||[];
+  transactions=txnRes.data||[];bankStatements=bsRes.data||[];
   const dbClients=cliRes.data||[];
   const phones=[...new Set(dbClients.map(c=>c.phone).filter(Boolean))];
   clients=phones.map(phone=>{
@@ -602,8 +666,14 @@ function populateClientDropdown(){
   if(val)dd.value=val;
 }
 function onClientSelect(phone){
-  if(phone){selectedClient=clients.find(c=>c.phone===phone)||{phone};gotoView('client360');}
-  else{selectedClient=null;gotoView('home');}
+  if(phone){
+    selectedClient=clients.find(c=>c.phone===phone)||{phone};
+    document.getElementById('client-dropdown').value=phone;
+    gotoView('client-dashboard');
+  } else {
+    selectedClient=null;
+    gotoView('home');
+  }
 }
 function onGlobalSearch(val){
   if(!val)return;
@@ -628,7 +698,11 @@ function gotoView(v){
     reminders:['Reminders','Client reminders and follow-ups'],
     'ca-invoices':['CA Invoices','Invoices raised to clients'],
     challans:['Challans','Tax challans and payments'],
-    tally:['Tally Import','Import data from Tally backup']
+    tally:['Tally Import','Import data from Tally backup'],
+    'bank-statements':['Bank Statements','Upload and manage client bank statements'],
+    transactions:['Transactions','All categorised bank transactions'],
+    spending:['Spending Analysis','AI-powered expense breakdown by category'],
+    'client-dashboard':['Client Dashboard','Complete client financial overview']
   };
   const t=titles[v]||['Dashboard',''];
   document.getElementById('page-title').textContent=t[0];
@@ -639,6 +713,8 @@ function gotoView(v){
   if(v==='challans')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'challan\')">+ New Challan</button>';
   if(v==='reminders')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'reminder\')">+ Add Reminder</button>';
   if(v==='clients')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'add-client\')">+ Add Client</button>';
+  if(v==='bank-statements')pa.innerHTML='<button class="btn-primary-sm" onclick="openModal(\'upload-bank\')">+ Upload Statement</button>';
+  if(v==='transactions')pa.innerHTML='<button class="btn-sm" onclick="exportTransactionsCSV()">↓ Export CSV</button>';
   renderView();
 }
 function renderView(){
@@ -652,6 +728,10 @@ function renderView(){
   else if(currentView==='reminders')renderReminders();
   else if(currentView==='ca-invoices')renderCAInvoices();
   else if(currentView==='challans')renderChallans();
+  else if(currentView==='bank-statements')renderBankStatements();
+  else if(currentView==='transactions')renderTransactions('','');
+  else if(currentView==='spending')renderSpending();
+  else if(currentView==='client-dashboard')renderClientDashboard();
   else if(currentView==='tally')renderTally();
 }
 function setContent(html){document.getElementById('page-content').innerHTML=html}
@@ -1187,6 +1267,25 @@ function openModal(type,phone=''){
         <div class="modal-field"><label>Period</label><input type="text" id="chal-period" placeholder="Q1 FY 2025-26"></div>
       </div>
       <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="saveChallan()">Save Challan</button></div>`;
+  } else if(type==='upload-bank'){
+    modal.innerHTML=`<h3>Upload Bank Statement</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="modal-field"><label>Client *</label><select id="bs-client"><option value="">Select client</option>${clientOptions}</select></div>
+        <div class="modal-field"><label>Bank name</label><input type="text" id="bs-bank" placeholder="HDFC, SBI, ICICI, Axis..."></div>
+        <div class="modal-field"><label>Account number (last 4)</label><input type="text" id="bs-account" placeholder="1234"></div>
+        <div class="modal-field"><label>Period from</label><input type="date" id="bs-from"></div>
+      </div>
+      <div class="modal-field"><label>Bank Statement File (PDF or CSV) *</label>
+        <div class="upload-zone" onclick="document.getElementById('bs-file').click()" id="bs-dropzone">
+          <div style="font-size:28px;margin-bottom:6px">🏦</div>
+          <p style="font-weight:600;color:var(--brown)">Click to select bank statement</p>
+          <p>PDF or CSV format supported</p>
+          <input type="file" id="bs-file" style="display:none" accept=".pdf,.csv,.xlsx,.xls" onchange="document.getElementById('bs-dropzone').querySelector('p').textContent=this.files[0].name">
+        </div>
+      </div>
+      <div class="upload-progress-bar" id="upload-prog-bar" style="display:none"><div class="upload-progress-fill" id="upload-fill" style="width:0%"></div></div>
+      <div class="upload-status" id="upload-status" style="display:none"></div>
+      <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button><button class="modal-btn-save" onclick="uploadBankStatement()">Upload & Process with AI</button></div>`;
   } else if(type==='upload-doc'){
     modal.innerHTML=`<h3>Upload Document</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
@@ -1289,6 +1388,52 @@ async function sendBroadcast(){
   alert('Broadcast sent! (WhatsApp API integration required for live sending)');
   closeModal();
 }
+async function uploadBankStatement(){
+  const clientPhone=document.getElementById('bs-client').value;
+  const bankName=document.getElementById('bs-bank').value.trim();
+  const accountNum=document.getElementById('bs-account').value.trim();
+  const periodFrom=document.getElementById('bs-from').value;
+  const file=document.getElementById('bs-file').files[0];
+  if(!clientPhone){alert('Please select a client');return}
+  if(!file){alert('Please select a bank statement file');return}
+  
+  document.getElementById('upload-prog-bar').style.display='block';
+  document.getElementById('upload-status').style.display='block';
+  document.getElementById('upload-fill').style.width='10%';
+  document.getElementById('upload-status').textContent='Uploading file...';
+  document.querySelector('.modal-btn-save').disabled=true;
+  document.querySelector('.modal-btn-save').textContent='Processing...';
+
+  try {
+    // Upload file to Supabase storage
+    const fileName=clientPhone+'_bank_'+Date.now()+'_'+file.name;
+    await sb.storage.from('documents').upload('bank-statements/'+fileName,file,{contentType:file.type});
+    const fileUrl=SUPA_URL+'/storage/v1/object/public/documents/bank-statements/'+fileName;
+    
+    // Create bank statement record
+    const{data:bsData}=await sb.from('bank_statements').insert({
+      client_phone:clientPhone,file_name:file.name,file_url:fileUrl,
+      bank_name:bankName||null,account_number:accountNum||null,
+      period_from:periodFrom||null,status:'processing'
+    }).select().single();
+    
+    document.getElementById('upload-fill').style.width='25%';
+    document.getElementById('upload-status').textContent='Reading file content...';
+
+    // Read file content
+    const reader=new FileReader();
+    reader.onload=async(e)=>{
+      const fileContent=e.target.result;
+      await processBankStatementWithClaude(fileContent, file.name, clientPhone, bsData.id);
+    };
+    reader.readAsText(file);
+  } catch(err) {
+    document.getElementById('upload-status').textContent='Error: '+err.message;
+    document.querySelector('.modal-btn-save').disabled=false;
+    document.querySelector('.modal-btn-save').textContent='Upload & Process with AI';
+  }
+}
+
 async function saveAddClient(){
   const phone=document.getElementById('ac-phone').value.trim();
   const name=document.getElementById('ac-name').value.trim();
@@ -1347,6 +1492,412 @@ async function updateCAInvoice(id,status){
   const inv=caInvoices.find(x=>x.id===id);if(inv)inv.status=status;
   closeDrawer();renderCAInvoices();
 }
+/* ========== CLIENT DASHBOARD ========== */
+function renderClientDashboard(){
+  const c=selectedClient;
+  if(!c||!c.phone){setContent('<div class="empty" style="margin-top:60px"><div class="empty-icon">👤</div><p>Select a client from the dropdown</p></div>');return}
+  const phone=c.phone;
+  const clientInvoices=invoices.filter(i=>i.client_phone===phone);
+  const clientTxns=transactions.filter(t=>t.client_phone===phone);
+  const clientDocs=documents.filter(d=>d.client_phone===phone);
+  const clientQ=questions.filter(q=>q.client_phone===phone);
+  const clientAppts=appointments.filter(a=>a.client_phone===phone);
+  const clientCAInv=caInvoices.filter(i=>i.client_phone===phone);
+  const clientBS=bankStatements.filter(b=>b.client_phone===phone);
+  const totalSpent=clientInvoices.reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const totalOwed=clientCAInv.filter(i=>i.status==='unpaid').reduce((s,i)=>s+(parseFloat(i.amount)||0),0);
+  const totalDebits=clientTxns.filter(t=>t.type==='debit').reduce((s,t)=>s+(parseFloat(t.amount)||0),0);
+  const totalCredits=clientTxns.filter(t=>t.type==='credit').reduce((s,t)=>s+(parseFloat(t.amount)||0),0);
+  // Build category breakdown
+  const cats={};
+  clientTxns.filter(t=>t.type==='debit').forEach(t=>{
+    const cat=t.ca_category||t.category||'other';
+    cats[cat]=(cats[cat]||0)+(parseFloat(t.amount)||0);
+  });
+  const catEntries=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const totalCatAmt=Object.values(cats).reduce((s,v)=>s+v,0)||1;
+  const catColors={fuel:'#e8920a',groceries:'#27ae60',salary:'#1a3a5c',rent:'#4a2070',office:'#8b1a1a',travel:'#3b5bdb',medical:'#8b4513',utilities:'#3d6b1f',gst:'#8b6010',tds:'#6b1a50',entertainment:'#1a6b6b',bank_charges:'#555',suspense:'#c05000',insurance:'#2d502d',other:'#888'};
+  const catIcons={fuel:'⛽',groceries:'🛒',salary:'💼',rent:'🏠',office:'🖥️',travel:'✈️',medical:'🏥',utilities:'💡',gst:'📋',tds:'📊',entertainment:'🎬',bank_charges:'🏦',suspense:'❓',insurance:'🛡️',other:'📌'};
+
+  setContent(`
+    <div class="client-dash-header">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between">
+        <div>
+          <div class="client-dash-name">${c.name||phone}</div>
+          <div class="client-dash-meta">${phone}${c.business_name?' · '+c.business_name:''}${c.gst_number?' · GSTIN: '+c.gst_number:''}</div>
+        </div>
+        <div style="display:flex;gap:8px">
+          <button onclick="gotoView('client360')" style="padding:7px 14px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.3);background:transparent;color:white;font-size:12px;font-weight:600;cursor:pointer">Full Profile →</button>
+          <button onclick="sendReminder('${phone}','general')" style="padding:7px 14px;border-radius:var(--r);border:none;background:rgba(255,255,255,.15);color:white;font-size:12px;font-weight:600;cursor:pointer">📱 WhatsApp</button>
+        </div>
+      </div>
+      <div class="client-dash-stats">
+        <div class="client-dash-stat"><div class="client-dash-stat-val">${clientInvoices.length}</div><div class="client-dash-stat-label">Receipts</div></div>
+        <div class="client-dash-stat"><div class="client-dash-stat-val">₹${fmtAmt(totalSpent)}</div><div class="client-dash-stat-label">Total Spent</div></div>
+        <div class="client-dash-stat"><div class="client-dash-stat-val" style="color:#ffccaa">₹${fmtAmt(totalOwed)}</div><div class="client-dash-stat-label">Outstanding</div></div>
+        <div class="client-dash-stat"><div class="client-dash-stat-val">${clientTxns.length}</div><div class="client-dash-stat-label">Transactions</div></div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <!-- SPENDING BY CATEGORY -->
+      <div class="spend-card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+          <h3 style="font-size:14px;color:var(--brown)">Spending by Category</h3>
+          <span style="font-size:11px;color:var(--brown4)">${clientTxns.filter(t=>t.type==='debit').length} transactions</span>
+        </div>
+        ${catEntries.length===0?'<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">📊</div><p>Upload bank statement to see spending</p></div>':
+        catEntries.map(([cat,amt])=>`<div class="spend-bar-row">
+          <div class="spend-bar-label">${catIcons[cat]||'📌'} ${cat}</div>
+          <div class="spend-bar-track"><div class="spend-bar-fill" style="width:${Math.round(amt/totalCatAmt*100)}%;background:${catColors[cat]||'#888'}"></div></div>
+          <div class="spend-bar-amt">₹${fmtAmt(amt)}</div>
+          <div class="spend-bar-pct">${Math.round(amt/totalCatAmt*100)}%</div>
+        </div>`).join('')}
+      </div>
+
+      <!-- BANK STATEMENTS + QUICK STATS -->
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="spend-card">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+            <h3 style="font-size:14px;color:var(--brown)">Bank Statements</h3>
+            <button onclick="openModal('upload-bank','${phone}')" class="btn-primary-sm" style="font-size:11px;padding:5px 10px">+ Upload</button>
+          </div>
+          ${clientBS.length===0?'<div style="text-align:center;padding:16px;color:var(--brown4);font-size:13px">No statements uploaded yet</div>':
+          clientBS.slice(0,3).map(bs=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px solid var(--cream3)">
+            <div style="font-size:18px">🏦</div>
+            <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">${bs.bank_name||bs.file_name||'Statement'}</div><div style="font-size:10px;color:var(--brown4)">${bs.transaction_count||0} txns · ${fmtDate(bs.created_at)}</div></div>
+            <span class="badge b-${bs.status==='done'?'answered':bs.status==='processing'?'pending':'review'}">${bs.status}</span>
+          </div>`).join('')}
+        </div>
+        <div class="spend-card">
+          <h3 style="font-size:14px;color:var(--brown);margin-bottom:12px">Account Summary</h3>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+            <div style="background:var(--green-light);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--green);font-weight:600;text-transform:uppercase;margin-bottom:4px">Total Credits</div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green)">₹${fmtAmt(totalCredits)}</div></div>
+            <div style="background:var(--red-light);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--red);font-weight:600;text-transform:uppercase;margin-bottom:4px">Total Debits</div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--red)">₹${fmtAmt(totalDebits)}</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:16px">
+      <!-- RECENT TRANSACTIONS -->
+      <div class="card">
+        <div class="card-head"><h3>Recent Transactions</h3><button class="btn-sm" onclick="gotoView('transactions')" style="font-size:11px">View all →</button></div>
+        <div style="overflow-y:auto;max-height:260px">
+          ${clientTxns.length===0?'<div class="empty"><div class="empty-icon">💳</div><p>No transactions yet</p></div>':
+          clientTxns.slice(0,8).map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--cream3)">
+            <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${t.description||'—'}</div><div style="font-size:10px;color:var(--brown4)">${t.transaction_date||'—'}</div></div>
+            <span class="txn-cat-badge cat-${t.ca_category||t.category||'other'}" onclick="changeTxnCategory('${t.id}')">${(t.ca_category||t.category||'other').replace('_',' ')}</span>
+            <div class="${t.type==='credit'?'txn-credit':'txn-debit'}">${t.type==='credit'?'+':'−'}₹${fmtAmt(parseFloat(t.amount)||0)}</div>
+          </div>`).join('')}
+        </div>
+      </div>
+
+      <!-- RECENT RECEIPTS + QUESTIONS -->
+      <div class="card">
+        <div class="card-head"><h3>Recent Receipts</h3><button class="btn-sm" onclick="gotoView('receipts')" style="font-size:11px">View all →</button></div>
+        <div style="overflow-y:auto;max-height:130px">
+          ${clientInvoices.slice(0,4).map(inv=>`<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openReceiptDrawer('${inv.id}')">
+            <div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">${inv.vendor_name||inv.description||'Receipt'}</div><div style="font-size:10px;color:var(--brown4)">${fmtDate(inv.received_at)}</div></div>
+            <div class="amt" style="font-size:12px">${inv.amount?'₹'+fmtAmt(parseFloat(inv.amount)):'—'}</div>
+          </div>`).join('')}
+        </div>
+        <div class="card-head"><h3>Recent Questions</h3></div>
+        <div style="overflow-y:auto;max-height:100px">
+          ${clientQ.slice(0,2).map(q=>`<div style="padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnaDrawer('${q.id}')">
+            <div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${q.question||'—'}</div>
+            <span class="badge ${q.needs_ca_review?'b-review':'b-answered'}" style="margin-top:4px;display:inline-block">${q.needs_ca_review?'Review':'Answered'}</span>
+          </div>`).join('')}
+        </div>
+      </div>
+    </div>
+
+    <!-- SUSPENSE ENTRIES -->
+    ${clientTxns.filter(t=>t.category==='suspense'||t.needs_review).length>0?`
+    <div class="card" style="margin-bottom:16px;border-color:#e0c090">
+      <div class="card-head" style="background:#fef3dc"><h3 style="color:#8b6010">⚠️ Suspense Entries — Needs Review</h3><span class="card-count" style="background:#f5e8b0;color:#8b6010">${clientTxns.filter(t=>t.category==='suspense'||t.needs_review).length}</span></div>
+      <div style="overflow-y:auto;max-height:200px">
+        ${clientTxns.filter(t=>t.category==='suspense'||t.needs_review).map(t=>`<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3)">
+          <div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">${t.description||'—'}</div><div style="font-size:11px;color:var(--brown4)">${t.transaction_date||'—'} · Claude could not categorise this</div></div>
+          <select onchange="updateTxnCategory('${t.id}',this.value)" style="padding:4px 8px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream2);font-size:12px;color:var(--brown);cursor:pointer;font-family:inherit">
+            <option value="">Select category</option>
+            <option>fuel</option><option>groceries</option><option>salary</option><option>rent</option>
+            <option>office</option><option>travel</option><option>medical</option><option>utilities</option>
+            <option>gst</option><option>tds</option><option>entertainment</option><option>bank_charges</option>
+            <option>insurance</option><option>other</option>
+          </select>
+          <div class="${t.type==='credit'?'txn-credit':'txn-debit'}">${t.type==='credit'?'+':'−'}₹${fmtAmt(parseFloat(t.amount)||0)}</div>
+        </div>`).join('')}
+      </div>
+    </div>`:''}
+  `);
+}
+
+/* ========== BANK STATEMENTS ========== */
+function renderBankStatements(){
+  let bs=bankStatements;
+  if(selectedClient)bs=bs.filter(b=>b.client_phone===selectedClient.phone);
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>Bank Statements</h3><span class="panel-count">${bs.length}</span></div>
+    ${bs.length===0?`<div class="coming-soon">
+      <div style="font-size:48px;margin-bottom:16px">🏦</div>
+      <h3>Upload Bank Statements</h3>
+      <p>Upload client bank statements in PDF or CSV format. Claude AI will read every transaction and automatically categorise it into fuel, groceries, salary, GST, TDS and more.</p>
+      <button class="btn-primary-sm" style="margin-top:16px;padding:10px 24px" onclick="openModal('upload-bank')">+ Upload First Statement</button>
+    </div>`:`<div class="table-wrap"><table><thead><tr><th>Client</th><th>Bank</th><th>Period</th><th>Transactions</th><th>Total Credits</th><th>Total Debits</th><th>Status</th><th>Uploaded</th></tr></thead><tbody>
+      ${bs.map(b=>'<tr onclick="openBSDrawer(''+b.id+'')"><td style="font-weight:500">'+clientName(b.client_phone||'')+'</td><td>'+(b.bank_name||'—')+'</td><td class="mono">'+(b.period_from?fmtDate(b.period_from)+' to '+fmtDate(b.period_to):'—')+'</td><td style="text-align:center">'+(b.transaction_count||0)+'</td><td class="txn-credit">₹'+fmtAmt(parseFloat(b.total_credits)||0)+'</td><td class="txn-debit">₹'+fmtAmt(parseFloat(b.total_debits)||0)+'</td><td><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'review')+'">'+b.status+'</span></td><td class="mono">'+fmtDate(b.created_at)+'</td></tr>').join('')}
+    </tbody></table></div>`}
+  </div>`);
+}
+
+/* ========== TRANSACTIONS ========== */
+function renderTransactions(search,cat){
+  let txns=transactions;
+  if(selectedClient)txns=txns.filter(t=>t.client_phone===selectedClient.phone);
+  if(cat)txns=txns.filter(t=>(t.ca_category||t.category)===cat);
+  if(search)txns=txns.filter(t=>(t.description||'').toLowerCase().includes(search.toLowerCase()));
+  const cats=['fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','suspense','other'];
+  setContent(`<div class="panel" style="height:calc(100vh - 130px)">
+    <div class="panel-head"><h3>Transactions</h3><span class="panel-count">${txns.length}</span></div>
+    <div class="toolbar">
+      <input class="search-input" style="flex:1" placeholder="Search transactions..." value="${search}" oninput="renderTransactions(this.value,document.getElementById('tcat').value)">
+      <select class="type-select" id="tcat" onchange="renderTransactions(document.querySelector('#page-content .search-input').value,this.value)">
+        <option value="">All categories</option>
+        ${cats.map(c=>'<option value="'+c+'">'+c+'</option>').join('')}
+      </select>
+    </div>
+    <div class="table-wrap">${txns.length===0?'<div class="empty"><div class="empty-icon">💳</div><p>No transactions yet. Upload a bank statement to get started.</p></div>':`<table><thead><tr><th>Date</th><th>Client</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th>Balance</th><th>Review</th></tr></thead><tbody>
+      ${txns.map(t=>'<tr><td class="mono">'+(t.transaction_date||'—')+'</td><td>'+clientName(t.client_phone||'')+'</td><td class="desc-cell">'+(t.description||'—')+'</td><td><span class="txn-cat-badge cat-'+(t.ca_category||t.category||'other')+'" onclick="changeTxnCategory(''+t.id+'')">'+(t.ca_category||t.category||'other').replace('_',' ')+'</span></td><td><span class="badge '+(t.type==='credit'?'b-answered':'b-unpaid')+'">'+(t.type||'—')+'</span></td><td class="'+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtAmt(parseFloat(t.amount)||0)+'</td><td class="mono">'+(t.balance?'₹'+fmtAmt(parseFloat(t.balance)):'—')+'</td><td>'+(t.needs_review?'<span class="badge b-review">Review</span>':'')+'</td></tr>').join('')}
+    </tbody></table>`}</div>
+  </div>`);
+}
+
+/* ========== SPENDING ANALYSIS ========== */
+function renderSpending(){
+  let txns=transactions.filter(t=>t.type==='debit');
+  if(selectedClient)txns=txns.filter(t=>t.client_phone===selectedClient.phone);
+  const cats={};
+  txns.forEach(t=>{const cat=t.ca_category||t.category||'other';cats[cat]=(cats[cat]||0)+(parseFloat(t.amount)||0);});
+  const catEntries=Object.entries(cats).sort((a,b)=>b[1]-a[1]);
+  const total=Object.values(cats).reduce((s,v)=>s+v,0)||1;
+  const catColors={fuel:'#e8920a',groceries:'#27ae60',salary:'#1a3a5c',rent:'#4a2070',office:'#8b1a1a',travel:'#3b5bdb',medical:'#8b4513',utilities:'#3d6b1f',gst:'#8b6010',tds:'#6b1a50',entertainment:'#1a6b6b',bank_charges:'#555',suspense:'#c05000',insurance:'#2d502d',other:'#888'};
+  const catIcons={fuel:'⛽',groceries:'🛒',salary:'💼',rent:'🏠',office:'🖥️',travel:'✈️',medical:'🏥',utilities:'💡',gst:'📋',tds:'📊',entertainment:'🎬',bank_charges:'🏦',suspense:'❓',insurance:'🛡️',other:'📌'};
+  const suspenseCount=transactions.filter(t=>t.category==='suspense'||t.needs_review).length;
+  setContent(`
+    <div style="display:grid;grid-template-columns:1fr 280px;gap:16px;margin-bottom:16px">
+      <div class="spend-card">
+        <h3 style="font-size:15px;color:var(--brown);margin-bottom:18px">Spending Breakdown</h3>
+        ${catEntries.length===0?'<div class="empty"><div class="empty-icon">📊</div><p>No transaction data yet. Upload a bank statement to see spending analysis.</p></div>':
+        catEntries.map(([cat,amt])=>`<div class="spend-bar-row">
+          <div class="spend-bar-label">${catIcons[cat]||'📌'} <strong>${cat}</strong></div>
+          <div class="spend-bar-track"><div class="spend-bar-fill" style="width:${Math.round(amt/total*100)}%;background:${catColors[cat]||'#888'}"></div></div>
+          <div class="spend-bar-amt">₹${fmtAmt(amt)}</div>
+          <div class="spend-bar-pct">${Math.round(amt/total*100)}%</div>
+        </div>`).join('')}
+      </div>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div class="spend-card" style="text-align:center">
+          <div style="font-size:11px;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Total Debits</div>
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--red)">₹${fmtAmt(total)}</div>
+          <div style="font-size:11px;color:var(--brown4);margin-top:4px">${txns.length} transactions</div>
+        </div>
+        <div class="spend-card" style="text-align:center">
+          <div style="font-size:11px;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:8px">Total Credits</div>
+          <div style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:var(--green)">₹${fmtAmt(transactions.filter(t=>t.type==='credit'&&(selectedClient?t.client_phone===selectedClient.phone:true)).reduce((s,t)=>s+(parseFloat(t.amount)||0),0))}</div>
+        </div>
+        ${suspenseCount>0?`<div class="spend-card" style="border-color:#e0c090;background:#fef8ec;text-align:center;cursor:pointer" onclick="renderTransactions('','suspense')">
+          <div style="font-size:24px;margin-bottom:6px">⚠️</div>
+          <div style="font-size:13px;font-weight:600;color:#8b6010">${suspenseCount} Suspense Entries</div>
+          <div style="font-size:11px;color:#a07820;margin-top:4px">Click to review</div>
+        </div>`:''}
+        <button class="btn-primary-sm" style="padding:10px" onclick="openModal('upload-bank')">+ Upload Bank Statement</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-head"><h3>Category Breakdown Table</h3></div>
+      <table><thead><tr><th>Category</th><th>Transactions</th><th>Total Amount</th><th>% of Spend</th></tr></thead><tbody>
+        ${catEntries.map(([cat,amt])=>`<tr onclick="renderTransactions('','${cat}')">
+          <td><span class="txn-cat-badge cat-${cat}">${catIcons[cat]||'📌'} ${cat.replace('_',' ')}</span></td>
+          <td style="text-align:center">${txns.filter(t=>(t.ca_category||t.category)===cat).length}</td>
+          <td class="amt">₹${fmtAmt(amt)}</td>
+          <td><div style="display:flex;align-items:center;gap:8px"><div style="flex:1;height:6px;background:var(--cream3);border-radius:3px;overflow:hidden"><div style="height:100%;width:${Math.round(amt/total*100)}%;background:${catColors[cat]||'#888'};border-radius:3px"></div></div><span style="font-size:12px;color:var(--brown4);width:32px">${Math.round(amt/total*100)}%</span></div></td>
+        </tr>`).join('')}
+      </tbody></table>
+    </div>
+  `);
+}
+
+/* ========== CLAUDE BANK STATEMENT PROCESSING ========== */
+async function processBankStatementWithClaude(fileData, fileName, clientPhone, statementId){
+  const statusEl=document.getElementById('upload-status');
+  const fillEl=document.getElementById('upload-fill');
+  
+  try {
+    if(statusEl)statusEl.textContent='Reading bank statement with Claude AI...';
+    if(fillEl)fillEl.style.width='40%';
+
+    const response = await fetch('https://api.anthropic.com/v1/messages', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4000,
+        messages: [{
+          role: 'user',
+          content: [{
+            type: 'text',
+            text: `You are an expert Indian CA assistant. Read this bank statement text and extract ALL transactions.
+
+For each transaction return a JSON object with:
+- transaction_date: (YYYY-MM-DD format)
+- description: (cleaned transaction description)
+- amount: (numeric, always positive)
+- type: "debit" or "credit"
+- balance: (running balance if available, else null)
+- category: categorise each debit into exactly one of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, suspense
+  - Use "suspense" ONLY if you genuinely cannot determine the category
+  - Credits: use "salary", "business_income", "refund", "transfer", or "other"
+- needs_review: true if suspense or ambiguous, false otherwise
+
+Rules:
+- HPCL, BPCL, IOCL, petrol = fuel
+- SWIGGY, ZOMATO, BIGBASKET, DMART, RELIANCE FRESH = groceries  
+- SALARY, SAL CR, PAYROLL = salary
+- GST, GSTIN = gst
+- TDS, INCOME TAX = tds
+- IRCTC, UBER, OLA, airline = travel
+- MEDICAL, PHARMACY, HOSPITAL = medical
+- ELECTRICITY, WATER, BROADBAND, AIRTEL, JIO = utilities
+- ATM withdrawal = bank_charges
+- EMI, LOAN = other
+- Unknown merchant codes, unclear descriptions = suspense
+
+Return ONLY a valid JSON array. No markdown, no explanation, no backticks.
+Example: [{"transaction_date":"2025-01-15","description":"HPCL FUEL","amount":3500,"type":"debit","balance":45000,"category":"fuel","needs_review":false}]
+
+Bank statement text:
+${fileData.slice(0, 8000)}`
+          }]
+        }]
+      })
+    });
+
+    const data = await response.json();
+    if(fillEl)fillEl.style.width='70%';
+    
+    const responseText = data.content?.[0]?.text || '[]';
+    let transactions_parsed = [];
+    
+    try {
+      const clean = responseText.replace(/```json/g,'').replace(/```/g,'').trim();
+      transactions_parsed = JSON.parse(clean);
+    } catch(e) {
+      // Try to extract JSON array
+      const match = responseText.match(/\[[\s\S]*\]/);
+      if(match) transactions_parsed = JSON.parse(match[0]);
+    }
+
+    if(statusEl)statusEl.textContent=`Saving ${transactions_parsed.length} transactions...`;
+    if(fillEl)fillEl.style.width='85%';
+
+    // Save transactions to Supabase in batches
+    const batchSize = 50;
+    let totalCredits = 0, totalDebits = 0, suspenseCount = 0;
+    
+    for(let i = 0; i < transactions_parsed.length; i += batchSize) {
+      const batch = transactions_parsed.slice(i, i+batchSize).map(t => ({
+        client_phone: clientPhone,
+        statement_id: statementId,
+        transaction_date: t.transaction_date || null,
+        description: t.description || '',
+        amount: parseFloat(t.amount) || 0,
+        type: t.type || 'debit',
+        category: t.category || 'other',
+        balance: t.balance ? parseFloat(t.balance) : null,
+        needs_review: t.needs_review || false,
+        is_approved: false
+      }));
+      
+      batch.forEach(t => {
+        if(t.type === 'credit') totalCredits += t.amount;
+        else totalDebits += t.amount;
+        if(t.category === 'suspense') suspenseCount++;
+      });
+      
+      await sb.from('transactions').insert(batch);
+    }
+
+    // Update bank statement record
+    await sb.from('bank_statements').update({
+      status: 'done',
+      transaction_count: transactions_parsed.length,
+      total_credits: totalCredits,
+      total_debits: totalDebits
+    }).eq('id', statementId);
+
+    if(fillEl)fillEl.style.width='100%';
+    if(statusEl)statusEl.textContent=`✓ Done! ${transactions_parsed.length} transactions categorised. ${suspenseCount} in suspense.`;
+    
+    setTimeout(()=>{closeModal();loadData();}, 2000);
+
+  } catch(err) {
+    console.error(err);
+    if(statusEl)statusEl.textContent='Error: '+err.message;
+    await sb.from('bank_statements').update({status:'error'}).eq('id',statementId);
+  }
+}
+
+/* ========== CATEGORY CHANGE ========== */
+async function updateTxnCategory(id, category){
+  if(!category)return;
+  await sb.from('transactions').update({ca_category:category, needs_review:false}).eq('id',id);
+  const t=transactions.find(x=>x.id===id);
+  if(t){t.ca_category=category;t.needs_review=false;}
+  renderView();
+}
+
+function changeTxnCategory(id){
+  const cats=['fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','other','suspense'];
+  const t=transactions.find(x=>x.id===id);if(!t)return;
+  const current=t.ca_category||t.category||'other';
+  const modal=document.getElementById('modal-content');
+  const overlay=document.getElementById('modal-overlay');
+  modal.innerHTML=`<h3>Change Category</h3>
+    <p style="font-size:13px;color:var(--brown3);margin-bottom:16px">${t.description}</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+      ${cats.map(cat=>`<button onclick="updateTxnCategory('${id}','${cat}');closeModal()" style="padding:10px;border-radius:var(--r);border:1.5px solid ${current===cat?'var(--accent)':'var(--cream3)'};background:${current===cat?'var(--accent-light)':'var(--cream2)'};color:${current===cat?'var(--accent)':'var(--brown2)'};font-size:13px;font-weight:${current===cat?'700':'400'};cursor:pointer;font-family:inherit;text-align:left">${cat.replace('_',' ')}</button>`).join('')}
+    </div>
+    <div class="modal-btns"><button class="modal-btn-cancel" onclick="closeModal()">Cancel</button></div>`;
+  overlay.classList.add('open');
+}
+
+function openBSDrawer(id){
+  const bs=bankStatements.find(x=>x.id===id);if(!bs)return;
+  document.getElementById('drawer-title').textContent='Bank Statement';
+  document.getElementById('drawer-body').innerHTML=`
+    <div class="dr"><div class="dl">Client</div><div class="dv">${clientName(bs.client_phone||'')}</div></div>
+    <div class="dr"><div class="dl">Bank</div><div class="dv" style="font-weight:500">${bs.bank_name||'—'}</div></div>
+    <div class="dr"><div class="dl">File</div><div class="dv mono">${bs.file_name||'—'}</div></div>
+    <div class="dr"><div class="dl">Period</div><div class="dv">${bs.period_from?fmtDate(bs.period_from)+' to '+fmtDate(bs.period_to):'—'}</div></div>
+    <div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-${bs.status==='done'?'answered':bs.status==='processing'?'pending':'review'}">${bs.status}</span></div></div>
+    <hr class="drawer-divider">
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">
+      <div style="background:var(--green-light);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:4px">CREDITS</div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--green)">₹${fmtAmt(bs.total_credits||0)}</div></div>
+      <div style="background:var(--red-light);border-radius:var(--r);padding:12px;text-align:center"><div style="font-size:10px;color:var(--red);font-weight:600;margin-bottom:4px">DEBITS</div><div style="font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:var(--red)">₹${fmtAmt(bs.total_debits||0)}</div></div>
+    </div>
+    <div class="dr" style="margin-top:16px"><div class="dl">Transactions</div><div class="dv" style="font-family:'Playfair Display',serif;font-size:22px;font-weight:700">${bs.transaction_count||0}</div></div>
+    ${bs.file_url?'<hr class="drawer-divider"><a href="'+bs.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none">↓ Download Statement</a>':''}`;
+  openDrawer();
+}
+
+function exportTransactionsCSV(){
+  const headers=['Date','Client','Description','Category','CA Category','Type','Amount','Balance'];
+  const rows=transactions.map(t=>[t.transaction_date||'',clientName(t.client_phone||''),(t.description||'').replace(/,/g,' '),t.category||'',t.ca_category||'',t.type||'',t.amount||'',t.balance||'']);
+  const csv=[headers,...rows].map(r=>r.join(',')).join('\n');
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_transactions_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
 function exportCSV(){
   const headers=['Date','Client','Type','Vendor','Amount','GST','Description'];
   const rows=invoices.map(i=>[fmtDate(i.received_at),clientName(i.client_phone||''),i.message_type||'',(i.vendor_name||'').replace(/,/g,' '),i.amount||'',i.gst_amount||'',(i.description||'').replace(/,/g,' ')]);
