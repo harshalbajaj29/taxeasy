@@ -1196,29 +1196,31 @@ function renderTransactions(s,cat,dateFrom,dateTo){
   });
 
   var chips='<div style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px;border-bottom:1.5px solid var(--cream3);background:var(--cream2)">';
-  // All chip
-  chips+='<button onclick="renderTransactions(txnSearch,'',txnDateFrom,txnDateTo)" style="padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(txnActiveCat===''?'var(--accent)':'var(--cream3)')+';background:'+(txnActiveCat===''?'var(--accent-light)':'var(--cream)')+';color:'+(txnActiveCat===''?'var(--accent)':'var(--brown2)')+'">All ('+allT.length+')</button>';
+  // All chip - use data attribute to avoid quote issues
+  var allActive=txnActiveCat==='';
+  chips+='<button data-cat="" class="txn-chip" style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(allActive?'var(--accent)':'var(--cream3)')+';background:'+(allActive?'var(--accent-light)':'var(--cream)')+';color:'+(allActive?'var(--accent)':'var(--brown2)')+'">All ('+allT.length+')</button>';
   cats.forEach(function(c){
     if(catCounts[c]===0)return;
     var isActive=txnActiveCat===c;
     var isSuspense=c==='suspense';
-    chips+='<button onclick="renderTransactions(txnSearch,''+c+'',txnDateFrom,txnDateTo)" style="padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':isSuspense?'#e0c090':'var(--cream3)')+';background:'+(isActive?'var(--accent-light)':isSuspense?'#fef8ec':'var(--cream)')+';color:'+(isActive?'var(--accent)':isSuspense?'#8b6010':'var(--brown2)')+'">'+catIcons[c]+' '+c.replace('_',' ')+' ('+catCounts[c]+')</button>';
+    chips+='<button data-cat="'+c+'" class="txn-chip" style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':isSuspense?'#e0c090':'var(--cream3)')+';background:'+(isActive?'var(--accent-light)':isSuspense?'#fef8ec':'var(--cream)')+';color:'+(isActive?'var(--accent)':isSuspense?'#8b6010':'var(--brown2)')+'">'+catIcons[c]+' '+c.replace(/_/g,' ')+' ('+catCounts[c]+')</button>';
   });
   chips+='</div>';
 
   var toolbar='<div class="toolbar" style="gap:10px">'
-    +'<input class="srch" style="flex:1;font-size:14px" placeholder="Search description..." value="'+txnSearch+'" oninput="renderTransactions(this.value,txnActiveCat,txnDateFrom,txnDateTo)">'
+    +'<input class="srch" id="txn-srch" style="flex:1;font-size:14px" placeholder="Search description..." value="'+txnSearch+'">'
     +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
-    +'<span style="font-size:13px;color:var(--brown4);white-space:nowrap">Date from</span>'
-    +'<input type="date" value="'+txnDateFrom+'" onchange="renderTransactions(txnSearch,txnActiveCat,this.value,txnDateTo)" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
-    +'<span style="font-size:13px;color:var(--brown4)">to</span>'
-    +'<input type="date" value="'+txnDateTo+'" onchange="renderTransactions(txnSearch,txnActiveCat,txnDateFrom,this.value)" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
-    +(txnDateFrom||txnDateTo?'<button onclick="renderTransactions(txnSearch,txnActiveCat,'','')" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--red-light);color:var(--red);font-size:12px;cursor:pointer;white-space:nowrap">✕ Clear</button>':'')
+    +'<span style="font-size:13px;color:var(--brown4);white-space:nowrap">From</span>'
+    +'<input type="date" id="txn-from" value="'+txnDateFrom+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
+    +'<span style="font-size:13px;color:var(--brown4)">To</span>'
+    +'<input type="date" id="txn-to" value="'+txnDateTo+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
+    +'<button id="txn-go" class="btn-pri" style="font-size:13px;padding:7px 14px">Apply</button>'
+    +(txnDateFrom||txnDateTo?'<button id="txn-clear" class="btn-sm" style="color:var(--red)">✕ Clear</button>':'')
     +'</div>'
     +'</div>';
 
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
-    +'<div class="panel-head"><h3>Transactions'+(txnActiveCat?' — '+txnActiveCat.replace('_',' '):'')+'</h3>'
+    +'<div class="panel-head"><h3>Transactions'+(txnActiveCat?' — '+txnActiveCat.replace(/_/g,' '):'')+'</h3>'
     +'<div style="display:flex;align-items:center;gap:8px">'
     +(txnActiveCat||txnSearch||txnDateFrom?'<span style="font-size:13px;color:var(--brown4)">'+t.length+' results</span>':'')
     +'<span class="card-cnt">'+allT.length+' total</span>'
@@ -1242,6 +1244,26 @@ function renderTransactions(s,cat,dateFrom,dateTo){
           +'<td class="mono" style="font-size:13px;color:var(--brown4)">'+(x.balance?'₹'+fmtN(parseFloat(x.balance)):'—')+'</td></tr>';
       }).join('')+'</tbody></table>'
     )+'</div></div>');
+  // Bind events after DOM is ready
+  setTimeout(function(){
+    // Search input
+    var si=document.getElementById('txn-srch');
+    if(si)si.addEventListener('input',function(){renderTransactions(this.value,txnActiveCat,txnDateFrom,txnDateTo);});
+    // Category chips
+    document.querySelectorAll('.txn-chip').forEach(function(btn){
+      btn.addEventListener('click',function(){renderTransactions(txnSearch,this.dataset.cat,txnDateFrom,txnDateTo);});
+    });
+    // Apply button
+    var goBtn=document.getElementById('txn-go');
+    if(goBtn)goBtn.addEventListener('click',function(){
+      var f=document.getElementById('txn-from').value;
+      var t=document.getElementById('txn-to').value;
+      renderTransactions(txnSearch,txnActiveCat,f,t);
+    });
+    // Clear button
+    var clBtn=document.getElementById('txn-clear');
+    if(clBtn)clBtn.addEventListener('click',function(){renderTransactions(txnSearch,txnActiveCat,'','');});
+  },50);
 }
 // ── SPENDING ANALYSIS ──
 function renderSpending(){
