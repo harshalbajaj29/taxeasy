@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taxnio — CA Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -488,8 +488,8 @@ tbody tr:last-child td{border-bottom:none}
   <div class="modal" id="modal-box"></div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-window.addEventListener('load', function(){
 // -- SUPABASE --
 const SB_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
@@ -542,7 +542,8 @@ function bootApp(user){
     loadData();
   }catch(e){
     console.error('bootApp error:',e);
-    document.getElementById('login-err').textContent='App failed to initialise: '+e.message;
+    var err=document.getElementById('login-err');
+    if(err)err.textContent='App failed to initialise: '+e.message;
     document.getElementById('login-page').style.display='flex';
     document.getElementById('app').classList.remove('show');
   }
@@ -1844,50 +1845,6 @@ function fmtN(n){if(!n||isNaN(n))return'0';return n.toLocaleString('en-IN',{maxi
 
 // -- INIT --
 sb.auth.getSession().then(function(res){if(res.data&&res.data.session)bootApp(res.data.session.user);});
-
-// Expose all onclick functions to global scope since they're inside window.load wrapper
-window.doLogin=doLogin;
-window.doLogout=doLogout;
-window.nav=nav;
-window.openModal=openModal;
-window.closeModal=closeModal;
-window.openDrawer=openDrawer;
-window.closeDrawer=closeDrawer;
-window.loadData=loadData;
-window.onClientSelect=onClientSelect;
-window.onGlobalSearch=onGlobalSearch;
-window.exportCSV=exportCSV;
-window.exportTxnCSV=exportTxnCSV;
-window.saveEvent=saveEvent;
-window.delEvent=delEvent;
-window.saveRem=saveRem;
-window.saveCAI=saveCAI;
-window.saveChal=saveChal;
-window.sendBC=sendBC;
-window.saveClient=saveClient;
-window.editClient=editClient;
-window.delClient=delClient;
-window.saveReply=saveReply;
-window.confirmAppt=confirmAppt;
-window.updateRem=updateRem;
-window.delRem=delRem;
-window.updateCAI=updateCAI;
-window.uploadBS=uploadBS;
-window.changeCat=changeCat;
-window.saveCat=saveCat;
-window.uploadTally=uploadTally;
-window.openRcptDrawer=openRcptDrawer;
-window.openQnADrawer=openQnADrawer;
-window.openApptDrawer=openApptDrawer;
-window.openDocDrawer=openDocDrawer;
-window.openRemDrawer=openRemDrawer;
-window.openCAIDrawer=openCAIDrawer;
-window.openBSDrawer=openBSDrawer;
-window.filterCli=filterCli;
-window.selClientGo=selClientGo;
-window.renderTransactions=renderTransactions;
-
-}); // end window.load
 </script>
 </body>
 </html>
