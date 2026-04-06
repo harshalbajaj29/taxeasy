@@ -1563,45 +1563,115 @@ async function uploadBS(){
 async function processBS(fileContent,fileName,clientPhone,statementId){
   try{
     document.getElementById('bs-fill').style.width='40%';
-    var response=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',
-      headers:{
-        'Content-Type':'application/json',
-        'x-api-key':'YOUR_CLAUDE_API_KEY',
-        'anthropic-version':'2023-06-01',
-        'anthropic-dangerous-direct-browser-access':'true'
-      },
-      body:JSON.stringify({
-        model:'claude-haiku-4-5-20251001',
-        max_tokens:4000,
-        messages:[{role:'user',content:'You are an expert Indian CA assistant. Read this bank statement text and extract ALL transactions. For each transaction return JSON with: transaction_date (YYYY-MM-DD), description (cleaned text), amount (positive number), type (debit or credit), balance (number or null), category (one of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, suspense), needs_review (true if suspense or ambiguous). Use suspense ONLY if genuinely cannot determine. Return ONLY a valid JSON array, no markdown.\n\nBank statement:\n'+fileContent.slice(0,8000)}]
+    document.getElementById('bs-status').textContent='Reading bank statement with Claude AI...';
+
+    var prompt = 'You are an expert Indian CA assistant. Read this bank statement and extract ALL transactions.\n\n'
+      + 'For each transaction return JSON with:\n'
+      + '- transaction_date: YYYY-MM-DD format\n'
+      + '- description: cleaned transaction description\n'
+      + '- amount: positive number always\n'
+      + '- type: debit or credit\n'
+      + '- balance: running balance or null\n'
+      + '- category: exactly one of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, suspense\n'
+      + '- needs_review: true only if suspense\n\n'
+      + 'Category rules:\n'
+      + 'HPCL BPCL IOCL PETROL FUEL = fuel\n'
+      + 'SWIGGY ZOMATO BIGBASKET DMART RELIANCE FRESH = groceries\n'
+      + 'SALARY SAL PAYROLL = salary\n'
+      + 'GST GSTIN = gst\n'
+      + 'TDS INCOME TAX = tds\n'
+      + 'IRCTC UBER OLA AIRLINE = travel\n'
+      + 'MEDICAL PHARMACY HOSPITAL CLINIC = medical\n'
+      + 'ELECTRICITY WATER BROADBAND AIRTEL JIO TATA = utilities\n'
+      + 'ATM CASH WITHDRAWAL = bank_charges\n'
+      + 'EMI LOAN = other\n'
+      + 'UPI unknown merchant = other\n'
+      + 'Truly unreadable = suspense\n\n'
+      + 'Return ONLY valid JSON array. No markdown. No explanation. No backticks.\n\n'
+      + 'Bank statement text:\n'
+      + fileContent.slice(0, 8000);
+
+    var response = await fetch('https://taxnio-ai.harshalbajaj29.workers.dev', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        content: prompt
       })
     });
-    var data=await response.json();
+
+    if(!response.ok){
+      var errText = await response.text();
+      throw new Error('Worker error: ' + errText);
+    }
+
+    var data = await response.json();
     document.getElementById('bs-fill').style.width='70%';
-    var txt=data.content&&data.content[0]?data.content[0].text||'[]':'[]';
-    var txns=[];
-    try{txns=JSON.parse(txt.replace(/```json/g,'').replace(/```/g,'').trim());}catch(e){var m=txt.match(/\[[\s\S]*\]/);if(m)txns=JSON.parse(m[0]);}
-    document.getElementById('bs-status').textContent='Saving '+txns.length+' transactions...';
-    document.getElementById('bs-fill').style.width='85%';
-    var totC=0,totD=0,sus=0;
-    for(var i=0;i<txns.length;i+=50){
-      var batch=txns.slice(i,i+50).map(function(t){
-        if(t.type==='credit')totC+=parseFloat(t.amount)||0;else totD+=parseFloat(t.amount)||0;
-        if(t.category==='suspense')sus++;
-        return{client_phone:clientPhone,statement_id:statementId,transaction_date:t.transaction_date||null,description:t.description||'',amount:parseFloat(t.amount)||0,type:t.type||'debit',category:t.category||'other',balance:t.balance?parseFloat(t.balance):null,needs_review:t.needs_review||false,is_approved:false};
+    document.getElementById('bs-status').textContent='Parsing transactions...';
+
+    var responseText = (data.content && data.content[0]) ? data.content[0].text || '[]' : '[]';
+    var txns = [];
+
+    try {
+      var clean = responseText.replace(/```json/g,'').replace(/```/g,'').trim();
+      txns = JSON.parse(clean);
+    } catch(e) {
+      var m = responseText.match(/\[[\s\S]*\]/);
+      if(m) {
+        try { txns = JSON.parse(m[0]); } catch(e2) { txns = []; }
+      }
+    }
+
+    if(!Array.isArray(txns)) txns = [];
+
+    document.getElementById('bs-status').textContent = 'Saving ' + txns.length + ' transactions...';
+    document.getElementById('bs-fill').style.width = '85%';
+
+    var totC = 0, totD = 0, sus = 0;
+
+    // Save in batches of 50
+    for(var i = 0; i < txns.length; i += 50){
+      var batch = txns.slice(i, i+50).map(function(t){
+        var amt = parseFloat(t.amount) || 0;
+        if(t.type === 'credit') totC += amt; else totD += amt;
+        if(t.category === 'suspense') sus++;
+        return {
+          client_phone: clientPhone,
+          statement_id: statementId,
+          transaction_date: t.transaction_date || null,
+          description: t.description || '',
+          amount: amt,
+          type: t.type || 'debit',
+          category: t.category || 'other',
+          balance: t.balance ? parseFloat(t.balance) : null,
+          needs_review: t.needs_review || false,
+          is_approved: false
+        };
       });
       await sb.from('transactions').insert(batch);
     }
-    await sb.from('bank_statements').update({status:'done',transaction_count:txns.length,total_credits:totC,total_debits:totD}).eq('id',statementId);
-    document.getElementById('bs-fill').style.width='100%';
-    document.getElementById('bs-status').textContent='Done! '+txns.length+' transactions. '+sus+' in suspense.';
-    setTimeout(function(){closeModal();loadData();},2000);
-  }catch(err){
-    document.getElementById('bs-status').textContent='Error: '+err.message;
-    await sb.from('bank_statements').update({status:'error'}).eq('id',statementId);
+
+    // Update statement record
+    await sb.from('bank_statements').update({
+      status: 'done',
+      transaction_count: txns.length,
+      total_credits: totC,
+      total_debits: totD
+    }).eq('id', statementId);
+
+    document.getElementById('bs-fill').style.width = '100%';
+    document.getElementById('bs-status').textContent = 'Done! ' + txns.length + ' transactions categorised. ' + sus + ' in suspense.';
+    setTimeout(function(){ closeModal(); loadData(); }, 2500);
+
+  } catch(err){
+    console.error('processBS error:', err);
+    document.getElementById('bs-status').textContent = 'Error: ' + err.message;
+    document.getElementById('bs-save') && (document.getElementById('bs-save').disabled = false);
+    document.getElementById('bs-save') && (document.getElementById('bs-save').textContent = 'Upload & Process with AI');
+    await sb.from('bank_statements').update({status:'error'}).eq('id', statementId);
   }
 }
+
 
 // ── CATEGORY CHANGE ──
 function changeCat(id){openModal('change-cat',id);}
