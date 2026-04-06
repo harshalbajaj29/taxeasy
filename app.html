@@ -1256,7 +1256,7 @@ function renderTransactions(s,cat,dateFrom,dateTo){
           +'<td class="mono" style="font-size:13px">'+(x.transaction_date||'--')+'</td>'
           +(selectedClient?'':'<td style="font-size:13px">'+cName(x.client_phone||'')+'</td>')
           +'<td style="font-size:13px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(x.description||'--')+'</td>'
-          +'<td><span class="cat-badge cat-'+cat+'" onclick="changeCat(''+x.id+'')" title="Click to change category">'+catIcons[cat]+' '+cat.replace('_',' ')+'</span>'+(isSus?'<span style="font-size:11px;color:#8b6010;margin-left:4px">⚠️</span>':'')+'</td>'
+          +'<td><span class="cat-badge cat-'+cat+'" onclick="changeCat(\''+x.id+'\')" title="Click to change category">'+catIcons[cat]+' '+cat.replace('_',' ')+'</span>'+(isSus?'<span style="font-size:11px;color:#8b6010;margin-left:4px">⚠️</span>':'')+'</td>'
           +'<td><span class="badge '+(x.type==='credit'?'b-answered':'b-unpaid')+'" style="font-size:12px">'+(x.type||'--')+'</span></td>'
           +'<td class="'+(x.type==='credit'?'txn-credit':'txn-debit')+'" style="font-size:14px;font-weight:700">'+(x.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(x.amount)||0)+'</td>'
           +'<td class="mono" style="font-size:13px;color:var(--brown4)">'+(x.balance?'₹'+fmtN(parseFloat(x.balance)):'--')+'</td></tr>';
