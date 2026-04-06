@@ -1,0 +1,2019 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Taxnio — CA Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --cream:#fdf8f0;--cream2:#f7f0e4;--cream3:#ede4d3;--cream4:#e0d4be;
+  --brown:#3d2b1f;--brown2:#5c4033;--brown3:#7d5a4a;--brown4:#a67c6a;
+  --brown-light:#c4a882;--brown-lighter:#e8d9c4;
+  --accent:#8b4513;--accent2:#6d3410;--accent-light:#f5e8dc;--accent-mid:#d4956a;
+  --green:#2d6a4f;--green-light:#e8f5ee;--green-mid:#95c4a8;
+  --amber:#b5720a;--amber-light:#fef3dc;
+  --red:#8b1a1a;--red-light:#fdecea;
+  --blue:#1a3a5c;--blue-light:#e8f0f8;
+  --purple:#4a2070;--purple-light:#f0eaf8;
+  --r:8px;--r-lg:14px;
+  --shadow:0 1px 4px rgba(61,43,31,.08);
+  --shadow-md:0 4px 16px rgba(61,43,31,.10);
+  --shadow-lg:0 8px 32px rgba(61,43,31,.12);
+}
+html,body{height:100%;font-family:'Source Sans 3',sans-serif;background:var(--cream2);color:var(--brown);font-size:16px;line-height:1.65}
+button,input,select,textarea{font-family:inherit}
+h1,h2,h3{font-family:'Playfair Display',serif;font-weight:600;color:var(--brown)}
+::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:var(--cream2)}::-webkit-scrollbar-thumb{background:var(--brown-lighter);border-radius:4px}
+
+/* ── LOGIN ── */
+#login-page{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--cream2)}
+.login-wrap{width:100%;max-width:440px;padding:24px}
+.login-brand{display:flex;justify-content:center;margin-bottom:32px}
+.login-card{background:var(--cream);border:1px solid var(--cream3);border-radius:var(--r-lg);padding:40px 36px;box-shadow:var(--shadow-lg)}
+.login-card h2{font-size:22px;margin-bottom:6px}
+.login-sub{color:var(--brown3);font-size:13px;margin-bottom:24px}
+.f-field{margin-bottom:16px}
+.f-field label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.f-field input{width:100%;padding:10px 14px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:14px;transition:border-color .15s}
+.f-field input:focus{outline:none;border-color:var(--accent);background:var(--cream)}
+.f-field input::placeholder{color:var(--brown4)}
+.btn-login{width:100%;padding:11px;background:var(--accent);border:none;border-radius:var(--r);color:var(--cream);font-size:14px;font-weight:600;cursor:pointer;margin-top:8px;transition:background .15s}
+.btn-login:hover{background:var(--accent2)}
+.login-err{color:var(--red);font-size:12px;margin-top:10px;min-height:16px}
+
+/* ── APP SHELL ── */
+#app{display:none;height:100vh;flex-direction:column}
+#app.show{display:flex}
+
+/* ── TOPBAR ── */
+.topbar{display:flex;align-items:center;gap:10px;padding:0 18px;border-bottom:1.5px solid var(--cream3);background:var(--cream);height:56px;flex-shrink:0;box-shadow:var(--shadow)}
+.topbar-logo{display:flex;align-items:center;flex-shrink:0;margin-right:6px}
+.tb-div{width:1px;height:26px;background:var(--cream3);flex-shrink:0}
+.sel-wrap{position:relative;flex-shrink:0}
+.sel-wrap::after{content:'▾';position:absolute;right:9px;top:50%;transform:translateY(-50%);font-size:11px;color:var(--brown4);pointer-events:none}
+.client-sel{padding:6px 26px 6px 10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;font-weight:500;cursor:pointer;appearance:none;min-width:190px}
+.client-sel:focus{outline:none;border-color:var(--accent-mid)}
+.tb-search{flex:1;position:relative}
+.tb-search input{width:100%;padding:7px 10px 7px 32px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;transition:border-color .15s}
+.tb-search input:focus{outline:none;border-color:var(--accent-mid);background:var(--cream)}
+.tb-search input::placeholder{color:var(--brown4)}
+.tb-search::before{content:'🔍';position:absolute;left:9px;top:50%;transform:translateY(-50%);font-size:12px;pointer-events:none}
+.tb-right{display:flex;align-items:center;gap:8px;margin-left:auto;flex-shrink:0}
+.notif-btn{width:32px;height:32px;border-radius:50%;background:var(--cream2);border:1.5px solid var(--cream3);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:14px;position:relative}
+.notif-dot{position:absolute;top:5px;right:5px;width:7px;height:7px;border-radius:50%;background:var(--red);border:1.5px solid var(--cream);display:none}
+.btn-sm{padding:7px 14px;border-radius:var(--r);font-size:13px;font-weight:500;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown2);transition:all .12s}
+.btn-sm:hover{border-color:var(--accent-mid);color:var(--accent)}
+.btn-pri{padding:7px 14px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:var(--cream);transition:background .12s}
+.btn-pri:hover{background:var(--accent2)}
+.user-chip{display:flex;align-items:center;gap:7px;padding:4px 10px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:20px;cursor:pointer}
+.user-chip:hover{border-color:var(--accent-mid)}
+.u-av{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:9px;font-weight:700;color:var(--cream)}
+.u-name{font-size:13px;font-weight:500;color:var(--brown2)}
+
+/* ── BODY ── */
+.app-body{display:flex;flex:1;overflow:hidden}
+
+/* ── SIDEBAR ── */
+.sidebar{width:205px;flex-shrink:0;background:var(--cream);border-right:1.5px solid var(--cream3);display:flex;flex-direction:column;overflow-y:auto}
+.sb-sec{padding:14px 8px 6px}
+.sb-lbl{font-size:11px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.9px;padding:0 8px;margin-bottom:5px}
+.nav-btn{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:var(--r);font-size:13px;font-weight:500;color:var(--brown3);cursor:pointer;transition:all .12s;margin-bottom:2px;border:none;background:none;width:100%;text-align:left}
+.nav-btn:hover{background:var(--cream2);color:var(--brown)}
+.nav-btn.active{background:var(--accent-light);color:var(--accent);font-weight:600;border-left:3px solid var(--accent);padding-left:6px}
+.nav-btn svg{width:14px;height:14px;flex-shrink:0;opacity:.7}
+.nav-btn.active svg{opacity:1}
+.nav-badge{margin-left:auto;font-size:9px;font-weight:700;background:var(--red);color:white;padding:1px 5px;border-radius:10px}
+.sb-foot{padding:10px 8px;border-top:1.5px solid var(--cream3);margin-top:auto}
+.sb-user{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:var(--r);background:var(--cream2)}
+.sb-av{width:30px;height:30px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--cream);flex-shrink:0}
+.sb-info{flex:1;min-width:0}
+.sb-email{font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.sb-tag{font-size:10px;color:var(--brown4)}
+.sb-logout{background:none;border:none;cursor:pointer;color:var(--brown4);font-size:14px;padding:3px;border-radius:5px}
+.sb-logout:hover{color:var(--red)}
+
+/* ── MAIN ── */
+.main{flex:1;min-width:0;display:flex;flex-direction:column;overflow:hidden;background:var(--cream2)}
+.pg-head{display:flex;align-items:center;justify-content:space-between;padding:12px 20px;border-bottom:1.5px solid var(--cream3);background:var(--cream);flex-shrink:0}
+.pg-head h1{font-size:18px}
+.pg-head p{font-size:11px;color:var(--brown4);margin-top:1px}
+.pg-acts{display:flex;gap:8px}
+.page{flex:1;overflow-y:auto;padding:18px 20px}
+
+/* ── CARDS ── */
+.card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1.5px solid var(--cream3);background:var(--cream2)}
+.card-head h3{font-size:13px;font-weight:600;color:var(--brown)}
+.card-cnt{font-size:10px;font-weight:600;color:var(--brown4);background:var(--cream3);padding:2px 7px;border-radius:20px}
+
+/* ── STATS ROW ── */
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.stat-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:14px;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.stat-card:hover{border-color:var(--accent-mid);box-shadow:var(--shadow-md);transform:translateY(-1px)}
+.stat-emoji{font-size:18px;margin-bottom:8px}
+.stat-lbl{font-size:11px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.stat-val{font-family:'Playfair Display',serif;font-size:26px;font-weight:700;line-height:1;color:var(--brown)}
+.stat-sub{font-size:11px;color:var(--brown4);margin-top:4px}
+.sc-green .stat-val{color:var(--green)}
+.sc-amber .stat-val{color:var(--amber)}
+.sc-red .stat-val{color:var(--red)}
+.sc-blue .stat-val{color:var(--blue)}
+.sc-accent .stat-val{color:var(--accent)}
+
+/* ── QUICK ACTIONS ── */
+.qa-row{display:grid;grid-template-columns:repeat(5,1fr);gap:10px;margin-bottom:16px}
+.qa-btn{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:12px 8px;text-align:center;cursor:pointer;transition:all .15s;box-shadow:var(--shadow)}
+.qa-btn:hover{border-color:var(--accent-mid);background:var(--accent-light);transform:translateY(-1px)}
+.qa-icon{font-size:20px;margin-bottom:5px}
+.qa-lbl{font-size:13px;font-weight:600;color:var(--brown2)}
+
+/* ── GRID LAYOUTS ── */
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.grid-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:14px;margin-bottom:14px}
+
+/* ── CALENDAR ── */
+.cal-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow)}
+.cal-title{font-family:'Playfair Display',serif;font-size:14px;font-weight:600;color:var(--brown);margin-bottom:4px}
+.cal-sub{font-size:11px;color:var(--brown4);margin-bottom:14px}
+.cal-badge{font-size:10px;font-weight:600;padding:2px 8px;border-radius:20px;margin-left:8px}
+.badge-ai{background:var(--accent-light);color:var(--accent);border:1px solid var(--accent-mid)}
+.badge-custom{background:var(--blue-light);color:var(--blue);border:1px solid #b0c8e8}
+.deadline-item{display:flex;align-items:center;gap:8px;padding:9px 10px;border-radius:var(--r);margin-bottom:6px;border:1px solid var(--cream3);background:var(--cream2);transition:all .12s;cursor:default}
+.dl-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.dl-info{flex:1;min-width:0}
+.dl-name{font-size:13px;font-weight:500;color:var(--brown)}
+.dl-desc{font-size:11px;color:var(--brown4)}
+.dl-date{font-size:11px;font-weight:600;font-family:'DM Mono',monospace;text-align:right;white-space:nowrap}
+.dl-urgent{background:var(--red-light);border-color:#f0b0b0}
+.dl-soon{background:var(--amber-light);border-color:#e8d090}
+.dl-ok{background:var(--green-light);border-color:var(--green-mid)}
+.add-event-btn{width:100%;margin-top:10px;padding:7px;border-radius:var(--r);border:1.5px dashed var(--cream4);background:transparent;color:var(--brown4);font-size:12px;cursor:pointer;transition:all .12s}
+.add-event-btn:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.custom-ev{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:var(--r);border:1px solid var(--blue-light);background:#f0f5fc;margin-bottom:5px}
+.cev-dot{width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.cev-info{flex:1;min-width:0}
+.cev-name{font-size:12px;font-weight:500;color:var(--blue)}
+.cev-date{font-size:10px;color:var(--brown4)}
+.cev-del{background:none;border:none;cursor:pointer;color:var(--brown4);font-size:14px;padding:0 3px}
+.cev-del:hover{color:var(--red)}
+
+/* ── FEED ── */
+.feed-item{display:flex;align-items:flex-start;gap:9px;padding:9px 14px;border-bottom:1px solid var(--cream3);transition:background .08s;cursor:pointer}
+.feed-item:hover{background:var(--cream2)}
+.feed-item:last-child{border-bottom:none}
+.feed-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feed-info{flex:1;min-width:0}
+.feed-title{font-size:13px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.feed-sub{font-size:11px;color:var(--brown4)}
+.feed-time{font-size:10px;color:var(--brown4);white-space:nowrap;font-family:'DM Mono',monospace}
+
+/* ── OUTSTANDING ── */
+.out-item{display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--cream3);transition:background .08s}
+.out-item:hover{background:var(--cream2)}
+.out-item:last-child{border-bottom:none}
+.out-av{width:30px;height:30px;border-radius:50%;background:var(--accent-light);border:1px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0}
+.out-info{flex:1;min-width:0}
+.out-name{font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.out-days{font-size:10px;color:var(--brown4)}
+.out-amt{font-family:'Playfair Display',serif;font-size:15px;font-weight:700;color:var(--red);margin-right:6px}
+.remind-btn{padding:4px 9px;border-radius:var(--r);background:var(--accent-light);border:1px solid var(--accent-mid);color:var(--accent);font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap}
+.remind-btn:hover{background:var(--accent);color:var(--cream)}
+
+/* ── BADGES ── */
+.badge{display:inline-flex;align-items:center;padding:3px 9px;border-radius:20px;font-size:11px;font-weight:700;text-transform:capitalize}
+.b-receipt,.b-answered,.b-active,.b-done,.b-confirmed,.b-paid,.b-processed{background:var(--green-light);color:var(--green)}
+.b-invoice{background:#e8edff;color:#3b5bdb}
+.b-expense,.b-document,.b-pending,.b-quiet{background:var(--amber-light);color:var(--amber)}
+.b-question{background:var(--blue-light);color:var(--blue)}
+.b-appointment{background:var(--purple-light);color:var(--purple)}
+.b-general,.b-other{background:var(--cream3);color:var(--brown4)}
+.b-unpaid,.b-overdue,.b-review,.b-inactive,.b-error{background:var(--red-light);color:var(--red)}
+
+/* ── HEALTH DOTS ── */
+.h-active{background:#27ae60}.h-quiet{background:#f39c12}.h-inactive{background:#c0392b}
+
+/* ── TABLE ── */
+.tbl-wrap{overflow:auto;flex:1}
+table{width:100%;border-collapse:collapse}
+thead th{padding:10px 14px;text-align:left;font-size:12px;font-weight:700;color:var(--brown4);text-transform:uppercase;letter-spacing:.6px;border-bottom:1.5px solid var(--cream3);white-space:nowrap;background:var(--cream2);position:sticky;top:0;z-index:1}
+tbody td{padding:11px 14px;border-bottom:1px solid var(--cream3);vertical-align:middle;color:var(--brown);font-size:14px}
+tbody tr{cursor:pointer;transition:background .08s}
+tbody tr:hover td{background:var(--cream2)}
+tbody tr:last-child td{border-bottom:none}
+.mono{font-family:'DM Mono',monospace;font-size:13px}
+.amt{font-family:'DM Mono',monospace;font-size:12px;font-weight:600;color:var(--green)}
+.desc-cell{color:var(--brown3);max-width:200px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+
+/* ── EMPTY / SPINNER ── */
+.empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 24px;text-align:center}
+.empty-icon{font-size:28px;margin-bottom:8px;opacity:.3}
+.empty p{color:var(--brown4);font-size:13px}
+.spin-wrap{display:flex;align-items:center;justify-content:center;padding:60px}
+.spinner{width:22px;height:22px;border:2.5px solid var(--cream3);border-top-color:var(--accent);border-radius:50%;animation:spin .6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ── PANEL ── */
+.panel{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow)}
+.panel-head{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;background:var(--cream2)}
+.panel-head h3{font-size:13px;font-weight:600;color:var(--brown)}
+.toolbar{display:flex;gap:8px;padding:8px 10px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;align-items:center;background:var(--cream2)}
+.srch{width:100%;padding:6px 10px;background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px}
+.srch:focus{outline:none;border-color:var(--accent-mid)}
+.srch::placeholder{color:var(--brown4)}
+.type-sel{padding:6px 10px;background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:12px;cursor:pointer}
+
+/* ── DRAWER ── */
+.overlay{display:none;position:fixed;inset:0;background:rgba(61,43,31,.3);z-index:90;backdrop-filter:blur(2px)}
+.overlay.open{display:block}
+.drawer{position:fixed;right:-480px;top:0;width:460px;height:100vh;background:var(--cream);border-left:1.5px solid var(--cream3);z-index:100;transition:right .28s cubic-bezier(.4,0,.2,1);overflow-y:auto;display:flex;flex-direction:column;box-shadow:-4px 0 24px rgba(61,43,31,.12)}
+.drawer.open{right:0}
+.drawer-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;border-bottom:1.5px solid var(--cream3);flex-shrink:0;background:var(--cream2)}
+.drawer-head h3{font-size:15px;color:var(--brown)}
+.drawer-close{background:var(--cream);border:1.5px solid var(--cream3);border-radius:6px;color:var(--brown3);cursor:pointer;padding:3px 8px;font-size:14px}
+.drawer-body{padding:20px;flex:1}
+.dr{margin-bottom:15px}
+.dr .dl{font-size:10px;font-weight:700;color:var(--brown4);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.dr .dv{font-size:14px;color:var(--brown)}
+.dr .dv.big{font-family:'Playfair Display',serif;font-size:22px;font-weight:700;color:var(--green)}
+.dr-div{border:none;border-top:1px solid var(--cream3);margin:14px 0}
+.raw-box{background:var(--cream2);border:1px solid var(--cream3);border-radius:var(--r);padding:10px;font-size:11px;color:var(--brown3);font-family:'DM Mono',monospace;line-height:1.8;white-space:pre-wrap;word-break:break-word;max-height:160px;overflow-y:auto}
+.ai-box{background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);padding:12px;font-size:13px;color:var(--brown);line-height:1.7;margin-top:4px}
+.reply-area{width:100%;padding:9px 12px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;resize:vertical;min-height:80px;margin-top:8px}
+.reply-area:focus{outline:none;border-color:var(--accent-mid)}
+.btn-reply{margin-top:8px;padding:8px 16px;background:var(--accent);border:none;border-radius:var(--r);color:var(--cream);font-size:13px;font-weight:600;cursor:pointer}
+.btn-reply:hover{background:var(--accent2)}
+.reply-ok{color:var(--green);font-size:12px;font-weight:500;margin-top:5px;display:none}
+
+/* ── CLIENT 360 ── */
+.c360-wrap{display:grid;grid-template-columns:270px 1fr;gap:14px;height:calc(100vh - 128px)}
+.c360-left{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:18px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;overflow-y:auto}
+.c360-av{width:50px;height:50px;border-radius:50%;background:var(--accent-light);border:2px solid var(--accent-mid);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:700;color:var(--accent);font-family:'DM Mono',monospace;flex-shrink:0}
+.c360-name{font-family:'Playfair Display',serif;font-size:16px;font-weight:600;color:var(--brown)}
+.c360-ph{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
+.if-lbl{font-size:10px;font-weight:600;color:var(--brown4);text-transform:uppercase;letter-spacing:.6px;margin-bottom:2px}
+.if-val{font-size:13px;color:var(--brown)}
+.c-act-btn{padding:7px 10px;border-radius:var(--r);font-size:12px;font-weight:600;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown2);width:100%;margin-bottom:5px;transition:all .12s}
+.c-act-btn:hover{border-color:var(--accent-mid);color:var(--accent);background:var(--accent-light)}
+.c-act-btn.pri{background:var(--accent);color:var(--cream);border-color:var(--accent)}
+.c-act-btn.pri:hover{background:var(--accent2)}
+.tab-row{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:10px}
+.tab-b{padding:4px 10px;border-radius:20px;font-size:12px;font-weight:500;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown3);transition:all .12s;white-space:nowrap}
+.tab-b.active{background:var(--accent);color:var(--cream);border-color:var(--accent)}
+.tab-b:hover:not(.active){border-color:var(--accent-mid);color:var(--brown)}
+.tab-pane{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);overflow:hidden;box-shadow:var(--shadow);flex:1}
+
+/* ── DOC GRID ── */
+.doc-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:10px;padding:12px}
+.doc-card{background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:12px;cursor:pointer;transition:all .15s}
+.doc-card:hover{border-color:var(--accent-mid);box-shadow:var(--shadow-md)}
+.doc-icon{font-size:24px;margin-bottom:6px}
+.doc-name{font-size:11px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:var(--brown)}
+.doc-type{font-size:10px;color:var(--brown4)}
+
+/* ── MODAL ── */
+.modal-ov{display:none;position:fixed;inset:0;background:rgba(61,43,31,.4);z-index:200;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+.modal-ov.open{display:flex}
+.modal{background:var(--cream);border-radius:var(--r-lg);padding:24px;width:100%;max-width:500px;box-shadow:var(--shadow-lg);border:1.5px solid var(--cream3);max-height:90vh;overflow-y:auto}
+.modal h3{font-size:16px;color:var(--brown);margin-bottom:16px}
+.mf{margin-bottom:13px}
+.mf label{display:block;font-size:11px;font-weight:600;color:var(--brown3);text-transform:uppercase;letter-spacing:.6px;margin-bottom:4px}
+.mf input,.mf select,.mf textarea{width:100%;padding:8px 11px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;transition:border-color .12s}
+.mf input:focus,.mf select:focus,.mf textarea:focus{outline:none;border-color:var(--accent-mid)}
+.mf textarea{min-height:70px;resize:vertical}
+.modal-btns{display:flex;gap:8px;justify-content:flex-end;margin-top:16px}
+.modal-cancel{padding:8px 16px;border-radius:var(--r);font-size:13px;cursor:pointer;border:1.5px solid var(--cream3);background:var(--cream2);color:var(--brown3)}
+.modal-save{padding:8px 16px;border-radius:var(--r);font-size:13px;font-weight:600;cursor:pointer;background:var(--accent);border:none;color:var(--cream)}
+
+/* ── UPLOAD ZONE ── */
+.upload-zone{border:2px dashed var(--cream4);border-radius:var(--r-lg);padding:24px;text-align:center;cursor:pointer;transition:all .15s;background:var(--cream2)}
+.upload-zone:hover{border-color:var(--accent-mid);background:var(--accent-light)}
+.upload-zone p{font-size:13px;color:var(--brown3);margin-top:5px}
+.progress-bar{height:5px;background:var(--cream3);border-radius:3px;overflow:hidden;margin-top:10px}
+.progress-fill{height:100%;background:var(--accent);border-radius:3px;transition:width .3s;width:0%}
+.progress-txt{font-size:12px;color:var(--brown3);margin-top:7px;text-align:center}
+
+/* ── CLIENT DASHBOARD HEADER ── */
+.cdash-head{background:linear-gradient(135deg,#8b4513 0%,#6d3410 100%);border-radius:var(--r-lg);padding:20px;color:var(--cream);margin-bottom:14px;box-shadow:var(--shadow-md)}
+.cdash-name{font-family:'Playfair Display',serif;font-size:20px;font-weight:700;color:white;margin-bottom:3px}
+.cdash-meta{font-size:12px;color:rgba(255,240,220,.65)}
+.cdash-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:14px}
+.cdash-stat{background:rgba(255,255,255,.12);border-radius:var(--r);padding:10px;text-align:center}
+.cdash-stat-val{font-family:'Playfair Display',serif;font-size:18px;font-weight:700;color:white}
+.cdash-stat-lbl{font-size:10px;color:rgba(255,240,220,.55);text-transform:uppercase;letter-spacing:.5px;margin-top:2px}
+
+/* ── SPEND BARS ── */
+.spend-card{background:var(--cream);border:1.5px solid var(--cream3);border-radius:var(--r-lg);padding:16px;box-shadow:var(--shadow)}
+.spend-row{display:flex;align-items:center;gap:8px;margin-bottom:7px}
+.spend-lbl{font-size:13px;font-weight:500;color:var(--brown);width:100px;flex-shrink:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spend-track{flex:1;height:9px;background:var(--cream3);border-radius:5px;overflow:hidden}
+.spend-fill{height:100%;border-radius:5px;transition:width .5s}
+.spend-amt{font-size:13px;font-weight:600;color:var(--brown2);font-family:'DM Mono',monospace;width:72px;text-align:right;flex-shrink:0}
+.spend-pct{font-size:12px;color:var(--brown4);width:28px;text-align:right;flex-shrink:0}
+
+/* ── TXN COLORS ── */
+.cat-badge{font-size:11px;font-weight:600;padding:2px 7px;border-radius:20px;cursor:pointer}
+.cat-fuel{background:#fef3dc;color:#b5720a}.cat-groceries{background:#e8f5ee;color:#2d6a4f}
+.cat-salary{background:#e8f0f8;color:#1a3a5c}.cat-rent{background:#f0eaf8;color:#4a2070}
+.cat-office{background:#fdecea;color:#8b1a1a}.cat-travel{background:#e8edff;color:#3b5bdb}
+.cat-medical{background:#fff0e8;color:#8b4513}.cat-utilities{background:#f0f8e8;color:#3d6b1f}
+.cat-gst{background:#fef3dc;color:#8b6010}.cat-tds{background:#f8e8f0;color:#6b1a50}
+.cat-entertainment{background:#e8f8f8;color:#1a6b6b}.cat-bank_charges{background:#f4f4f4;color:#555}
+.cat-insurance{background:#e8f0e8;color:#2d502d}
+.cat-other,.cat-others,.cat-business_income,.cat-refund,.cat-transfer,.cat-suspense{background:#fff0e0;color:#c05000}
+/* ── SUSPENSE REVIEW ── */
+.sus-row{background:var(--cream);border:1.5px solid #e0c090;border-radius:var(--r-lg);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.sus-row:hover{border-color:var(--accent-mid)}
+.sus-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.sus-desc{font-size:13px;font-weight:600;color:var(--brown);flex:1}
+.sus-amt{font-family:'DM Mono',monospace;font-size:13px;font-weight:700}
+.sus-date{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
+.sus-comment{width:100%;padding:8px 11px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;resize:none;min-height:54px;margin-bottom:8px}
+.sus-comment:focus{outline:none;border-color:var(--accent-mid)}
+.sus-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sus-ai-result{margin-top:8px;padding:10px 12px;background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);font-size:13px;color:var(--brown);display:none}
+.sus-ai-result.show{display:block}
+.sus-mem{font-size:11px;color:var(--green);margin-top:4px;display:none}
+.sus-mem.show{display:block}
+.txn-debit{color:var(--red);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
+.txn-credit{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
+
+/* ── COMING SOON ── */
+.coming-soon{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:44px 24px;text-align:center}
+.coming-soon h3{font-size:16px;color:var(--brown);margin-bottom:7px}
+.coming-soon p{font-size:13px;color:var(--brown4);max-width:280px;line-height:1.7}
+.soon-tag{display:inline-block;margin-top:10px;padding:4px 12px;background:var(--accent-light);color:var(--accent);border-radius:20px;font-size:11px;font-weight:600;border:1px solid var(--accent-mid)}
+</style>
+</head>
+<body>
+
+<!-- LOGIN PAGE -->
+<div id="login-page">
+  <div class="login-wrap">
+    <div class="login-brand">
+      <img src="taxnio-logo.png" alt="Taxnio" style="height:56px;width:auto" onerror="this.style.display='none'">
+    </div>
+    <div class="login-card">
+      <h2>Welcome back</h2>
+      <p class="login-sub">Sign in to your Taxnio CA dashboard</p>
+      <div class="f-field">
+        <label>Email address</label>
+        <input type="email" id="login-email" placeholder="ca@yourfirm.com" autofocus>
+      </div>
+      <div class="f-field">
+        <label>Password</label>
+        <input type="password" id="login-password" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+      </div>
+      <button class="btn-login" id="login-btn" onclick="doLogin()">Sign in to Dashboard</button>
+      <div class="login-err" id="login-err"></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN APP -->
+<div id="app">
+  <!-- TOPBAR -->
+  <div class="topbar">
+    <div class="topbar-logo">
+      <img src="taxnio-logo.png" alt="Taxnio" style="height:32px;width:auto" onerror="this.style.display='none'">
+    </div>
+    <div class="tb-div"></div>
+    <div class="sel-wrap">
+      <select class="client-sel" id="client-dropdown" onchange="onClientSelect(this.value)">
+        <option value="">All Clients</option>
+      </select>
+    </div>
+    <div class="tb-search">
+      <input type="text" placeholder="Search clients, receipts, documents..." id="global-search" oninput="onGlobalSearch(this.value)">
+    </div>
+    <div class="tb-right">
+      <div class="notif-btn" title="Notifications">🔔<div class="notif-dot" id="notif-dot"></div></div>
+      <button class="btn-sm" id="refresh-btn" onclick="loadData()">↺ Refresh</button>
+      <button class="btn-pri" onclick="openModal('reminder')">+ Reminder</button>
+      <div class="user-chip" onclick="doLogout()" title="Sign out">
+        <div class="u-av" id="user-av">CA</div>
+        <span class="u-name" id="user-nm">CA</span>
+        <span style="color:var(--brown4);font-size:12px">⏻</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="app-body">
+    <!-- SIDEBAR -->
+    <div class="sidebar">
+      <div class="sb-sec">
+        <div class="sb-lbl">Main</div>
+        <button class="nav-btn active" data-view="home" onclick="nav('home')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Overview
+        </button>
+        <button class="nav-btn" data-view="client-dash" onclick="nav('client-dash')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>Client Dashboard
+        </button>
+        <button class="nav-btn" data-view="clients" onclick="nav('clients')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>Manage Clients
+        </button>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Activity</div>
+        <button class="nav-btn" data-view="receipts" onclick="nav('receipts')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>Receipts
+        </button>
+        <button class="nav-btn" data-view="qna" onclick="nav('qna')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>Q&amp;A Inbox
+          <span class="nav-badge" id="qna-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-btn" data-view="appointments" onclick="nav('appointments')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>Appointments
+          <span class="nav-badge" id="appt-badge" style="display:none">0</span>
+        </button>
+        <button class="nav-btn" data-view="documents" onclick="nav('documents')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 01-2 2H4a2 2 0 01-2-2V5a2 2 0 012-2h5l2 3h9a2 2 0 012 2z"/></svg>Documents
+        </button>
+        <button class="nav-btn" data-view="reminders" onclick="nav('reminders')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 006 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 01-3.46 0"/></svg>Reminders
+        </button>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Finance</div>
+        <button class="nav-btn" data-view="ca-invoices" onclick="nav('ca-invoices')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>CA Invoices
+        </button>
+        <button class="nav-btn" data-view="challans" onclick="nav('challans')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/></svg>Challans
+        </button>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Bank & Spending</div>
+        <button class="nav-btn" data-view="bank-statements" onclick="nav('bank-statements')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>Bank Statements
+        </button>
+        <button class="nav-btn" data-view="transactions" onclick="nav('transactions')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>Transactions
+        </button>
+        <button class="nav-btn" data-view="spending" onclick="nav('spending')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>Spending Analysis
+        </button>
+        <button class="nav-btn" data-view="others-review" onclick="nav('others-review')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Others Review
+          <span class="nav-badge" id="others-badge" style="display:none">0</span>
+        </button>
+      </div>
+      <div class="sb-sec">
+        <div class="sb-lbl">Tools</div>
+        <button class="nav-btn" data-view="tally" onclick="nav('tally')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>Tally Import
+        </button>
+      </div>
+      <div class="sb-foot">
+        <div class="sb-user">
+          <div class="sb-av" id="sb-av">CA</div>
+          <div class="sb-info">
+            <div class="sb-email" id="sb-email">Loading...</div>
+            <div class="sb-tag">Smart Tax · Happy Clients</div>
+          </div>
+          <button class="sb-logout" onclick="doLogout()" title="Sign out">⏻</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="main">
+      <div class="pg-head">
+        <div><h1 id="pg-title">Overview</h1><p id="pg-sub">Your daily briefing</p></div>
+        <div class="pg-acts" id="pg-acts"></div>
+      </div>
+      <div class="page" id="page-content">
+        <div class="spin-wrap"><div class="spinner"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- DRAWER -->
+<div class="overlay" id="overlay" onclick="closeDrawer()"></div>
+<div class="drawer" id="drawer">
+  <div class="drawer-head">
+    <h3 id="drawer-title">Detail</h3>
+    <button class="drawer-close" onclick="closeDrawer()">✕</button>
+  </div>
+  <div class="drawer-body" id="drawer-body"></div>
+</div>
+
+<!-- MODAL -->
+<div class="modal-ov" id="modal-ov" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-box"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// -- SUPABASE --
+const SB_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
+const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+// -- STATE --
+let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[],transactions=[],bankStatements=[],customEvents=[];
+let currentView='home', selectedClient=null;
+
+// -- AUTH --
+async function doLogin(){
+  var btn=document.getElementById('login-btn');
+  var err=document.getElementById('login-err');
+  var email=document.getElementById('login-email').value.trim();
+  var pass=document.getElementById('login-password').value;
+  err.textContent='';
+  if(!email||!pass){err.textContent='Please fill in both fields';return;}
+  btn.textContent='Signing in...';btn.disabled=true;
+  try{
+    var res=await sb.auth.signInWithPassword({email:email,password:pass});
+    if(res.error){err.textContent=res.error.message;return;}
+    bootApp(res.data.user);
+  }catch(e){
+    err.textContent='Login failed: '+e.message;
+  }finally{
+    btn.textContent='Sign in to Dashboard';btn.disabled=false;
+  }
+}
+
+async function doLogout(){
+  await sb.auth.signOut();
+  document.getElementById('app').classList.remove('show');
+  document.getElementById('login-page').style.display='flex';
+}
+
+function bootApp(user){
+  try{
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('app').classList.add('show');
+    var email=user.email||'';
+    var initials=email.slice(0,2).toUpperCase();
+    var userAv=document.getElementById('user-av');
+    var userNm=document.getElementById('user-nm');
+    var sbAv=document.getElementById('sb-av');
+    var sbEmail=document.getElementById('sb-email');
+    if(userAv)userAv.textContent=initials;
+    if(userNm)userNm.textContent=email.split('@')[0];
+    if(sbAv)sbAv.textContent=initials;
+    if(sbEmail)sbEmail.textContent=email;
+    loadData();
+  }catch(e){
+    console.error('bootApp error:',e);
+    var err=document.getElementById('login-err');
+    if(err)err.textContent='App failed to initialise: '+e.message;
+    document.getElementById('login-page').style.display='flex';
+    document.getElementById('app').classList.remove('show');
+  }
+}
+
+// -- DATA --
+async function loadData(){
+  setPage('<div class="spin-wrap"><div class="spinner"></div></div>');
+  try{
+    var r=await Promise.all([
+      sb.from('invoices').select('*').order('received_at',{ascending:false}),
+      sb.from('questions').select('*').order('created_at',{ascending:false}),
+      sb.from('appointments').select('*').order('created_at',{ascending:false}),
+      sb.from('documents').select('*').order('created_at',{ascending:false}),
+      sb.from('reminders').select('*').order('due_date',{ascending:true}),
+      sb.from('ca_invoices').select('*').order('created_at',{ascending:false}),
+      sb.from('challans').select('*').order('created_at',{ascending:false}),
+      sb.from('clients').select('*').order('name',{ascending:true})
+    ]);
+    invoices=r[0].data||[];questions=r[1].data||[];appointments=r[2].data||[];
+    documents=r[3].data||[];reminders=r[4].data||[];caInvoices=r[5].data||[];challans=r[6].data||[];
+    var dbC=r[7].data||[];
+    var phones=[...new Set(dbC.map(function(c){return c.phone;}).filter(Boolean))];
+    clients=phones.map(function(phone){
+      var db=dbC.find(function(c){return c.phone===phone;})||{};
+      var last=invoices.filter(function(i){return i.client_phone===phone;})[0];
+      var lastSeen=last?last.received_at:null;
+      var days=lastSeen?Math.floor((Date.now()-new Date(lastSeen))/(864e5)):999;
+      return{phone:phone,id:db.id||null,name:db.name||null,business_name:db.business_name||null,
+        email:db.email||null,pan_number:db.pan_number||null,gst_number:db.gst_number||null,
+        address:db.address||null,notes:db.notes||null,is_active:db.is_active!==false,
+        count:invoices.filter(function(i){return i.client_phone===phone;}).length,
+        lastSeen:lastSeen,days:days,
+        total:invoices.filter(function(i){return i.client_phone===phone;}).reduce(function(s,i){return s+(parseFloat(i.amount)||0);},0),
+        health:days<14?'active':days<30?'quiet':'inactive'};
+    }).sort(function(a,b){return (a.name||a.phone).localeCompare(b.name||b.phone);});
+  }catch(e){
+    setPage('<div class="empty" style="margin-top:80px"><div class="empty-icon">⚠️</div><p style="color:var(--red)">Error loading: '+e.message+'</p><br><button class="btn-sm" onclick="loadData()">Retry</button></div>');
+    return;
+  }
+  // Load new tables (optional - won't break if missing)
+  try{var tr=await sb.from('transactions').select('*').order('transaction_date',{ascending:false});
+    var rawTxns=tr.data||[];
+    // Load memory and auto-apply
+    var memRes=await sb.from('category_memory').select('*');
+    var memory=memRes.data||[];
+    transactions=rawTxns.map(function(t){
+      if(t.ca_category) return t; // already manually set
+      if(t.category==='suspense'||t.category==='others'||t.needs_review){
+        var key=(t.description||'').toLowerCase().trim().slice(0,80);
+        var clientMem=memory.find(function(m){return m.client_phone===t.client_phone&&m.description_key===key;});
+        if(clientMem){
+          // auto-apply memory — mark it but don't overwrite ca_category so CA sees it happened
+          return Object.assign({},t,{ca_category:clientMem.category,needs_review:false,_auto_categorised:true});
+        }
+      }
+      return t;
+    });
+  }catch(e){transactions=[];}
+  try{var br=await sb.from('bank_statements').select('*').order('created_at',{ascending:false});bankStatements=br.data||[];}catch(e){bankStatements=[];}
+  customEvents=JSON.parse(localStorage.getItem('taxnio_events')||'[]');
+  updateBadges();
+  populateDrop();
+  renderView();
+}
+
+function cName(phone){if(!phone)return'--';var c=clients.find(function(x){return x.phone===phone;});return c&&c.name?c.name:phone;}
+function updateBadges(){
+  var pq=questions.filter(function(q){return q.needs_ca_review&&q.status!=='ca_replied';}).length;
+  var pa=appointments.filter(function(a){return a.status==='pending';}).length;
+  var po=transactions.filter(function(t){return (t.category==='suspense'||t.category==='others'||t.needs_review)&&!t.ca_category;}).length;
+  var qb=document.getElementById('qna-badge');var ab=document.getElementById('appt-badge');var ob=document.getElementById('others-badge');
+  if(qb){qb.textContent=pq;qb.style.display=pq>0?'inline':'none';}
+  if(ab){ab.textContent=pa;ab.style.display=pa>0?'inline':'none';}
+  if(ob){ob.textContent=po;ob.style.display=po>0?'inline':'none';}
+  document.getElementById('notif-dot').style.display=(pq+pa+po)>0?'block':'none';
+}
+function populateDrop(){
+  var dd=document.getElementById('client-dropdown');
+  var val=dd.value;
+  dd.innerHTML='<option value="">All Clients</option>';
+  clients.forEach(function(c){
+    var o=document.createElement('option');
+    o.value=c.phone;
+    o.textContent=c.name?c.name+' ('+c.phone+')':c.phone;
+    dd.appendChild(o);
+  });
+  if(val)dd.value=val;
+}
+function onClientSelect(phone){
+  if(phone){
+    selectedClient=clients.find(function(c){return c.phone===phone;})||{phone:phone};
+    // Stay on current page but refresh with client filter
+    // Only go to client-dash if on home or no specific page
+    if(currentView==='home'){
+      nav('client-dash');
+    } else {
+      // Stay on current view, just re-render with selected client
+      renderView();
+    }
+  }else{
+    selectedClient=null;
+    renderView();
+  }
+}
+function onGlobalSearch(val){
+  if(!val)return;
+  nav('receipts');
+  setTimeout(function(){var i=document.querySelector('.srch');if(i){i.value=val;renderReceipts(val,'');}},120);
+}
+
+// -- ROUTING --
+function nav(v){
+  currentView=v;
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});
+  var hr=new Date().getHours();
+  var gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
+  var T={
+    home:['Overview',gr+' -- here is your daily briefing'],
+    'client-dash':['Client Dashboard','Selected client overview and spending'],
+    clients:['Manage Clients','Add, edit and delete clients'],
+    receipts:['Receipts','All invoices and receipts from clients'],
+    qna:['Q&A Inbox','Client questions and AI answers'],
+    appointments:['Appointments','Meeting requests from clients'],
+    documents:['Documents','Client documents and files'],
+    reminders:['Reminders','Client reminders and follow-ups'],
+    'ca-invoices':['CA Invoices','Invoices raised to clients'],
+    challans:['Challans','Tax challans and payments'],
+    'bank-statements':['Bank Statements','Upload and manage bank statements'],
+    transactions:['Transactions','All categorised bank transactions'],
+    spending:['Spending Analysis','AI-powered expense breakdown by category'],
+    'others-review':['Others Review','AI-assisted categorisation of unidentified transactions'],
+    tally:['Tally Import','Import data from Tally']
+  };
+  var t=T[v]||['Dashboard',''];
+  document.getElementById('pg-title').textContent=t[0];
+  document.getElementById('pg-sub').textContent=t[1];
+  var pa=document.getElementById('pg-acts');pa.innerHTML='';
+  if(v==='receipts')pa.innerHTML='<button class="btn-sm" onclick="exportCSV()">↓ Export</button>';
+  if(v==='ca-invoices')pa.innerHTML='<button class="btn-pri" onclick="openModal(\'ca-invoice\')">+ New Invoice</button>';
+  if(v==='challans')pa.innerHTML='<button class="btn-pri" onclick="openModal(\'challan\')">+ New Challan</button>';
+  if(v==='reminders')pa.innerHTML='<button class="btn-pri" onclick="openModal(\'reminder\')">+ Add Reminder</button>';
+  if(v==='clients')pa.innerHTML='<button class="btn-pri" onclick="openModal(\'add-client\')">+ Add Client</button>';
+  if(v==='bank-statements')pa.innerHTML='<button class="btn-pri" onclick="openModal(\'upload-bank\')">+ Upload Statement</button>';
+  if(v==='transactions')pa.innerHTML='<button class="btn-sm" onclick="exportTxnCSV()">↓ Export CSV</button>';
+  renderView();
+}
+function renderView(){
+  if(currentView==='home')renderHome();
+  else if(currentView==='client-dash')renderClientDash();
+  else if(currentView==='clients')renderClients();
+  else if(currentView==='receipts')renderReceipts('','');
+  else if(currentView==='qna')renderQnA('','');
+  else if(currentView==='appointments')renderAppointments('');
+  else if(currentView==='documents')renderDocuments('');
+  else if(currentView==='reminders')renderReminders();
+  else if(currentView==='ca-invoices')renderCAInvoices();
+  else if(currentView==='challans')renderChallans();
+  else if(currentView==='bank-statements')renderBankStatements();
+  else if(currentView==='transactions')renderTransactions('','');
+  else if(currentView==='spending')renderSpending();
+  else if(currentView==='others-review')renderOthersReview();
+  else if(currentView==='tally')renderTally();
+}
+function setPage(h){document.getElementById('page-content').innerHTML=h;}
+
+// -- COMPLIANCE DATES --
+function getComplianceDates(){
+  var now=new Date(),m=now.getMonth(),y=now.getFullYear();
+  var nm=m===11?0:m+1,ny=m===11?y+1:y;
+  var months=['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  var dates=[];
+  function add(d,mo,yr,name,desc){
+    var dt=new Date(yr,mo,d);
+    var diff=Math.floor((dt-now)/864e5);
+    dates.push({date:d+' '+months[mo]+' '+yr,name:name,desc:desc,diff:diff});
+  }
+  add(7,m,y,'TDS Payment','Deposit TDS deducted in previous month');
+  add(11,m,y,'GSTR-1 Filing','Monthly sales return');
+  add(20,m,y,'GSTR-3B Filing','Summary GST return & pay tax');
+  add(7,nm,ny,'TDS Payment (Next)','Next month TDS deposit');
+  add(11,nm,ny,'GSTR-1 (Next)','Next month sales return');
+  if([2,5,8,11].indexOf(m)>=0)add(31,m,y,'TDS Quarterly Return','File TDS return for quarter');
+  if(m===2)add(31,m,y,'Professional Tax Maharashtra','Annual PT return');
+  if([5,8,11,2].indexOf(m)>=0)add(15,m,y,'Advance Tax','Pay advance tax instalment');
+  return dates.filter(function(d){return d.diff>=-1&&d.diff<=45;}).sort(function(a,b){return a.diff-b.diff;});
+}
+
+// -- HOME --
+function renderHome(){
+  var now=new Date();
+  var tm=invoices.filter(function(i){var d=new Date(i.received_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
+  var totAmt=invoices.reduce(function(s,i){return s+(parseFloat(i.amount)||0);},0);
+  var pendAppt=appointments.filter(function(a){return a.status==='pending';}).length;
+  var pendQ=questions.filter(function(q){return q.needs_ca_review&&q.status!=='ca_replied';}).length;
+  var totOwed=caInvoices.filter(function(i){return i.status==='unpaid';}).reduce(function(s,i){return s+(parseFloat(i.amount)||0);},0);
+  var compDates=getComplianceDates().slice(0,5);
+  var recentAct=[].concat(
+    invoices.slice(0,5).map(function(i){return {type:'receipt',title:(i.vendor_name||i.description||'Receipt'),sub:cName(i.client_phone||''),time:new Date(i.received_at),id:i.id,phone:i.client_phone};}),
+    questions.slice(0,3).map(function(q){return {type:'question',title:(q.question||'Question'),sub:cName(q.client_phone||''),time:new Date(q.created_at),id:q.id,phone:q.client_phone};}),
+    documents.slice(0,2).map(function(d){return {type:'document',title:(d.doc_type||'Document'),sub:cName(d.client_phone||''),time:new Date(d.created_at),id:d.id,phone:d.client_phone};})
+  ).sort(function(a,b){return b.time-a.time;}).slice(0,8);
+  var urgQ=questions.filter(function(q){return q.needs_ca_review&&q.status!=='ca_replied';}).slice(0,4);
+  var topOwed=caInvoices.filter(function(i){return i.status==='unpaid';}).sort(function(a,b){return (parseFloat(b.amount)||0)-(parseFloat(a.amount)||0);}).slice(0,5);
+  var pendChal=challans.filter(function(c){return c.status==='pending';}).slice(0,4);
+  var dotColors={receipt:'#27ae60',question:'#1a3a5c',document:'#b5720a'};
+  var dotIcons={receipt:'🧾',question:'💬',document:'📁'};
+  var hColor={active:'#27ae60',quiet:'#f39c12',inactive:'#c0392b'};
+
+  setPage(
+  '<div class="qa-row">'
+  +'<div class="qa-btn" onclick="openModal(\'add-client\')"><div class="qa-icon">👤</div><div class="qa-lbl">Add Client</div></div>'
+  +'<div class="qa-btn" onclick="nav(\'receipts\')"><div class="qa-icon">🧾</div><div class="qa-lbl">View Receipts</div></div>'
+  +'<div class="qa-btn" onclick="openModal(\'ca-invoice\')"><div class="qa-icon">💰</div><div class="qa-lbl">New Invoice</div></div>'
+  +'<div class="qa-btn" onclick="openModal(\'reminder\')"><div class="qa-icon">🔔</div><div class="qa-lbl">Add Reminder</div></div>'
+  +'<div class="qa-btn" onclick="openModal(\'broadcast\')"><div class="qa-icon">📢</div><div class="qa-lbl">Broadcast</div></div>'
+  +'</div>'
+
+  +'<div class="stats-row">'
+  +'<div class="stat-card" onclick="nav(\'receipts\')"><div class="stat-emoji">🧾</div><div class="stat-lbl">This month</div><div class="stat-val">'+tm.length+'</div><div class="stat-sub">'+invoices.length+' total</div></div>'
+  +'<div class="stat-card sc-green" onclick="nav(\'receipts\')"><div class="stat-emoji">₹</div><div class="stat-lbl">Total amount</div><div class="stat-val">₹'+fmtN(totAmt)+'</div><div class="stat-sub">All receipts</div></div>'
+  +'<div class="stat-card sc-accent" onclick="nav(\'ca-invoices\')"><div class="stat-emoji">💰</div><div class="stat-lbl">Outstanding</div><div class="stat-val">₹'+fmtN(totOwed)+'</div><div class="stat-sub">Unpaid fees</div></div>'
+  +'<div class="stat-card sc-amber" onclick="nav(\'appointments\')"><div class="stat-emoji">📅</div><div class="stat-lbl">Appointments</div><div class="stat-val">'+pendAppt+'</div><div class="stat-sub">Pending</div></div>'
+  +'<div class="stat-card sc-red" onclick="nav(\'qna\')"><div class="stat-emoji">💬</div><div class="stat-lbl">Questions</div><div class="stat-val">'+pendQ+'</div><div class="stat-sub">Need reply</div></div>'
+  +'</div>'
+
+  +'<div class="grid-2" style="margin-bottom:14px">'
+  // Compliance calendar
+  +'<div class="cal-card">'
+  +'<div style="display:flex;align-items:center;margin-bottom:4px"><div class="cal-title">Compliance Calendar</div><span class="cal-badge badge-ai">🤖 AI</span></div>'
+  +'<div class="cal-sub">GST · TDS · ITR · Maharashtra deadlines</div>'
+  +(compDates.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>No deadlines in 45 days</p></div>':
+    compDates.map(function(d){
+      var cls=d.diff<=3?'dl-urgent':d.diff<=7?'dl-soon':'dl-ok';
+      var dotC=d.diff<=3?'#c0392b':d.diff<=7?'#f39c12':'#27ae60';
+      var lbl=d.diff<0?'Overdue':d.diff===0?'Today':d.diff===1?'Tomorrow':'In '+d.diff+'d';
+      return '<div class="deadline-item '+cls+'"><div class="dl-dot" style="background:'+dotC+'"></div>'
+        +'<div class="dl-info"><div class="dl-name">'+d.name+'</div><div class="dl-desc">'+d.desc+'</div></div>'
+        +'<div class="dl-date" style="color:'+dotC+'">'+d.date+'<br><span style="font-size:9px">'+lbl+'</span></div></div>';
+    }).join('')
+  )+'</div>'
+  // My calendar
+  +'<div class="cal-card">'
+  +'<div style="display:flex;align-items:center;margin-bottom:4px"><div class="cal-title">My Calendar</div><span class="cal-badge badge-custom">📌 Custom</span></div>'
+  +'<div class="cal-sub">Your events and personal deadlines</div>'
+  +(customEvents.length===0?'<div style="text-align:center;padding:16px;color:var(--brown4);font-size:13px">No custom events yet</div>':
+    customEvents.sort(function(a,b){return new Date(a.date)-new Date(b.date);}).map(function(e){
+      return '<div class="custom-ev"><div class="cev-dot"></div><div class="cev-info"><div class="cev-name">'+e.title+'</div><div class="cev-date">'+e.date+(e.client?' · '+e.client:'')+'</div></div>'
+        +'<button class="cev-del" onclick="delEvent(\''+e.id+'\')">×</button></div>';
+    }).join('')
+  )
+  +'<button class="add-event-btn" onclick="openModal(\'add-event\')">+ Add custom event or deadline</button>'
+  +'</div>'
+  +'</div>'
+
+  +'<div class="grid-2" style="margin-bottom:14px">'
+  // Recent activity
+  +'<div class="card">'
+  +'<div class="card-head"><h3>Recent Client Activity</h3><span class="card-cnt">'+recentAct.length+'</span></div>'
+  +'<div style="overflow-y:auto;max-height:300px">'
+  +(recentAct.length===0?'<div class="empty"><div class="empty-icon">📭</div><p>No activity yet</p></div>':
+    recentAct.map(function(a){
+      return '<div class="feed-item" onclick="onClientSelect(\''+a.phone+'\')">'
+        +'<div class="feed-dot" style="background:'+(dotColors[a.type]||'#888')+'"></div>'
+        +'<div class="feed-info"><div class="feed-title">'+(dotIcons[a.type]||'📌')+' '+a.title+'</div><div class="feed-sub">'+a.sub+'</div></div>'
+        +'<div class="feed-time">'+tSince(a.time)+'</div></div>';
+    }).join('')
+  )+'</div></div>'
+  // Urgent Q&A
+  +'<div class="card">'
+  +'<div class="card-head"><h3>Questions Needing Reply</h3><span class="card-cnt" style="background:var(--red-light);color:var(--red)">'+urgQ.length+'</span></div>'
+  +'<div style="overflow-y:auto;max-height:300px">'
+  +(urgQ.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>All questions answered</p></div>':
+    urgQ.map(function(q){
+      return '<div style="padding:10px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnADrawer(\''+q.id+'\')">'
+        +'<div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:4px">'+(q.question||'--')+'</div>'
+        +'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--brown4)">'+cName(q.client_phone||'')+'</span><span style="margin-left:auto;font-size:10px;color:var(--brown4)">'+tSince(new Date(q.created_at))+'</span></div>'
+        +'<button class="btn-reply" style="margin-top:6px;padding:4px 10px;font-size:11px" onclick="event.stopPropagation();openQnADrawer(\''+q.id+'\')">Reply →</button></div>';
+    }).join('')
+  )+'</div></div>'
+  +'</div>'
+
+  +'<div class="grid-2" style="margin-bottom:14px">'
+  // Outstanding balances
+  +'<div class="card">'
+  +'<div class="card-head"><h3>Outstanding Balances</h3><button class="btn-sm" style="font-size:11px" onclick="nav(\'ca-invoices\')">View all →</button></div>'
+  +'<div style="overflow-y:auto;max-height:250px">'
+  +(topOwed.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>No outstanding balances</p></div>':
+    topOwed.map(function(inv){
+      var days=Math.floor((Date.now()-new Date(inv.created_at))/864e5);
+      var nm=cName(inv.client_phone||'');
+      return '<div class="out-item"><div class="out-av">'+nm.slice(0,2).toUpperCase()+'</div>'
+        +'<div class="out-info"><div class="out-name">'+nm+'</div><div class="out-days">'+days+' days overdue</div></div>'
+        +'<div class="out-amt">₹'+fmtN(parseFloat(inv.amount)||0)+'</div>'
+        +'<button class="remind-btn" onclick="alert(\'Reminder sent to \'+cName(\''+inv.client_phone+'\'))">📱 Remind</button></div>';
+    }).join('')
+  )+'</div></div>'
+  // Challans + appointments
+  +'<div class="card">'
+  +'<div class="card-head"><h3>Pending Challans</h3><button class="btn-sm" style="font-size:11px" onclick="nav(\'challans\')">View all →</button></div>'
+  +'<div style="overflow-y:auto;max-height:130px">'
+  +(pendChal.length===0?'<div class="empty" style="padding:16px"><div class="empty-icon" style="font-size:20px">✅</div><p>No pending challans</p></div>':
+    pendChal.map(function(c){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3)">'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(c.challan_type||'--')+' -- '+cName(c.client_phone||'')+'</div><div style="font-size:10px;color:var(--brown4)">'+(c.period||'--')+'</div></div>'
+        +'<div class="mono">₹'+fmtN(parseFloat(c.amount)||0)+'</div><span class="badge b-pending">Pending</span></div>';
+    }).join('')
+  )+'</div>'
+  +'<div class="card-head"><h3>Today\'s Appointments</h3></div>'
+  +'<div style="overflow-y:auto;max-height:110px">'
+  +(function(){
+    var todayA=appointments.filter(function(a){return new Date(a.created_at).toDateString()===new Date().toDateString();}).slice(0,3);
+    if(todayA.length===0)return '<div class="empty" style="padding:14px"><div class="empty-icon" style="font-size:18px">📅</div><p>No appointments today</p></div>';
+    return todayA.map(function(a){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openApptDrawer(\''+a.id+'\')">'
+        +'<div style="font-size:18px">📅</div><div style="flex:1;min-width:0">'
+        +'<div style="font-size:12px;font-weight:500;color:var(--brown)">'+(a.requested_time||'Time TBD')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+cName(a.client_phone||'')+'</div></div>'
+        +'<span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>';
+    }).join('');
+  }())
+  +'</div></div>'
+  +'</div>'
+
+  // Client health grid
+  +'<div class="card" style="margin-bottom:14px">'
+  +'<div class="card-head"><h3>Client Health Overview</h3><span class="card-cnt">'+clients.length+' clients</span></div>'
+  +'<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(195px,1fr))">'
+  +(clients.slice(0,12).map(function(c){
+    return '<div style="display:flex;align-items:center;gap:9px;padding:9px 14px;border-bottom:1px solid var(--cream3);border-right:1px solid var(--cream3);cursor:pointer" onclick="onClientSelect(\''+c.phone+'\')">'
+      +'<div style="width:7px;height:7px;border-radius:50%;background:'+hColor[c.health]+';flex-shrink:0"></div>'
+      +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(c.name||c.phone)+'</div>'
+      +'<div style="font-size:10px;color:var(--brown4)">'+(c.days===999?'No activity':c.days===0?'Today':c.days+' days ago')+'</div></div>'
+      +'<span style="font-size:10px;color:var(--brown4)">'+c.count+'</span></div>';
+  }).join(''))
+  +(clients.length>12?'<div style="grid-column:1/-1;padding:10px 14px;text-align:center"><button class="btn-sm" onclick="nav(\'clients\')">View all '+clients.length+' clients →</button></div>':'')
+  +'</div></div>'
+  );
+}
+
+function tSince(d){var s=Math.floor((Date.now()-d)/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
+function delEvent(id){customEvents=customEvents.filter(function(e){return e.id!==id;});localStorage.setItem('taxnio_events',JSON.stringify(customEvents));renderHome();}
+
+// -- CLIENT DASHBOARD --
+function renderClientDash(){
+  var c=selectedClient;
+  if(!c||!c.phone){setPage('<div class="empty" style="margin-top:60px"><div class="empty-icon">👤</div><p>Select a client from the dropdown above</p></div>');return;}
+  var ph=c.phone;
+  var cInv=invoices.filter(function(i){return i.client_phone===ph;});
+  var cTxn=transactions.filter(function(t){return t.client_phone===ph;});
+  var cQ=questions.filter(function(q){return q.client_phone===ph;});
+  var cA=appointments.filter(function(a){return a.client_phone===ph;});
+  var cCAI=caInvoices.filter(function(i){return i.client_phone===ph;});
+  var cBS=bankStatements.filter(function(b){return b.client_phone===ph;});
+  var totSpent=cInv.reduce(function(s,i){return s+(parseFloat(i.amount)||0);},0);
+  var totOwed=cCAI.filter(function(i){return i.status==='unpaid';}).reduce(function(s,i){return s+(parseFloat(i.amount)||0);},0);
+  var totDeb=cTxn.filter(function(t){return t.type==='debit';}).reduce(function(s,t){return s+(parseFloat(t.amount)||0);},0);
+  var totCred=cTxn.filter(function(t){return t.type==='credit';}).reduce(function(s,t){return s+(parseFloat(t.amount)||0);},0);
+  var cats={};
+  cTxn.filter(function(t){return t.type==='debit';}).forEach(function(t){var cat=t.ca_category||t.category||'other';cats[cat]=(cats[cat]||0)+(parseFloat(t.amount)||0);});
+  var catArr=Object.entries(cats).sort(function(a,b){return b[1]-a[1];});
+  var catTotal=Object.values(cats).reduce(function(s,v){return s+v;},0)||1;
+  var catColors={fuel:'#e8920a',groceries:'#27ae60',salary:'#1a3a5c',rent:'#4a2070',office:'#8b1a1a',travel:'#3b5bdb',medical:'#8b4513',utilities:'#3d6b1f',gst:'#8b6010',tds:'#6b1a50',entertainment:'#1a6b6b',bank_charges:'#555',suspense:'#c05000',insurance:'#2d502d',other:'#888'};
+  var catIcons={fuel:'⛽',groceries:'🛒',salary:'💼',rent:'🏠',office:'🖥️',travel:'✈️',medical:'🏥',utilities:'💡',gst:'📋',tds:'📊',entertainment:'🎬',bank_charges:'🏦',suspense:'❓',insurance:'🛡️',other:'📌'};
+  var suspArr=cTxn.filter(function(t){return t.category==='suspense'||t.needs_review;});
+
+  setPage(
+  '<div class="cdash-head">'
+  +'<div style="display:flex;align-items:flex-start;justify-content:space-between">'
+  +'<div><div class="cdash-name">'+(c.name||ph)+'</div><div class="cdash-meta">'+ph+(c.business_name?' · '+c.business_name:'')+(c.gst_number?' · '+c.gst_number:'')+'</div></div>'
+  +'<div style="display:flex;gap:8px"><button onclick="nav(\'client-dash\')" style="padding:6px 12px;border-radius:var(--r);border:1.5px solid rgba(255,255,255,.3);background:transparent;color:white;font-size:12px;font-weight:600;cursor:pointer">Full Profile</button></div>'
+  +'</div>'
+  +'<div class="cdash-stats">'
+  +'<div class="cdash-stat"><div class="cdash-stat-val">'+cInv.length+'</div><div class="cdash-stat-lbl">Receipts</div></div>'
+  +'<div class="cdash-stat"><div class="cdash-stat-val">₹'+fmtN(totSpent)+'</div><div class="cdash-stat-lbl">Total Spent</div></div>'
+  +'<div class="cdash-stat"><div class="cdash-stat-val" style="color:#ffccaa">₹'+fmtN(totOwed)+'</div><div class="cdash-stat-lbl">Outstanding</div></div>'
+  +'<div class="cdash-stat"><div class="cdash-stat-val">'+cTxn.length+'</div><div class="cdash-stat-lbl">Transactions</div></div>'
+  +'</div></div>'
+
+  +'<div class="grid-2" style="margin-bottom:14px">'
+  // Spending categories
+  +'<div class="spend-card">'
+  +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+  +'<h3 style="font-size:13px">Spending by Category</h3>'
+  +'<span style="font-size:11px;color:var(--brown4)">'+cTxn.filter(function(t){return t.type==='debit';}).length+' debits</span>'
+  +'</div>'
+  +(catArr.length===0?'<div class="empty" style="padding:20px"><div class="empty-icon" style="font-size:24px">📊</div><p>Upload bank statement to see spending breakdown</p><button class="btn-pri" style="margin-top:12px" onclick="openModal(\'upload-bank\',\''+ph+'\')">+ Upload Statement</button></div>':
+    catArr.map(function(e){
+      var cat=e[0],amt=e[1];
+      return '<div class="spend-row"><div class="spend-lbl">'+(catIcons[cat]||'📌')+' '+cat+'</div>'
+        +'<div class="spend-track"><div class="spend-fill" style="width:'+Math.round(amt/catTotal*100)+'%;background:'+(catColors[cat]||'#888')+'"></div></div>'
+        +'<div class="spend-amt">₹'+fmtN(amt)+'</div><div class="spend-pct">'+Math.round(amt/catTotal*100)+'%</div></div>';
+    }).join('')
+  )+'</div>'
+  // Right column
+  +'<div style="display:flex;flex-direction:column;gap:12px">'
+  +'<div class="spend-card">'
+  +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">'
+  +'<h3 style="font-size:13px">Bank Statements</h3>'
+  +'<button class="btn-pri" style="font-size:11px;padding:4px 10px" onclick="openModal(\'upload-bank\',\''+ph+'\')">+ Upload</button>'
+  +'</div>'
+  +(cBS.length===0?'<div style="text-align:center;padding:14px;color:var(--brown4);font-size:13px">No statements uploaded yet</div>':
+    cBS.slice(0,3).map(function(b){
+      return '<div style="display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid var(--cream3)">'
+        +'<div style="font-size:16px">🏦</div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(b.bank_name||b.file_name||'Statement')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+(b.transaction_count||0)+' txns · '+fmtD(b.created_at)+'</div></div>'
+        +'<span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></div>';
+    }).join('')
+  )+'</div>'
+  +'<div class="spend-card">'
+  +'<h3 style="font-size:13px;margin-bottom:10px">Account Summary</h3>'
+  +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+  +'<div style="background:var(--green-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">CREDITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--green)">₹'+fmtN(totCred)+'</div></div>'
+  +'<div style="background:var(--red-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--red);font-weight:600;margin-bottom:3px">DEBITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--red)">₹'+fmtN(totDeb)+'</div></div>'
+  +'</div></div>'
+  +'</div></div>'
+
+  +'<div class="grid-2" style="margin-bottom:14px">'
+  // Recent transactions
+  +'<div class="card"><div class="card-head"><h3>Recent Transactions</h3><button class="btn-sm" style="font-size:11px" onclick="nav(\'transactions\')">View all →</button></div>'
+  +'<div style="overflow-y:auto;max-height:240px">'
+  +(cTxn.length===0?'<div class="empty"><div class="empty-icon">💳</div><p>No transactions yet</p></div>':
+    cTxn.slice(0,8).map(function(t){
+      var cat=t.ca_category||t.category||'other';
+      return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3)">'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(t.description||'--')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'--')+'</div></div>'
+        +'<span class="cat-badge cat-'+cat+'" onclick="changeCat(\''+t.id+'\')">'+cat.replace('_',' ')+'</span>'
+        +'<div class="'+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(t.amount)||0)+'</div></div>';
+    }).join('')
+  )+'</div></div>'
+  // Recent receipts + questions
+  +'<div class="card"><div class="card-head"><h3>Recent Receipts</h3></div>'
+  +'<div style="overflow-y:auto;max-height:130px">'
+  +(cInv.slice(0,4).map(function(i){
+    return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openRcptDrawer(\''+i.id+'\')">'
+      +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(i.vendor_name||i.description||'Receipt')+'</div>'
+      +'<div style="font-size:10px;color:var(--brown4)">'+fmtD(i.received_at)+'</div></div>'
+      +'<div class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</div></div>';
+  }).join(''))
+  +'</div><div class="card-head"><h3>Recent Questions</h3></div>'
+  +'<div style="overflow-y:auto;max-height:100px">'
+  +(cQ.slice(0,2).map(function(q){
+    return '<div style="padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnADrawer(\''+q.id+'\')">'
+      +'<div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(q.question||'--')+'</div>'
+      +'<span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'" style="display:inline-block;margin-top:3px">'+(q.needs_ca_review?'Review':'Answered')+'</span></div>';
+  }).join(''))
+  +'</div></div></div>'
+
+  // Suspense entries
+  +(suspArr.length>0?'<div class="card" style="margin-bottom:14px;border-color:#e0c090">'
+    +'<div class="card-head" style="background:#fef3dc"><h3 style="color:#8b6010">⚠️ Suspense Entries -- Needs Review</h3><span class="card-cnt" style="background:#f5e8b0;color:#8b6010">'+suspArr.length+'</span></div>'
+    +'<div style="overflow-y:auto;max-height:200px">'
+    +suspArr.map(function(t){
+      return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--cream3)">'
+        +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(t.description||'--')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'--')+' · Claude could not categorise</div></div>'
+        +'<select onchange="saveCat(\''+t.id+'\',this.value)" style="padding:4px 8px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream2);font-size:12px;color:var(--brown);cursor:pointer">'
+        +'<option value="">Select category</option>'
+        +'<option>fuel</option><option>groceries</option><option>salary</option><option>rent</option>'
+        +'<option>office</option><option>travel</option><option>medical</option><option>utilities</option>'
+        +'<option>gst</option><option>tds</option><option>entertainment</option><option>bank_charges</option>'
+        +'<option>insurance</option><option>other</option></select>'
+        +'<div class="'+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(t.amount)||0)+'</div></div>';
+    }).join('')+'</div></div>':'')
+  );
+}
+
+// -- MANAGE CLIENTS --
+function renderClients(){
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>All Clients</h3><span>'+clients.length+'</span></div>'
+    +'<div class="toolbar"><input class="srch" style="flex:1" placeholder="Search name, phone, PAN, GST..." oninput="filterCli(this.value)"></div>'
+    +'<div class="tbl-wrap" id="cli-tbl">'+renderCliTable(clients)+'</div></div>');
+}
+function filterCli(s){var f=s?clients.filter(function(c){return (c.name||'').toLowerCase().includes(s.toLowerCase())||(c.phone||'').includes(s)||(c.pan_number||'').toLowerCase().includes(s.toLowerCase())||(c.gst_number||'').toLowerCase().includes(s.toLowerCase());;}):clients;var w=document.getElementById('cli-tbl');if(w)w.innerHTML=renderCliTable(f);}
+function renderCliTable(data){
+  if(!data||!data.length)return'<div class="empty"><div class="empty-icon">👥</div><p>No clients. Click + Add Client to start.</p></div>';
+  return'<table><thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>PAN</th><th>Health</th><th>Rcpts</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
+  +data.map(function(c){
+    return'<tr onclick="onClientSelect(\''+c.phone+'\')">'
+      +'<td style="font-weight:500">'+(c.name||'--')+'</td>'
+      +'<td class="mono">'+(c.phone||'--')+'</td>'
+      +'<td class="desc-cell">'+(c.business_name||'--')+'</td>'
+      +'<td class="mono">'+(c.pan_number||'--')+'</td>'
+      +'<td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px"><div style="width:7px;height:7px;border-radius:50%;background:'+(c.health==='active'?'#27ae60':c.health==='quiet'?'#f39c12':'#c0392b')+'"></div>'+c.health+'</span></td>'
+      +'<td style="text-align:center">'+c.count+'</td>'
+      +'<td class="amt">₹'+fmtN(c.total)+'</td>'
+      +'<td><span class="badge '+(c.is_active?'b-active':'b-inactive')+'">'+(c.is_active?'Active':'Inactive')+'</span></td>'
+      +'<td onclick="event.stopPropagation()" style="white-space:nowrap">'
+      +'<button onclick="openModal(\'edit-client\',\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--cream3);background:var(--cream2);color:var(--brown2);margin-right:4px">Edit</button>'
+      +'<button onclick="delClient(\''+c.phone+'\')" style="padding:3px 8px;border-radius:4px;font-size:11px;cursor:pointer;border:1px solid var(--red-light);background:var(--red-light);color:var(--red)">Delete</button>'
+      +'</td></tr>';
+  }).join('')+'</tbody></table>';
+}
+function selClientGo(ph){selectedClient=clients.find(function(c){return c.phone===ph;});document.getElementById('client-dropdown').value=ph;nav('client-dash');}
+
+// -- RECEIPTS --
+function renderReceipts(s,t){
+  var inv=selectedClient?invoices.filter(function(i){return i.client_phone===selectedClient.phone;}):invoices;
+  if(t)inv=inv.filter(function(i){return i.message_type===t;});
+  if(s)inv=inv.filter(function(i){return (i.vendor_name||'').toLowerCase().includes(s.toLowerCase())||(i.client_phone||'').includes(s)||(i.description||'').toLowerCase().includes(s.toLowerCase());});
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Receipts</h3><span>'+inv.length+' of '+invoices.length+'</span></div>'
+    +'<div class="toolbar"><input class="srch" style="flex:1" placeholder="Search vendor, client..." value="'+s+'" oninput="renderReceipts(this.value,document.getElementById(\'rt-sel\').value)">'
+    +'<select class="type-sel" id="rt-sel" onchange="renderReceipts(document.querySelector(\'.srch\').value,this.value)"><option value="">All</option><option value="receipt">Receipt</option><option value="invoice">Invoice</option><option value="expense">Expense</option></select>'
+    +'</div><div class="tbl-wrap">'+renderRcptTable(inv)+'</div></div>');
+}
+function renderRcptTable(data){
+  if(!data||!data.length)return'<div class="empty"><div class="empty-icon">📭</div><p>No receipts found</p></div>';
+  return'<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Vendor</th><th>Amount</th><th>Description</th></tr></thead><tbody>'
+  +data.map(function(i){
+    return'<tr onclick="openRcptDrawer(\''+i.id+'\')">'
+      +'<td class="mono">'+fmtD(i.received_at)+'</td>'
+      +'<td style="color:var(--brown3)">'+cName(i.client_phone||'')+'</td>'
+      +'<td><span class="badge b-'+(i.message_type||'receipt')+'">'+(i.message_type||'receipt').replace('_',' ')+'</span></td>'
+      +'<td style="font-weight:500">'+(i.vendor_name||'--')+'</td>'
+      +'<td class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</td>'
+      +'<td class="desc-cell">'+(i.description||i.raw_text||'--')+'</td></tr>';
+  }).join('')+'</tbody></table>';
+}
+
+// -- Q&A --
+function renderQnA(s,f){
+  var qs=selectedClient?questions.filter(function(q){return q.client_phone===selectedClient.phone;}):questions;
+  if(f==='review')qs=qs.filter(function(q){return q.needs_ca_review;});
+  if(f==='answered')qs=qs.filter(function(q){return !q.needs_ca_review;});
+  if(s)qs=qs.filter(function(q){return (q.question||'').toLowerCase().includes(s.toLowerCase());});
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Q&A Inbox</h3><span>'+qs.length+'</span></div>'
+    +'<div class="toolbar"><input class="srch" style="flex:1" placeholder="Search questions..." value="'+s+'" oninput="renderQnA(this.value,document.getElementById(\'qf-sel\').value)">'
+    +'<select class="type-sel" id="qf-sel" onchange="renderQnA(document.querySelector(\'.srch\').value,this.value)"><option value="">All</option><option value="review">Needs review</option><option value="answered">Answered</option></select>'
+    +'</div><div style="overflow-y:auto;flex:1">'
+    +(qs.length===0?'<div class="empty"><div class="empty-icon">💬</div><p>No questions yet</p></div>':
+      qs.map(function(q){
+        return'<div style="padding:11px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnADrawer(\''+q.id+'\')">'
+          +'<div style="display:flex;align-items:center;gap:8px;margin-bottom:5px">'
+          +'<span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'">'+(q.needs_ca_review?'Needs review':'AI answered')+'</span>'
+          +'<span style="font-size:11px;color:var(--brown4)">'+cName(q.client_phone||'')+'</span>'
+          +'<span style="margin-left:auto;font-size:10px;color:var(--brown4)">'+fmtD(q.created_at)+'</span></div>'
+          +'<div style="font-size:13px;font-weight:500;color:var(--brown)">'+(q.question||'--')+'</div>'
+          +'<div style="font-size:12px;color:var(--brown3);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+(q.ai_answer||q.ca_reply||'No answer yet')+'</div></div>';
+      }).join('')
+    )+'</div></div>');
+}
+
+// -- APPOINTMENTS --
+function renderAppointments(f){
+  var ap=selectedClient?appointments.filter(function(a){return a.client_phone===selectedClient.phone;}):appointments;
+  if(f==='pending')ap=ap.filter(function(a){return a.status==='pending';});
+  if(f==='confirmed')ap=ap.filter(function(a){return a.status==='confirmed';});
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Appointments</h3><span>'+ap.length+'</span></div>'
+    +'<div class="toolbar"><select class="type-sel" onchange="renderAppointments(this.value)"><option value="">All</option><option value="pending">Pending</option><option value="confirmed">Confirmed</option></select></div>'
+    +'<div style="overflow-y:auto;flex:1">'
+    +(ap.length===0?'<div class="empty"><div class="empty-icon">📅</div><p>No appointments yet</p></div>':
+      ap.map(function(a){
+        return'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openApptDrawer(\''+a.id+'\')">'
+          +'<div style="width:42px;height:42px;border-radius:var(--r);background:var(--purple-light);border:1px solid #d8c8f0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📅</div>'
+          +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(a.requested_date||'TBD')+(a.requested_time?' · '+a.requested_time:'')+'</div>'
+          +'<div style="font-size:11px;color:var(--brown4)">'+cName(a.client_phone||'')+'</div>'
+          +'<div style="font-size:11px;color:var(--brown3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.notes||'--')+'</div></div>'
+          +'<span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>';
+      }).join('')
+    )+'</div></div>');
+}
+
+// -- DOCUMENTS --
+function renderDocuments(s){
+  var d=selectedClient?documents.filter(function(x){return x.client_phone===selectedClient.phone;}):documents;
+  if(s)d=d.filter(function(x){return (x.file_name||'').toLowerCase().includes(s.toLowerCase())||(x.doc_type||'').toLowerCase().includes(s.toLowerCase());});
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Documents</h3><span>'+d.length+' files</span></div>'
+    +'<div class="toolbar"><input class="srch" style="flex:1" placeholder="Search documents..." oninput="renderDocuments(this.value)"></div>'
+    +'<div style="overflow-y:auto;flex:1">'
+    +(d.length===0?'<div class="coming-soon"><h3>Document Folder</h3><p>Documents sent via WhatsApp or email appear here automatically with AI summaries.</p><div class="soon-tag">Ready to receive</div></div>':
+      '<div class="doc-grid">'+d.map(function(x){
+        return'<div class="doc-card" onclick="openDocDrawer(\''+x.id+'\')">'
+          +'<div class="doc-icon">'+dIcon(x.doc_type)+'</div>'
+          +'<div class="doc-name">'+(x.file_name||'Document')+'</div>'
+          +'<div class="doc-type">'+(x.doc_type||'General')+'</div>'
+          +'<div class="doc-type" style="margin-top:2px">'+cName(x.client_phone||'')+' · '+fmtD(x.created_at)+'</div>'
+          +(x.summary?'<div style="font-size:9px;color:var(--brown4);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+x.summary+'</div>':'')
+          +'</div>';
+      }).join('')+'</div>'
+    )+'</div></div>');
+}
+
+// -- REMINDERS --
+function renderReminders(){
+  var rem=selectedClient?reminders.filter(function(r){return r.client_phone===selectedClient.phone||r.is_all_clients;}):reminders;
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Reminders</h3><span>'+rem.length+'</span></div>'
+    +'<div style="overflow-y:auto;flex:1">'
+    +(rem.length===0?'<div class="empty"><div class="empty-icon">🔔</div><p>No reminders yet</p></div>':
+      rem.map(function(r){
+        return'<div style="display:flex;align-items:center;gap:10px;padding:10px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openRemDrawer(\''+r.id+'\')">'
+          +'<div style="width:8px;height:8px;border-radius:50%;flex-shrink:0;background:'+(r.is_all_clients?'#4a2070':r.status==='done'?'#a8a29e':'#8b4513')+'"></div>'
+          +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(r.title||'Reminder')+'</div>'
+          +'<div style="font-size:11px;color:var(--brown4)">'+(r.is_all_clients?'All clients':cName(r.client_phone||''))+' · '+(r.notes||'')+'</div></div>'
+          +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">'
+          +'<div style="font-size:11px;font-family:\'DM Mono\',monospace;color:var(--amber)">'+(r.due_date||'--')+'</div>'
+          +'<span class="badge b-'+(r.status||'pending')+'">'+(r.status||'pending')+'</span></div></div>';
+      }).join('')
+    )+'</div></div>');
+}
+
+// -- CA INVOICES --
+function renderCAInvoices(){
+  var inv=selectedClient?caInvoices.filter(function(i){return i.client_phone===selectedClient.phone;}):caInvoices;
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>CA Invoices</h3><span>'+inv.length+'</span></div>'
+    +'<div class="tbl-wrap">'
+    +(inv.length===0?'<div class="empty"><div class="empty-icon">🧾</div><p>No invoices raised yet</p></div>':
+      '<table><thead><tr><th>Date</th><th>Client</th><th>Invoice #</th><th>Description</th><th>Amount</th><th>Due</th><th>Status</th></tr></thead><tbody>'
+      +inv.map(function(i){
+        return'<tr onclick="openCAIDrawer(\''+i.id+'\')">'
+          +'<td class="mono">'+fmtD(i.created_at)+'</td>'
+          +'<td>'+cName(i.client_phone||'')+'</td>'
+          +'<td class="mono">'+(i.invoice_number||'--')+'</td>'
+          +'<td class="desc-cell">'+(i.description||'--')+'</td>'
+          +'<td class="amt">₹'+fmtN(parseFloat(i.amount)||0)+'</td>'
+          +'<td class="mono">'+(i.due_date||'--')+'</td>'
+          +'<td><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></td></tr>';
+      }).join('')+'</tbody></table>'
+    )+'</div></div>');
+}
+
+// -- CHALLANS --
+function renderChallans(){
+  var ch=selectedClient?challans.filter(function(c){return c.client_phone===selectedClient.phone;}):challans;
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Challans</h3><span>'+ch.length+'</span></div>'
+    +'<div class="tbl-wrap">'
+    +(ch.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet</p></div>':
+      '<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>'
+      +ch.map(function(c){
+        return'<tr><td class="mono">'+fmtD(c.created_at)+'</td><td>'+cName(c.client_phone||'')+'</td><td>'+(c.challan_type||'--')+'</td><td class="amt">₹'+fmtN(parseFloat(c.amount)||0)+'</td><td class="mono">'+(c.period||'--')+'</td><td><span class="badge b-'+(c.status||'pending')+'">'+(c.status||'pending')+'</span></td></tr>';
+      }).join('')+'</tbody></table>'
+    )+'</div></div>');
+}
+
+// -- BANK STATEMENTS --
+function renderBankStatements(){
+  var bs=selectedClient?bankStatements.filter(function(b){return b.client_phone===selectedClient.phone;}):bankStatements;
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Bank Statements</h3><span>'+bs.length+'</span></div>'
+    +(bs.length===0?'<div class="coming-soon"><div style="font-size:40px;margin-bottom:12px">🏦</div><h3>Upload Bank Statements</h3><p>Upload PDF or CSV bank statements. Claude AI reads every transaction and categorises it automatically into fuel, groceries, salary, GST and more.</p><button class="btn-pri" style="margin-top:14px;padding:10px 22px" onclick="openModal(\'upload-bank\')">+ Upload First Statement</button></div>':
+      '<div class="tbl-wrap"><table><thead><tr><th>Client</th><th>Bank</th><th>Period</th><th>Transactions</th><th>Credits</th><th>Debits</th><th>Status</th><th>Uploaded</th></tr></thead><tbody>'
+      +bs.map(function(b){
+        return'<tr onclick="openBSDrawer(\''+b.id+'\')">'
+          +'<td style="font-weight:500">'+cName(b.client_phone||'')+'</td>'
+          +'<td>'+(b.bank_name||'--')+'</td>'
+          +'<td class="mono">'+(b.period_from?fmtD(b.period_from)+' – '+fmtD(b.period_to):'--')+'</td>'
+          +'<td style="text-align:center">'+(b.transaction_count||0)+'</td>'
+          +'<td class="txn-credit">₹'+fmtN(parseFloat(b.total_credits)||0)+'</td>'
+          +'<td class="txn-debit">₹'+fmtN(parseFloat(b.total_debits)||0)+'</td>'
+          +'<td><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></td>'
+          +'<td class="mono">'+fmtD(b.created_at)+'</td></tr>';
+      }).join('')+'</tbody></table></div>'
+    )+'</div>');
+}
+
+// -- TRANSACTIONS --
+var txnActiveCat='', txnSearch='', txnDateFrom='', txnDateTo='';
+
+function renderTransactions(s,cat,dateFrom,dateTo){
+  // Update filter state
+  if(s!==undefined)txnSearch=s||'';
+  if(cat!==undefined)txnActiveCat=cat||'';
+  if(dateFrom!==undefined)txnDateFrom=dateFrom||'';
+  if(dateTo!==undefined)txnDateTo=dateTo||'';
+
+  var t=selectedClient?transactions.filter(function(x){return x.client_phone===selectedClient.phone;}):transactions;
+  if(txnActiveCat)t=t.filter(function(x){return (x.ca_category||x.category)===txnActiveCat;});
+  if(txnSearch)t=t.filter(function(x){return (x.description||'').toLowerCase().includes(txnSearch.toLowerCase());});
+  if(txnDateFrom)t=t.filter(function(x){return x.transaction_date&&x.transaction_date>=txnDateFrom;});
+  if(txnDateTo)t=t.filter(function(x){return x.transaction_date&&x.transaction_date<=txnDateTo;});
+
+  var cats=['suspense','fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','other'];
+  var catIcons={suspense:'❓',fuel:'⛽',groceries:'🛒',salary:'💼',rent:'🏠',office:'🖥️',travel:'✈️',medical:'🏥',utilities:'💡',gst:'📋',tds:'📊',entertainment:'🎬',bank_charges:'🏦',insurance:'🛡️',other:'📌'};
+
+  // Count per category for chips
+  var allT=selectedClient?transactions.filter(function(x){return x.client_phone===selectedClient.phone;}):transactions;
+  var catCounts={};
+  cats.forEach(function(c){
+    catCounts[c]=allT.filter(function(x){return (x.ca_category||x.category)===c;}).length;
+  });
+
+  var chips='<div style="display:flex;gap:8px;flex-wrap:wrap;padding:14px 16px;border-bottom:1.5px solid var(--cream3);background:var(--cream2)">';
+  // All chip - use data attribute to avoid quote issues
+  var allActive=txnActiveCat==='';
+  chips+='<button data-cat="" class="txn-chip" style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(allActive?'var(--accent)':'var(--cream3)')+';background:'+(allActive?'var(--accent-light)':'var(--cream)')+';color:'+(allActive?'var(--accent)':'var(--brown2)')+'">All ('+allT.length+')</button>';
+  cats.forEach(function(c){
+    if(catCounts[c]===0)return;
+    var isActive=txnActiveCat===c;
+    var isSuspense=c==='suspense';
+    chips+='<button data-cat="'+c+'" class="txn-chip" style="padding:7px 16px;border-radius:20px;font-size:13px;font-weight:600;cursor:pointer;border:2px solid '+(isActive?'var(--accent)':isSuspense?'#e0c090':'var(--cream3)')+';background:'+(isActive?'var(--accent-light)':isSuspense?'#fef8ec':'var(--cream)')+';color:'+(isActive?'var(--accent)':isSuspense?'#8b6010':'var(--brown2)')+'">'+catIcons[c]+' '+c.replace(/_/g,' ')+' ('+catCounts[c]+')</button>';
+  });
+  chips+='</div>';
+
+  var toolbar='<div class="toolbar" style="gap:10px">'
+    +'<input class="srch" id="txn-srch" style="flex:1;font-size:14px" placeholder="Search description..." value="'+txnSearch+'">'
+    +'<div style="display:flex;align-items:center;gap:6px;flex-shrink:0">'
+    +'<span style="font-size:13px;color:var(--brown4);white-space:nowrap">From</span>'
+    +'<input type="date" id="txn-from" value="'+txnDateFrom+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
+    +'<span style="font-size:13px;color:var(--brown4)">To</span>'
+    +'<input type="date" id="txn-to" value="'+txnDateTo+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream);color:var(--brown);font-size:13px;cursor:pointer">'
+    +'<button id="txn-go" class="btn-pri" style="font-size:13px;padding:7px 14px">Apply</button>'
+    +(txnDateFrom||txnDateTo?'<button id="txn-clear" class="btn-sm" style="color:var(--red)">✕ Clear</button>':'')
+    +'</div>'
+    +'</div>';
+
+  setPage('<div class="panel" style="height:calc(100vh - 128px)">'
+    +'<div class="panel-head"><h3>Transactions'+(txnActiveCat?' -- '+txnActiveCat.replace(/_/g,' '):'')+'</h3>'
+    +'<div style="display:flex;align-items:center;gap:8px">'
+    +(txnActiveCat||txnSearch||txnDateFrom?'<span style="font-size:13px;color:var(--brown4)">'+t.length+' results</span>':'')
+    +'<span class="card-cnt">'+allT.length+' total</span>'
+    +(t.length>0?'<button class="btn-sm" onclick="exportTxnCSV()">↓ Export</button>':'')
+    +'</div></div>'
+    +chips
+    +toolbar
+    +'<div class="tbl-wrap">'
+    +(t.length===0?'<div class="empty"><div class="empty-icon">💳</div><p>'+(allT.length===0?'No transactions yet. Upload a bank statement to get started.':'No transactions match your filters.')+'</p></div>':
+      '<table><thead><tr><th>Date</th><th>'+(selectedClient?'':'Client')+'</th><th>Description</th><th>Category</th><th>Type</th><th>Amount</th><th>Balance</th></tr></thead><tbody>'
+      +t.map(function(x){
+        var cat=x.ca_category||x.category||'other';
+        var isSus=cat==='suspense';
+        return'<tr style="'+(isSus?'background:#fffbf0;':'')+'">'
+          +'<td class="mono" style="font-size:13px">'+(x.transaction_date||'--')+'</td>'
+          +(selectedClient?'':'<td style="font-size:13px">'+cName(x.client_phone||'')+'</td>')
+          +'<td style="font-size:13px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(x.description||'--')+'</td>'
+          +'<td><span class="cat-badge cat-'+cat+'" onclick="changeCat(\''+x.id+'\')" title="Click to change category">'+catIcons[cat]+' '+cat.replace('_',' ')+'</span>'+(isSus?'<span style="font-size:11px;color:#8b6010;margin-left:4px">⚠️</span>':'')+'</td>'
+          +'<td><span class="badge '+(x.type==='credit'?'b-answered':'b-unpaid')+'" style="font-size:12px">'+(x.type||'--')+'</span></td>'
+          +'<td class="'+(x.type==='credit'?'txn-credit':'txn-debit')+'" style="font-size:14px;font-weight:700">'+(x.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(x.amount)||0)+'</td>'
+          +'<td class="mono" style="font-size:13px;color:var(--brown4)">'+(x.balance?'₹'+fmtN(parseFloat(x.balance)):'--')+'</td></tr>';
+      }).join('')+'</tbody></table>'
+    )+'</div></div>');
+  // Bind events after DOM is ready
+  setTimeout(function(){
+    // Search input
+    var si=document.getElementById('txn-srch');
+    if(si)si.addEventListener('input',function(){renderTransactions(this.value,txnActiveCat,txnDateFrom,txnDateTo);});
+    // Category chips
+    document.querySelectorAll('.txn-chip').forEach(function(btn){
+      btn.addEventListener('click',function(){renderTransactions(txnSearch,this.dataset.cat,txnDateFrom,txnDateTo);});
+    });
+    // Apply button
+    var goBtn=document.getElementById('txn-go');
+    if(goBtn)goBtn.addEventListener('click',function(){
+      var f=document.getElementById('txn-from').value;
+      var t=document.getElementById('txn-to').value;
+      renderTransactions(txnSearch,txnActiveCat,f,t);
+    });
+    // Clear button
+    var clBtn=document.getElementById('txn-clear');
+    if(clBtn)clBtn.addEventListener('click',function(){renderTransactions(txnSearch,txnActiveCat,'','');});
+  },50);
+}
+// -- SPENDING ANALYSIS --
+function renderSpending(){
+  var t=selectedClient?transactions.filter(function(x){return x.client_phone===selectedClient.phone&&x.type==='debit';}):transactions.filter(function(x){return x.type==='debit';});
+  var cats={};
+  t.forEach(function(x){var c=x.ca_category||x.category||'other';cats[c]=(cats[c]||0)+(parseFloat(x.amount)||0);});
+  var arr=Object.entries(cats).sort(function(a,b){return b[1]-a[1];});
+  var total=Object.values(cats).reduce(function(s,v){return s+v;},0)||1;
+  var catColors={fuel:'#e8920a',groceries:'#27ae60',salary:'#1a3a5c',rent:'#4a2070',office:'#8b1a1a',travel:'#3b5bdb',medical:'#8b4513',utilities:'#3d6b1f',gst:'#8b6010',tds:'#6b1a50',entertainment:'#1a6b6b',bank_charges:'#555',suspense:'#c05000',insurance:'#2d502d',other:'#888'};
+  var catIcons={fuel:'⛽',groceries:'🛒',salary:'💼',rent:'🏠',office:'🖥️',travel:'✈️',medical:'🏥',utilities:'💡',gst:'📋',tds:'📊',entertainment:'🎬',bank_charges:'🏦',suspense:'❓',insurance:'🛡️',other:'📌'};
+  var suspCount=transactions.filter(function(x){return x.category==='suspense'||x.needs_review;}).length;
+  setPage(
+  '<div style="display:grid;grid-template-columns:1fr 260px;gap:14px;margin-bottom:14px">'
+  +'<div class="spend-card"><h3 style="font-size:14px;margin-bottom:14px">Spending Breakdown</h3>'
+  +(arr.length===0?'<div class="empty"><div class="empty-icon">📊</div><p>No transaction data yet. Upload a bank statement.</p><button class="btn-pri" style="margin-top:12px" onclick="openModal(\'upload-bank\')">+ Upload Statement</button></div>':
+    arr.map(function(e){
+      return'<div class="spend-row"><div class="spend-lbl">'+(catIcons[e[0]]||'📌')+' '+e[0]+'</div>'
+        +'<div class="spend-track"><div class="spend-fill" style="width:'+Math.round(e[1]/total*100)+'%;background:'+(catColors[e[0]]||'#888')+'"></div></div>'
+        +'<div class="spend-amt">₹'+fmtN(e[1])+'</div><div class="spend-pct">'+Math.round(e[1]/total*100)+'%</div></div>';
+    }).join('')
+  )+'</div>'
+  +'<div style="display:flex;flex-direction:column;gap:10px">'
+  +'<div class="spend-card" style="text-align:center"><div style="font-size:10px;color:var(--brown4);text-transform:uppercase;margin-bottom:6px">Total Debits</div><div style="font-family:\'Playfair Display\',serif;font-size:26px;font-weight:700;color:var(--red)">₹'+fmtN(total)+'</div><div style="font-size:11px;color:var(--brown4);margin-top:3px">'+t.length+' transactions</div></div>'
+  +(suspCount>0?'<div class="spend-card" style="border-color:#e0c090;background:#fef8ec;text-align:center;cursor:pointer" onclick="renderTransactions(\'\',\'suspense\')"><div style="font-size:22px;margin-bottom:5px">⚠️</div><div style="font-size:13px;font-weight:600;color:#8b6010">'+suspCount+' Suspense Entries</div><div style="font-size:11px;color:#a07820;margin-top:3px">Click to review</div></div>':'')
+  +'<button class="btn-pri" style="padding:10px" onclick="openModal(\'upload-bank\')">+ Upload Bank Statement</button>'
+  +'</div></div>'
+  +'<div class="card"><div class="card-head"><h3>Category Table</h3></div>'
+  +'<table><thead><tr><th>Category</th><th>Transactions</th><th>Total</th><th>% of Spend</th></tr></thead><tbody>'
+  +arr.map(function(e){
+    return'<tr onclick="renderTransactions(\'\',\''+e[0]+'\')">'
+      +'<td><span class="cat-badge cat-'+e[0]+'">'+(catIcons[e[0]]||'📌')+' '+e[0].replace('_',' ')+'</span></td>'
+      +'<td style="text-align:center">'+t.filter(function(x){return (x.ca_category||x.category)===e[0];}).length+'</td>'
+      +'<td class="amt">₹'+fmtN(e[1])+'</td>'
+      +'<td><div style="display:flex;align-items:center;gap:7px"><div style="flex:1;height:5px;background:var(--cream3);border-radius:3px;overflow:hidden"><div style="height:100%;width:'+Math.round(e[1]/total*100)+'%;background:'+(catColors[e[0]]||'#888')+';border-radius:3px"></div></div><span style="font-size:11px;color:var(--brown4);width:28px">'+Math.round(e[1]/total*100)+'%</span></div></td></tr>';
+  }).join('')+'</tbody></table></div>'
+  );
+}
+
+// -- TALLY --
+function renderTally(){
+  setPage('<div style="max-width:580px;margin:0 auto">'
+    +'<div class="card"><div class="card-head"><h3>Import Tally Backup</h3></div>'
+    +'<div style="padding:20px">'
+    +'<p style="font-size:13px;color:var(--brown3);margin-bottom:16px;line-height:1.7">Upload your Tally backup file (.tbk) or XML export. System will process it within 24 hours and populate your dashboard.</p>'
+    +'<div class="upload-zone" onclick="document.getElementById(\'tally-file\').click()">'
+    +'<div style="font-size:32px;margin-bottom:6px">📊</div>'
+    +'<p style="font-weight:600;color:var(--brown)">Click to upload Tally file</p>'
+    +'<p>.tbk · .xml · .xlsx · .csv supported</p>'
+    +'<input type="file" id="tally-file" style="display:none" accept=".tbk,.xml,.xlsx,.csv,.xls" onchange="uploadTally(this)">'
+    +'</div>'
+    +'<div style="background:var(--cream2);border-radius:var(--r);padding:14px;margin-top:14px;font-size:13px;color:var(--brown3);line-height:1.8;border:1px solid var(--cream3)">'
+    +'<strong style="color:var(--brown)">How to export from Tally:</strong><br>'
+    +'1. Open Tally → Gateway of Tally<br>2. Press Alt+E for Export<br>3. Select XML format → Choose date range<br>4. Export the file → Upload it here'
+    +'</div></div></div></div>');
+}
+async function uploadTally(input){
+  if(!input.files||!input.files[0])return;
+  var f=input.files[0];
+  var fn='tally_'+Date.now()+'_'+f.name;
+  await sb.storage.from('documents').upload('tally/'+fn,f,{contentType:f.type});
+  var url=SB_URL+'/storage/v1/object/public/documents/tally/'+fn;
+  await sb.from('documents').insert({doc_type:'tally_backup',file_name:f.name,file_url:url,summary:'Tally backup -- processing scheduled',status:'pending'});
+  alert('Uploaded successfully! Will be processed within 24 hours.');
+}
+
+// -- DRAWERS --
+function openRcptDrawer(id){
+  var i=invoices.find(function(x){return x.id===id;});if(!i)return;
+  document.getElementById('drawer-title').textContent='Receipt Detail';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Type</div><div class="dv"><span class="badge b-'+(i.message_type||'receipt')+'">'+(i.message_type||'receipt').replace('_',' ')+'</span></div></div>'
+    +'<div class="dr"><div class="dl">Date</div><div class="dv">'+new Date(i.received_at||Date.now()).toLocaleString('en-IN')+'</div></div>'
+    +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(i.client_phone||'')+' <span class="mono" style="color:var(--brown4);font-size:11px">'+(i.client_phone||'')+'</span></div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div class="dr"><div class="dl">Amount</div><div class="dv big">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Vendor</div><div class="dv" style="font-weight:500">'+(i.vendor_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Invoice date</div><div class="dv">'+(i.invoice_date||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">GST number</div><div class="dv mono">'+(i.gst_number||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">GST amount</div><div class="dv">'+(i.gst_amount?'₹'+fmtN(parseFloat(i.gst_amount)):'--')+'</div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(i.description||'--')+'</div></div>'
+    +(i.raw_text?'<div class="dr"><div class="dl">Raw text</div><div class="raw-box">'+i.raw_text+'</div></div>':'');
+  openDrawer();
+}
+function openQnADrawer(id){
+  var q=questions.find(function(x){return x.id===id;});if(!q)return;
+  document.getElementById('drawer-title').textContent='Question Detail';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'">'+(q.needs_ca_review?'Needs CA review':'AI answered')+'</span></div></div>'
+    +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(q.client_phone||'')+'</div></div>'
+    +'<div class="dr"><div class="dl">Date</div><div class="dv">'+new Date(q.created_at||Date.now()).toLocaleString('en-IN')+'</div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div class="dr"><div class="dl">Question</div><div class="dv" style="font-size:15px;font-weight:500;line-height:1.6">'+(q.question||'--')+'</div></div>'
+    +(q.ai_answer?'<div class="dr"><div class="dl">AI Answer</div><div class="ai-box">'+q.ai_answer+'</div></div>':'')
+    +(q.ca_reply?'<div class="dr"><div class="dl">Your reply</div><div class="ai-box" style="background:var(--green-light);border-color:var(--green-mid)">'+q.ca_reply+'</div></div>':'')
+    +'<div class="dr-div"></div>'
+    +'<div class="dr"><div class="dl">Reply to client</div>'
+    +'<textarea class="reply-area" id="ca-reply-txt" placeholder="Type your reply...">'+(q.ca_reply||'')+'</textarea>'
+    +'<button class="btn-reply" onclick="saveReply(\''+q.id+'\')">Save Reply</button>'
+    +'<div class="reply-ok" id="reply-ok">✓ Reply saved</div></div>';
+  openDrawer();
+}
+function openApptDrawer(id){
+  var a=appointments.find(function(x){return x.id===id;});if(!a)return;
+  document.getElementById('drawer-title').textContent='Appointment';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div></div>'
+    +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(a.client_phone||'')+'</div></div>'
+    +'<div class="dr"><div class="dl">Date</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600">'+(a.requested_date||'Not specified')+'</div></div>'
+    +'<div class="dr"><div class="dl">Time</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600">'+(a.requested_time||'Not specified')+'</div></div>'
+    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3)">'+(a.notes||'--')+'</div></div>'
+    +'<div class="dr-div"></div>'
+    +'<textarea class="reply-area" id="appt-reply-txt" placeholder="Confirmed for...">'+(a.ca_reply||'')+'</textarea>'
+    +'<div style="display:flex;gap:8px;margin-top:8px">'
+    +'<button class="btn-reply" style="flex:1" onclick="confirmAppt(\''+a.id+'\',\'confirmed\')">✓ Confirm</button>'
+    +'<button class="btn-reply" style="flex:1;background:var(--amber)" onclick="confirmAppt(\''+a.id+'\',\'rescheduled\')">↺ Reschedule</button>'
+    +'</div><div class="reply-ok" id="appt-ok">✓ Updated</div>';
+  openDrawer();
+}
+function openDocDrawer(id){
+  var d=documents.find(function(x){return x.id===id;});if(!d)return;
+  document.getElementById('drawer-title').textContent='Document';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Type</div><div class="dv"><span class="badge b-document">'+(d.doc_type||'General')+'</span></div></div>'
+    +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(d.client_phone||'')+'</div></div>'
+    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(d.file_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(d.status||'pending')+'">'+(d.status||'pending')+'</span></div></div>'
+    +(d.summary?'<div class="dr-div"></div><div class="dr"><div class="dl">AI Summary</div><div class="ai-box">'+d.summary+'</div></div>':'')
+    +(d.file_url?'<div class="dr-div"></div><a href="'+d.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none">↓ Download</a>':'');
+  openDrawer();
+}
+function openRemDrawer(id){
+  var r=reminders.find(function(x){return x.id===id;});if(!r)return;
+  document.getElementById('drawer-title').textContent='Reminder';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Title</div><div class="dv" style="font-size:16px;font-weight:600">'+(r.title||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">For</div><div class="dv">'+(r.is_all_clients?'All clients':cName(r.client_phone||''))+'</div></div>'
+    +'<div class="dr"><div class="dl">Due date</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600;color:var(--amber)">'+(r.due_date||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(r.notes||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(r.status||'pending')+'">'+(r.status||'pending')+'</span></div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn-reply" style="flex:1" onclick="updateRem(\''+r.id+'\',\'done\')">✓ Mark Done</button>'
+    +'<button class="btn-reply" style="flex:1;background:var(--red)" onclick="delRem(\''+r.id+'\')">Delete</button>'
+    +'</div>';
+  openDrawer();
+}
+function openCAIDrawer(id){
+  var i=caInvoices.find(function(x){return x.id===id;});if(!i)return;
+  document.getElementById('drawer-title').textContent='CA Invoice';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Invoice #</div><div class="dv mono" style="font-size:15px;font-weight:600">'+(i.invoice_number||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(i.client_phone||'')+'</div></div>'
+    +'<div class="dr"><div class="dl">Amount</div><div class="dv big">₹'+fmtN(parseFloat(i.amount)||0)+'</div></div>'
+    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3)">'+(i.description||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Due date</div><div class="dv">'+(i.due_date||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div style="display:flex;gap:8px">'
+    +'<button class="btn-reply" style="flex:1" onclick="updateCAI(\''+i.id+'\',\'paid\')">✓ Mark Paid</button>'
+    +'<button class="btn-reply" style="flex:1;background:var(--red)" onclick="updateCAI(\''+i.id+'\',\'overdue\')">Mark Overdue</button>'
+    +'</div>';
+  openDrawer();
+}
+function openBSDrawer(id){
+  var b=bankStatements.find(function(x){return x.id===id;});if(!b)return;
+  document.getElementById('drawer-title').textContent='Bank Statement';
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(b.client_phone||'')+'</div></div>'
+    +'<div class="dr"><div class="dl">Bank</div><div class="dv" style="font-weight:500">'+(b.bank_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(b.file_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></div></div>'
+    +'<div class="dr-div"></div>'
+    +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+    +'<div style="background:var(--green-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">CREDITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--green)">₹'+fmtN(b.total_credits||0)+'</div></div>'
+    +'<div style="background:var(--red-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--red);font-weight:600;margin-bottom:3px">DEBITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--red)">₹'+fmtN(b.total_debits||0)+'</div></div>'
+    +'</div>'
+    +'<div class="dr" style="margin-top:12px"><div class="dl">Transactions</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:700">'+(b.transaction_count||0)+'</div></div>'
+    +(b.file_url?'<div class="dr-div"></div><a href="'+b.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none">↓ Download</a>':'');
+  openDrawer();
+}
+function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open');}
+function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');}
+
+// -- MODALS --
+function openModal(type,phone){
+  phone=phone||'';
+  var cOpts=clients.map(function(c){return'<option value="'+c.phone+'"'+(c.phone===phone?' selected':'')+'>'+(c.name||c.phone)+'</option>';}).join('');
+  var m=document.getElementById('modal-box');
+  var ov=document.getElementById('modal-ov');
+  if(type==='reminder'){
+    m.innerHTML='<h3>Add Reminder</h3>'
+      +'<div class="mf"><label>Title *</label><input type="text" id="rm-t" placeholder="GST filing deadline..."></div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>For client</label><select id="rm-c"><option value="">All clients</option>'+cOpts+'</select></div>'
+      +'<div class="mf"><label>Due date</label><input type="date" id="rm-d"></div></div>'
+      +'<div class="mf"><label>Notes</label><textarea id="rm-n" placeholder="Additional details..."></textarea></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="saveRem()">Save</button></div>';
+  }else if(type==='add-event'){
+    m.innerHTML='<h3>Add Custom Event</h3>'
+      +'<div class="mf"><label>Event title *</label><input type="text" id="ev-t" placeholder="Court date, audit, client meeting..."></div>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Date *</label><input type="date" id="ev-d"></div>'
+      +'<div class="mf"><label>Client (optional)</label><select id="ev-c"><option value="">None</option>'+cOpts+'</select></div></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="saveEvent()">Add</button></div>';
+  }else if(type==='ca-invoice'){
+    m.innerHTML='<h3>New CA Invoice</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Client *</label><select id="ci-c"><option value="">Select</option>'+cOpts+'</select></div>'
+      +'<div class="mf"><label>Invoice #</label><input type="text" id="ci-n" placeholder="INV-001"></div>'
+      +'<div class="mf"><label>Amount ₹ *</label><input type="number" id="ci-a" placeholder="5000"></div>'
+      +'<div class="mf"><label>Due date</label><input type="date" id="ci-d"></div></div>'
+      +'<div class="mf"><label>Description</label><input type="text" id="ci-desc" placeholder="GST filing Q1 2025"></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="saveCAI()">Save</button></div>';
+  }else if(type==='challan'){
+    m.innerHTML='<h3>New Challan</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Client *</label><select id="ch-c"><option value="">Select</option>'+cOpts+'</select></div>'
+      +'<div class="mf"><label>Type</label><select id="ch-t"><option value="">Select</option><option>Advance Tax</option><option>Self Assessment Tax</option><option>TDS</option><option>GST</option><option>Professional Tax</option></select></div>'
+      +'<div class="mf"><label>Amount ₹</label><input type="number" id="ch-a" placeholder="10000"></div>'
+      +'<div class="mf"><label>Period</label><input type="text" id="ch-p" placeholder="Q1 FY 2025-26"></div></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="saveChal()">Save</button></div>';
+  }else if(type==='broadcast'){
+    m.innerHTML='<h3>Send WhatsApp Broadcast</h3>'
+      +'<div class="mf"><label>Send to</label><select id="bc-to"><option value="all">All clients</option>'+cOpts+'</select></div>'
+      +'<div class="mf"><label>Message *</label><textarea id="bc-msg" placeholder="Please send your receipts before 25th..." style="min-height:100px"></textarea></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="sendBC()">Send</button></div>';
+  }else if(type==='add-client'){
+    m.innerHTML='<h3>Add New Client</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Phone *</label><input type="text" id="ac-ph" placeholder="+919876543210"></div>'
+      +'<div class="mf"><label>Name</label><input type="text" id="ac-n" placeholder="Ramesh Kumar"></div>'
+      +'<div class="mf"><label>Business</label><input type="text" id="ac-b" placeholder="Ramesh Textiles Pvt Ltd"></div>'
+      +'<div class="mf"><label>Email</label><input type="email" id="ac-e" placeholder="ramesh@business.com"></div>'
+      +'<div class="mf"><label>PAN</label><input type="text" id="ac-pan" placeholder="ABCDE1234F"></div>'
+      +'<div class="mf"><label>GST</label><input type="text" id="ac-gst" placeholder="27ABCDE1234F1Z5"></div></div>'
+      +'<div class="mf"><label>Address</label><input type="text" id="ac-addr" placeholder="123 Main Street, Pune"></div>'
+      +'<div class="mf"><label>Notes</label><textarea id="ac-notes" placeholder="Any notes..."></textarea></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="saveClient()">Add Client</button></div>';
+  }else if(type==='edit-client'){
+    var c=clients.find(function(x){return x.phone===phone;})||{};
+    m.innerHTML='<h3>Edit Client</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Phone</label><input type="text" value="'+(c.phone||'')+'" disabled style="opacity:.6"></div>'
+      +'<div class="mf"><label>Name</label><input type="text" id="ec-n" value="'+(c.name||'')+'"></div>'
+      +'<div class="mf"><label>Business</label><input type="text" id="ec-b" value="'+(c.business_name||'')+'"></div>'
+      +'<div class="mf"><label>Email</label><input type="email" id="ec-e" value="'+(c.email||'')+'"></div>'
+      +'<div class="mf"><label>PAN</label><input type="text" id="ec-pan" value="'+(c.pan_number||'')+'"></div>'
+      +'<div class="mf"><label>GST</label><input type="text" id="ec-gst" value="'+(c.gst_number||'')+'"></div></div>'
+      +'<div class="mf"><label>Address</label><input type="text" id="ec-addr" value="'+(c.address||'')+'"></div>'
+      +'<div class="mf"><label>Notes</label><textarea id="ec-notes">'+(c.notes||'')+'</textarea></div>'
+      +'<div class="mf"><label>Status</label><select id="ec-active"><option value="true"'+(c.is_active!==false?' selected':'')+'>Active</option><option value="false"'+(c.is_active===false?' selected':'')+'>Inactive</option></select></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" onclick="editClient(\''+phone+'\')">Save</button></div>';
+  }else if(type==='upload-bank'){
+    m.innerHTML='<h3>Upload Bank Statement</h3>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
+      +'<div class="mf"><label>Client *</label><select id="bs-c"><option value="">Select</option>'+cOpts+'</select></div>'
+      +'<div class="mf"><label>Bank name</label><input type="text" id="bs-b" placeholder="HDFC, SBI, ICICI..."></div></div>'
+      +'<div class="mf"><label>Statement file (PDF or CSV) *</label>'
+      +'<div class="upload-zone" onclick="document.getElementById(\'bs-f\').click()" id="bs-zone">'
+      +'<div style="font-size:28px;margin-bottom:5px">🏦</div>'
+      +'<p style="font-weight:600;color:var(--brown)">Click to select file</p><p>PDF or CSV format</p>'
+      +'<input type="file" id="bs-f" style="display:none" accept=".pdf,.csv,.xlsx,.xls" onchange="document.getElementById(\'bs-zone\').querySelector(\'p\').textContent=this.files[0].name">'
+      +'</div></div>'
+      +'<div class="progress-bar" id="bs-bar" style="display:none"><div class="progress-fill" id="bs-fill"></div></div>'
+      +'<div class="progress-txt" id="bs-status" style="display:none"></div>'
+      +'<div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button><button class="modal-save" id="bs-save" onclick="uploadBS()">Upload & Process with AI</button></div>';
+  }else if(type==='change-cat'){
+    var cats=['fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','other','suspense'];
+    var tx=transactions.find(function(x){return x.id===phone;})||{};
+    var cur=tx.ca_category||tx.category||'other';
+    m.innerHTML='<h3>Change Category</h3>'
+      +'<p style="font-size:13px;color:var(--brown3);margin-bottom:14px">'+(tx.description||'Transaction')+'</p>'
+      +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">'
+      +cats.map(function(cat){return'<button onclick="saveCat(\''+phone+'\',\''+cat+'\');closeModal()" style="padding:9px;border-radius:var(--r);border:1.5px solid '+(cur===cat?'var(--accent)':'var(--cream3)')+';background:'+(cur===cat?'var(--accent-light)':'var(--cream2)')+';color:'+(cur===cat?'var(--accent)':'var(--brown2)')+';font-size:13px;font-weight:'+(cur===cat?'700':'400')+';cursor:pointer;text-align:left">'+cat.replace('_',' ')+'</button>';}).join('')
+      +'</div><div class="modal-btns"><button class="modal-cancel" onclick="closeModal()">Cancel</button></div>';
+  }
+  ov.classList.add('open');
+}
+function closeModal(){document.getElementById('modal-ov').classList.remove('open');}
+
+// -- SAVE FUNCTIONS --
+function saveEvent(){
+  var t=document.getElementById('ev-t').value.trim(),d=document.getElementById('ev-d').value,c=document.getElementById('ev-c').value;
+  if(!t||!d){alert('Please add title and date');return;}
+  customEvents.push({id:Date.now().toString(),title:t,date:d,client:c?cName(c):''});
+  localStorage.setItem('taxnio_events',JSON.stringify(customEvents));
+  closeModal();renderHome();
+}
+async function saveRem(){
+  var t=document.getElementById('rm-t').value.trim(),c=document.getElementById('rm-c').value,d=document.getElementById('rm-d').value,n=document.getElementById('rm-n').value.trim();
+  if(!t){alert('Please add a title');return;}
+  await sb.from('reminders').insert({title:t,client_phone:c||null,due_date:d||null,notes:n,is_all_clients:!c,status:'pending'});
+  closeModal();loadData();
+}
+async function saveCAI(){
+  var c=document.getElementById('ci-c').value,n=document.getElementById('ci-n').value.trim(),a=parseFloat(document.getElementById('ci-a').value)||0,d=document.getElementById('ci-d').value,desc=document.getElementById('ci-desc').value.trim();
+  if(!c||!a){alert('Please fill client and amount');return;}
+  await sb.from('ca_invoices').insert({client_phone:c,invoice_number:n,amount:a,description:desc,due_date:d||null,status:'unpaid'});
+  closeModal();loadData();
+}
+async function saveChal(){
+  var c=document.getElementById('ch-c').value,t=document.getElementById('ch-t').value,a=parseFloat(document.getElementById('ch-a').value)||0,p=document.getElementById('ch-p').value.trim();
+  if(!c){alert('Please select a client');return;}
+  await sb.from('challans').insert({client_phone:c,challan_type:t,amount:a,period:p,status:'pending'});
+  closeModal();loadData();
+}
+function sendBC(){var msg=document.getElementById('bc-msg').value.trim();if(!msg){alert('Please type a message');return;}alert('Broadcast sent! (Twilio integration required for live sending)');closeModal();}
+async function saveClient(){
+  var ph=document.getElementById('ac-ph').value.trim();
+  if(!ph){alert('Phone number is required');return;}
+  await sb.from('clients').upsert({phone:ph,name:document.getElementById('ac-n').value.trim()||null,business_name:document.getElementById('ac-b').value.trim()||null,pan_number:document.getElementById('ac-pan').value.trim().toUpperCase()||null,gst_number:document.getElementById('ac-gst').value.trim().toUpperCase()||null,email:document.getElementById('ac-e').value.trim()||null,address:document.getElementById('ac-addr').value.trim()||null,notes:document.getElementById('ac-notes').value.trim()||null,is_active:true},{onConflict:'phone'});
+  closeModal();loadData();
+}
+async function editClient(phone){
+  await sb.from('clients').upsert({phone:phone,name:document.getElementById('ec-n').value.trim()||null,business_name:document.getElementById('ec-b').value.trim()||null,pan_number:document.getElementById('ec-pan').value.trim().toUpperCase()||null,gst_number:document.getElementById('ec-gst').value.trim().toUpperCase()||null,email:document.getElementById('ec-e').value.trim()||null,address:document.getElementById('ec-addr').value.trim()||null,notes:document.getElementById('ec-notes').value.trim()||null,is_active:document.getElementById('ec-active').value==='true'},{onConflict:'phone'});
+  closeModal();loadData();
+}
+async function delClient(phone){
+  if(!confirm('Delete '+cName(phone)+'? Their receipts and documents will remain.'))return;
+  await sb.from('clients').delete().eq('phone',phone);
+  clients=clients.filter(function(c){return c.phone!==phone;});
+  populateDrop();renderClients();
+}
+async function saveReply(qid){
+  var t=document.getElementById('ca-reply-txt');if(!t||!t.value.trim())return;
+  await sb.from('questions').update({ca_reply:t.value.trim(),status:'ca_replied'}).eq('id',qid);
+  var q=questions.find(function(x){return x.id===qid;});if(q){q.ca_reply=t.value.trim();q.status='ca_replied';}
+  var ok=document.getElementById('reply-ok');if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';},3000);}
+}
+async function confirmAppt(id,status){
+  var t=document.getElementById('appt-reply-txt');
+  await sb.from('appointments').update({status:status,ca_reply:t?t.value.trim():''}).eq('id',id);
+  var a=appointments.find(function(x){return x.id===id;});if(a)a.status=status;
+  var ok=document.getElementById('appt-ok');if(ok){ok.style.display='block';setTimeout(function(){ok.style.display='none';closeDrawer();renderAppointments('');},2000);}
+}
+async function updateRem(id,status){
+  await sb.from('reminders').update({status:status}).eq('id',id);
+  var r=reminders.find(function(x){return x.id===id;});if(r)r.status=status;
+  closeDrawer();renderReminders();
+}
+async function delRem(id){
+  await sb.from('reminders').delete().eq('id',id);
+  reminders=reminders.filter(function(x){return x.id!==id;});
+  closeDrawer();renderReminders();
+}
+async function updateCAI(id,status){
+  await sb.from('ca_invoices').update({status:status}).eq('id',id);
+  var i=caInvoices.find(function(x){return x.id===id;});if(i)i.status=status;
+  closeDrawer();renderCAInvoices();
+}
+
+// -- BANK STATEMENT UPLOAD --
+async function uploadBS(){
+  var c=document.getElementById('bs-c').value;
+  var bank=document.getElementById('bs-b').value.trim();
+  var file=document.getElementById('bs-f').files[0];
+  if(!c){alert('Please select a client');return;}
+  if(!file){alert('Please select a file');return;}
+  document.getElementById('bs-bar').style.display='block';
+  document.getElementById('bs-status').style.display='block';
+  document.getElementById('bs-fill').style.width='10%';
+  document.getElementById('bs-status').textContent='Reading file...';
+  document.getElementById('bs-save').disabled=true;
+  document.getElementById('bs-save').textContent='Processing...';
+
+  // Step 1: Read file content first
+  var reader=new FileReader();
+  reader.onload=async function(e){
+    var fileContent=e.target.result;
+    try{
+      document.getElementById('bs-fill').style.width='20%';
+      document.getElementById('bs-status').textContent='Saving to database...';
+
+      // Step 2: Create statement record first (no file storage needed)
+      var res=await sb.from('bank_statements').insert({
+        client_phone:c,
+        file_name:file.name,
+        file_url:null,
+        bank_name:bank||null,
+        status:'processing'
+      }).select().single();
+
+      if(res.error)throw new Error(res.error.message);
+
+      document.getElementById('bs-fill').style.width='30%';
+
+      // Step 3: Process with Claude via Worker
+      await processBS(fileContent,file.name,c,res.data.id);
+
+    }catch(err){
+      console.error(err);
+      document.getElementById('bs-status').textContent='Error: '+err.message;
+      document.getElementById('bs-save').disabled=false;
+      document.getElementById('bs-save').textContent='Upload & Process with AI';
+    }
+  };
+  reader.onerror=function(){
+    document.getElementById('bs-status').textContent='Error reading file';
+    document.getElementById('bs-save').disabled=false;
+    document.getElementById('bs-save').textContent='Upload & Process with AI';
+  };
+  reader.readAsText(file);
+}
+
+async function processBS(fileContent, fileName, clientPhone, statementId){
+  try{
+    document.getElementById('bs-fill').style.width='40%';
+    document.getElementById('bs-status').textContent='Sending to Claude AI...';
+
+    // Build the prompt
+    var prompt = 'You are an expert Indian CA assistant. Read this bank statement and extract ALL transactions.\n\n'
+      + 'Return ONLY a JSON array. No explanation. No markdown. No backticks. Just the array.\n\n'
+      + 'Each object in the array must have exactly these fields:\n'
+      + '{ "transaction_date": "YYYY-MM-DD", "description": "string", "amount": 100.00, "type": "debit", "balance": 5000.00, "category": "fuel", "needs_review": false }\n\n'
+      + 'category must be ONE of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, others\n\n'
+      + 'Rules for category:\n'
+      + 'HPCL/BPCL/IOCL/PETROL = fuel | SWIGGY/ZOMATO/BIGBASKET/DMART/GROCERY = groceries\n'
+      + 'SALARY/SAL/PAYROLL/CTC = salary | GST/GSTIN = gst | TDS/INCOME TAX/IT DEPT = tds\n'
+      + 'IRCTC/UBER/OLA/AIRLINE/TRAVEL = travel | MEDICAL/PHARMA/HOSPITAL/CLINIC = medical\n'
+      + 'ELECTRICITY/WATER/BROADBAND/AIRTEL/JIO/BSNL = utilities | RENT/LEASE = rent\n'
+      + 'ATM/CASH = bank_charges | EMI/LOAN/MORTGAGE = other | UPI UNKNOWN = others\n'
+      + 'needs_review: true ONLY for others entries that could not be identified\n'
+      + 'IMPORTANT: When you cannot identify a merchant or transaction type, use "others"\n'
+      + '"other" is only for known but uncategorised items like bank transfers between own accounts\n\n'
+      + 'Bank statement:\n' + fileContent.slice(0, 7000);
+
+    var workerRes = await fetch('https://taxnio-ai.harshalbajaj29.workers.dev', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        content: prompt
+      })
+    });
+
+    if(!workerRes.ok){
+      var errText = await workerRes.text();
+      throw new Error('Worker returned ' + workerRes.status + ': ' + errText);
+    }
+
+    var workerData = await workerRes.json();
+    document.getElementById('bs-fill').style.width='65%';
+    document.getElementById('bs-status').textContent='Parsing results...';
+
+    // Debug: log full response
+    console.log('Worker response:', JSON.stringify(workerData).slice(0, 500));
+
+    // Extract text from Claude response
+    var responseText = '';
+    if(workerData.content && Array.isArray(workerData.content) && workerData.content.length > 0){
+      responseText = workerData.content[0].text || '';
+    } else if(workerData.error){
+      throw new Error('Claude error: ' + (workerData.error.message || JSON.stringify(workerData.error)));
+    } else {
+      throw new Error('Unexpected response: ' + JSON.stringify(workerData).slice(0,200));
+    }
+
+    console.log('Response text:', responseText.slice(0, 500));
+
+    // Parse JSON from response
+    var txns = [];
+    var cleanText = responseText.replace(/```json/g,'').replace(/```/g,'').trim();
+
+    // Try direct parse first
+    try {
+      txns = JSON.parse(cleanText);
+    } catch(e1) {
+      // Try to find array in text
+      var arrMatch = cleanText.match(/\[[\s\S]*\]/);
+      if(arrMatch){
+        try { txns = JSON.parse(arrMatch[0]); }
+        catch(e2){ txns = []; console.error('Parse failed:', e2.message, arrMatch[0].slice(0,200)); }
+      }
+    }
+
+    if(!Array.isArray(txns)){
+      console.error('txns is not array:', typeof txns, JSON.stringify(txns).slice(0,100));
+      txns = [];
+    }
+
+    if(txns.length === 0){
+      document.getElementById('bs-status').textContent = 'No transactions found. Make sure file is a text CSV not PDF binary.';
+      await sb.from('bank_statements').update({status:'error'}).eq('id',statementId);
+      document.getElementById('bs-save').disabled = false;
+      document.getElementById('bs-save').textContent = 'Upload & Process with AI';
+      return;
+    }
+
+    document.getElementById('bs-fill').style.width='80%';
+    document.getElementById('bs-status').textContent='Saving ' + txns.length + ' transactions...';
+
+    var totC=0, totD=0, sus=0;
+
+    // Save in batches of 50
+    for(var i=0; i<txns.length; i+=50){
+      var batch = txns.slice(i,i+50).map(function(t){
+        var amt = parseFloat(t.amount)||0;
+        var typ = (t.type||'debit').toLowerCase().trim();
+        if(typ==='credit') totC+=amt; else totD+=amt;
+        if((t.category||'')===('suspense')) sus++;
+        return {
+          client_phone: clientPhone,
+          statement_id: statementId,
+          transaction_date: t.transaction_date||null,
+          description: (t.description||'').slice(0,500),
+          amount: amt,
+          type: typ,
+          category: t.category||'other',
+          balance: t.balance ? parseFloat(t.balance) : null,
+          needs_review: t.needs_review===true,
+          is_approved: false
+        };
+      });
+      var saveRes = await sb.from('transactions').insert(batch);
+      if(saveRes.error) console.error('Batch save error:', saveRes.error.message);
+    }
+
+    // Update statement
+    await sb.from('bank_statements').update({
+      status:'done',
+      transaction_count: txns.length,
+      total_credits: Math.round(totC*100)/100,
+      total_debits: Math.round(totD*100)/100
+    }).eq('id',statementId);
+
+    document.getElementById('bs-fill').style.width='100%';
+    document.getElementById('bs-status').textContent='Done! ' + txns.length + ' transactions categorised. ' + sus + ' in suspense.';
+    setTimeout(function(){ closeModal(); loadData(); }, 2500);
+
+  }catch(err){
+    console.error('processBS error:', err);
+    document.getElementById('bs-status').textContent='Error: ' + err.message;
+    document.getElementById('bs-save') && (document.getElementById('bs-save').disabled=false);
+    document.getElementById('bs-save') && (document.getElementById('bs-save').textContent='Upload & Process with AI');
+    try{ await sb.from('bank_statements').update({status:'error'}).eq('id',statementId); }catch(e){}
+  }
+}
+
+
+// -- CATEGORY CHANGE --
+function changeCat(id){openModal('change-cat',id);}
+async function saveCat(id, cat, description, clientPhone){
+  if(!cat) return;
+  await sb.from('transactions').update({ca_category:cat, needs_review:false}).eq('id',id);
+  var t=transactions.find(function(x){return x.id===id;});
+  if(t){t.ca_category=cat;t.needs_review=false;}
+  // Save memory if description and clientPhone provided
+  if(description && clientPhone){
+    var key = description.toLowerCase().trim().slice(0,80);
+    // Upsert into category_memory table
+    await sb.from('category_memory').upsert({
+      client_phone: clientPhone,
+      description_key: key,
+      category: cat,
+      updated_at: new Date().toISOString()
+    }, {onConflict:'client_phone,description_key'});
+  }
+  renderView();
+}
+
+// -- SUSPENSE / OTHERS REVIEW --
+var susAiResults = {}; // store AI suggestions per transaction id
+
+async function askAiForSuspense(txnId){
+  var t = transactions.find(function(x){return x.id===txnId;});
+  if(!t) return;
+  var comment = document.getElementById('sus-comment-'+txnId).value.trim();
+  var btn = document.getElementById('sus-ai-btn-'+txnId);
+  var resultBox = document.getElementById('sus-ai-result-'+txnId);
+  btn.textContent='Asking AI...'; btn.disabled=true;
+  resultBox.className='sus-ai-result';
+  resultBox.textContent='';
+  try{
+    var prompt = 'You are an expert Indian CA assistant helping categorise a bank transaction.\n\n'
+      +'Transaction description: "'+t.description+'"\n'
+      +'Amount: ₹'+t.amount+' ('+t.type+')\n'
+      +'CA note: "'+comment+'"\n\n'
+      +'Based on the description and CA note, suggest the best category from this list:\n'
+      +'fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other\n\n'
+      +'Reply in this exact JSON format only, no explanation:\n'
+      +'{"category":"salary","reason":"CA note says this is employee payment"}';
+    var res = await fetch('https://taxnio-ai.harshalbajaj29.workers.dev',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001', content:prompt})
+    });
+    var data = await res.json();
+    var text = (data.content&&data.content[0]&&data.content[0].text)||'';
+    var clean = text.replace(/```json|```/g,'').trim();
+    var parsed = JSON.parse(clean);
+    susAiResults[txnId] = parsed.category;
+    resultBox.innerHTML = '🤖 AI suggests: <strong>'+parsed.category+'</strong><br><span style="font-size:12px;color:var(--brown3)">'+parsed.reason+'</span>'
+      +'<div style="display:flex;gap:8px;margin-top:8px">'
+      +'<button class="btn-pri" style="font-size:12px;padding:5px 12px" onclick="confirmSusCat(\''+txnId+'\',\''+parsed.category+'\')">✓ Accept</button>'
+      +'<button class="btn-sm" style="font-size:12px;padding:5px 12px" onclick="document.getElementById(\'sus-manual-'+txnId+'\').style.display=\'flex\'">Change</button>'
+      +'</div>';
+    resultBox.className='sus-ai-result show';
+  }catch(e){
+    resultBox.textContent='AI error: '+e.message+'. Please categorise manually.';
+    resultBox.className='sus-ai-result show';
+    document.getElementById('sus-manual-'+txnId).style.display='flex';
+  }
+  btn.textContent='Ask AI'; btn.disabled=false;
+}
+
+async function confirmSusCat(txnId, cat){
+  var t = transactions.find(function(x){return x.id===txnId;});
+  if(!t) return;
+  await saveCat(txnId, cat, t.description, t.client_phone);
+  // Show memory saved notice
+  var mem = document.getElementById('sus-mem-'+txnId);
+  if(mem){mem.textContent='✅ Saved! Next time "'+t.description.slice(0,30)+'..." will auto-categorise as '+cat;mem.className='sus-mem show';}
+  var row = document.getElementById('sus-row-'+txnId);
+  if(row) setTimeout(function(){row.style.opacity='0.4';row.style.pointerEvents='none';},300);
+}
+
+function renderSuspenseReview(clientPhone){
+  var sus = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone)
+      && !t.ca_category;
+  });
+  if(sus.length===0) return '<div class="empty" style="padding:24px"><div class="empty-icon">✅</div><p>No unreviewed entries</p></div>';
+
+  var cats=['fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','other'];
+
+  return sus.map(function(t){
+    var catOpts = cats.map(function(c){return'<option value="'+c+'">'+c+'</option>';}).join('');
+    return '<div class="sus-row" id="sus-row-'+t.id+'">'
+      +'<div class="sus-meta">'
+      +'<div class="sus-desc">'+t.description+'</div>'
+      +'<div class="sus-date">'+t.transaction_date+'</div>'
+      +'<div class="sus-amt '+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(t.amount)||0)+'</div>'
+      +(clientPhone?'':'<div style="font-size:11px;color:var(--brown4)">'+cName(t.client_phone||'')+'</div>')
+      +'</div>'
+      +'<textarea class="sus-comment" id="sus-comment-'+t.id+'" placeholder="Add a note for AI e.g. \'This is salary payment to Mobin Khan\' or \'Monthly office rent\'..."></textarea>'
+      +'<div class="sus-actions">'
+      +'<button class="btn-pri" id="sus-ai-btn-'+t.id+'" style="font-size:12px;padding:6px 14px" onclick="askAiForSuspense(\''+t.id+'\')">🤖 Ask AI</button>'
+      +'<div id="sus-manual-'+t.id+'" style="display:flex;gap:6px;align-items:center">'
+      +'<select id="sus-sel-'+t.id+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream2);font-size:12px;color:var(--brown)"><option value="">Move to category...</option>'+catOpts+'</select>'
+      +'<button class="btn-sm" style="font-size:12px;padding:6px 12px" onclick="confirmSusCat(\''+t.id+'\',document.getElementById(\'sus-sel-'+t.id+'\').value)">Save</button>'
+      +'</div>'
+      +'</div>'
+      +'<div class="sus-ai-result" id="sus-ai-result-'+t.id+'"></div>'
+      +'<div class="sus-mem" id="sus-mem-'+t.id+'"></div>'
+      +'</div>';
+  }).join('');
+}
+
+// -- EXPORT --
+function exportCSV(){
+  var h=['Date','Client','Type','Vendor','Amount','GST','Description'];
+  var rows=invoices.map(function(i){return[fmtD(i.received_at),cName(i.client_phone||''),i.message_type||'',(i.vendor_name||'').replace(/,/g,' '),i.amount||'',i.gst_amount||'',(i.description||'').replace(/,/g,' ')];});
+  var csv=[h].concat(rows).map(function(r){return r.join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_receipts_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+function exportTxnCSV(){
+  var h=['Date','Client','Description','Category','CA Category','Type','Amount','Balance'];
+  var rows=transactions.map(function(t){return[t.transaction_date||'',cName(t.client_phone||''),(t.description||'').replace(/,/g,' '),t.category||'',t.ca_category||'',t.type||'',t.amount||'',t.balance||''];});
+  var csv=[h].concat(rows).map(function(r){return r.join(',');}).join('\n');
+  var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_transactions_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// -- OTHERS REVIEW PAGE --
+function renderOthersReview(){
+  var clientPhone = selectedClient ? selectedClient.phone : null;
+  var sus = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone)
+      && !t.ca_category;
+  });
+  var total = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone);
+  }).length;
+  setPage(
+    '<div style="max-width:860px;margin:0 auto">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<div>'
+    +'<h3 style="font-size:15px;color:var(--brown)">⚠️ Others — Needs Review</h3>'
+    +'<p style="font-size:12px;color:var(--brown4);margin-top:2px">'+sus.length+' pending · '+total+' total · Add a note and ask AI to auto-categorise</p>'
+    +'</div>'
+    +(clientPhone?'<button class="btn-sm" onclick="selectedClient=null;document.getElementById(\'client-dropdown\').value=\'\';renderOthersReview()">Show All Clients</button>':'')
+    +'</div>'
+    +(sus.length===0
+      ? '<div class="empty" style="margin-top:40px"><div class="empty-icon" style="font-size:36px">✅</div><p style="font-size:14px">All transactions reviewed!</p></div>'
+      : renderSuspenseReview(clientPhone)
+    )
+    +'</div>'
+  );
+}
+
+// -- HELPERS --
+function dIcon(t){if(!t)return'📄';var s=t.toLowerCase();if(s.includes('bank'))return'🏦';if(s.includes('itr'))return'📊';if(s.includes('gst'))return'🧾';if(s.includes('pan'))return'💳';if(s.includes('aadhaar'))return'🪪';if(s.includes('tally'))return'📉';return'📁';}
+function fmtD(d){if(!d)return'--';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtN(n){if(!n||isNaN(n))return'0';return n.toLocaleString('en-IN',{maximumFractionDigits:0});}
+
+// -- INIT --
+sb.auth.getSession().then(function(res){if(res.data&&res.data.session)bootApp(res.data.session.user);});
+</script>
+</body>
+</html>
