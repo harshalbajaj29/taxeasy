@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Taxnio — CA Dashboard</title>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.39.3/dist/umd/supabase.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=Source+Sans+3:wght@300;400;500;600&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
@@ -489,16 +489,16 @@ tbody tr:last-child td{border-bottom:none}
 </div>
 
 <script>
-// ── SUPABASE ──
+// -- SUPABASE --
 const SB_URL='https://luljdeuhpldtjnbcdwgo.supabase.co';
 const SB_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imx1bGpkZXVocGxkdGpuYmNkd2dvIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzM2ODYwMzEsImV4cCI6MjA4OTI2MjAzMX0.OjaFweTgBsnXtynuYuvGK27UjFSEPAhB9XHh1TQwXIU';
 const sb = window.supabase.createClient(SB_URL, SB_KEY);
 
-// ── STATE ──
+// -- STATE --
 let invoices=[],clients=[],questions=[],appointments=[],documents=[],reminders=[],caInvoices=[],challans=[],transactions=[],bankStatements=[],customEvents=[];
 let currentView='home', selectedClient=null;
 
-// ── AUTH ──
+// -- AUTH --
 async function doLogin(){
   var btn=document.getElementById('login-btn');
   var err=document.getElementById('login-err');
@@ -531,7 +531,7 @@ function bootApp(user){
   loadData();
 }
 
-// ── DATA ──
+// -- DATA --
 async function loadData(){
   setPage('<div class="spin-wrap"><div class="spinner"></div></div>');
   try{
@@ -575,7 +575,7 @@ async function loadData(){
   renderView();
 }
 
-function cName(phone){if(!phone)return'—';var c=clients.find(function(x){return x.phone===phone;});return c&&c.name?c.name:phone;}
+function cName(phone){if(!phone)return'--';var c=clients.find(function(x){return x.phone===phone;});return c&&c.name?c.name:phone;}
 function updateBadges(){
   var pq=questions.filter(function(q){return q.needs_ca_review&&q.status!=='ca_replied';}).length;
   var pa=appointments.filter(function(a){return a.status==='pending';}).length;
@@ -618,14 +618,14 @@ function onGlobalSearch(val){
   setTimeout(function(){var i=document.querySelector('.srch');if(i){i.value=val;renderReceipts(val,'');}},120);
 }
 
-// ── ROUTING ──
+// -- ROUTING --
 function nav(v){
   currentView=v;
   document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.toggle('active',b.dataset.view===v);});
   var hr=new Date().getHours();
   var gr=hr<12?'Good morning':hr<17?'Good afternoon':'Good evening';
   var T={
-    home:['Overview',gr+' — here is your daily briefing'],
+    home:['Overview',gr+' -- here is your daily briefing'],
     'client-dash':['Client Dashboard','Selected client overview and spending'],
     clients:['Manage Clients','Add, edit and delete clients'],
     receipts:['Receipts','All invoices and receipts from clients'],
@@ -671,7 +671,7 @@ function renderView(){
 }
 function setPage(h){document.getElementById('page-content').innerHTML=h;}
 
-// ── COMPLIANCE DATES ──
+// -- COMPLIANCE DATES --
 function getComplianceDates(){
   var now=new Date(),m=now.getMonth(),y=now.getFullYear();
   var nm=m===11?0:m+1,ny=m===11?y+1:y;
@@ -693,7 +693,7 @@ function getComplianceDates(){
   return dates.filter(function(d){return d.diff>=-1&&d.diff<=45;}).sort(function(a,b){return a.diff-b.diff;});
 }
 
-// ── HOME ──
+// -- HOME --
 function renderHome(){
   var now=new Date();
   var tm=invoices.filter(function(i){var d=new Date(i.received_at);return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();});
@@ -780,7 +780,7 @@ function renderHome(){
   +(urgQ.length===0?'<div class="empty"><div class="empty-icon">✅</div><p>All questions answered</p></div>':
     urgQ.map(function(q){
       return '<div style="padding:10px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnADrawer(\''+q.id+'\')">'
-        +'<div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:4px">'+(q.question||'—')+'</div>'
+        +'<div style="font-size:13px;font-weight:500;color:var(--brown);margin-bottom:4px">'+(q.question||'--')+'</div>'
         +'<div style="display:flex;align-items:center;gap:8px"><span style="font-size:11px;color:var(--brown4)">'+cName(q.client_phone||'')+'</span><span style="margin-left:auto;font-size:10px;color:var(--brown4)">'+tSince(new Date(q.created_at))+'</span></div>'
         +'<button class="btn-reply" style="margin-top:6px;padding:4px 10px;font-size:11px" onclick="event.stopPropagation();openQnADrawer(\''+q.id+'\')">Reply →</button></div>';
     }).join('')
@@ -809,7 +809,7 @@ function renderHome(){
   +(pendChal.length===0?'<div class="empty" style="padding:16px"><div class="empty-icon" style="font-size:20px">✅</div><p>No pending challans</p></div>':
     pendChal.map(function(c){
       return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3)">'
-        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(c.challan_type||'—')+' — '+cName(c.client_phone||'')+'</div><div style="font-size:10px;color:var(--brown4)">'+(c.period||'—')+'</div></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(c.challan_type||'--')+' -- '+cName(c.client_phone||'')+'</div><div style="font-size:10px;color:var(--brown4)">'+(c.period||'--')+'</div></div>'
         +'<div class="mono">₹'+fmtN(parseFloat(c.amount)||0)+'</div><span class="badge b-pending">Pending</span></div>';
     }).join('')
   )+'</div>'
@@ -848,7 +848,7 @@ function renderHome(){
 function tSince(d){var s=Math.floor((Date.now()-d)/1000);if(s<60)return s+'s ago';if(s<3600)return Math.floor(s/60)+'m ago';if(s<86400)return Math.floor(s/3600)+'h ago';return Math.floor(s/86400)+'d ago';}
 function delEvent(id){customEvents=customEvents.filter(function(e){return e.id!==id;});localStorage.setItem('taxnio_events',JSON.stringify(customEvents));renderHome();}
 
-// ── CLIENT DASHBOARD ──
+// -- CLIENT DASHBOARD --
 function renderClientDash(){
   var c=selectedClient;
   if(!c||!c.phone){setPage('<div class="empty" style="margin-top:60px"><div class="empty-icon">👤</div><p>Select a client from the dropdown above</p></div>');return;}
@@ -912,7 +912,7 @@ function renderClientDash(){
         +'<div style="font-size:16px">🏦</div>'
         +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(b.bank_name||b.file_name||'Statement')+'</div>'
         +'<div style="font-size:10px;color:var(--brown4)">'+(b.transaction_count||0)+' txns · '+fmtD(b.created_at)+'</div></div>'
-        +'<span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'—')+'</span></div>';
+        +'<span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></div>';
     }).join('')
   )+'</div>'
   +'<div class="spend-card">'
@@ -931,8 +931,8 @@ function renderClientDash(){
     cTxn.slice(0,8).map(function(t){
       var cat=t.ca_category||t.category||'other';
       return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3)">'
-        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(t.description||'—')+'</div>'
-        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'—')+'</div></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(t.description||'--')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'--')+'</div></div>'
         +'<span class="cat-badge cat-'+cat+'" onclick="changeCat(\''+t.id+'\')">'+cat.replace('_',' ')+'</span>'
         +'<div class="'+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(t.amount)||0)+'</div></div>';
     }).join('')
@@ -944,25 +944,25 @@ function renderClientDash(){
     return '<div style="display:flex;align-items:center;gap:8px;padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openRcptDrawer(\''+i.id+'\')">'
       +'<div style="flex:1;min-width:0"><div style="font-size:12px;font-weight:500;color:var(--brown)">'+(i.vendor_name||i.description||'Receipt')+'</div>'
       +'<div style="font-size:10px;color:var(--brown4)">'+fmtD(i.received_at)+'</div></div>'
-      +'<div class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'—')+'</div></div>';
+      +'<div class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</div></div>';
   }).join(''))
   +'</div><div class="card-head"><h3>Recent Questions</h3></div>'
   +'<div style="overflow-y:auto;max-height:100px">'
   +(cQ.slice(0,2).map(function(q){
     return '<div style="padding:8px 14px;border-bottom:1px solid var(--cream3);cursor:pointer" onclick="openQnADrawer(\''+q.id+'\')">'
-      +'<div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(q.question||'—')+'</div>'
+      +'<div style="font-size:12px;font-weight:500;color:var(--brown);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(q.question||'--')+'</div>'
       +'<span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'" style="display:inline-block;margin-top:3px">'+(q.needs_ca_review?'Review':'Answered')+'</span></div>';
   }).join(''))
   +'</div></div></div>'
 
   // Suspense entries
   +(suspArr.length>0?'<div class="card" style="margin-bottom:14px;border-color:#e0c090">'
-    +'<div class="card-head" style="background:#fef3dc"><h3 style="color:#8b6010">⚠️ Suspense Entries — Needs Review</h3><span class="card-cnt" style="background:#f5e8b0;color:#8b6010">'+suspArr.length+'</span></div>'
+    +'<div class="card-head" style="background:#fef3dc"><h3 style="color:#8b6010">⚠️ Suspense Entries -- Needs Review</h3><span class="card-cnt" style="background:#f5e8b0;color:#8b6010">'+suspArr.length+'</span></div>'
     +'<div style="overflow-y:auto;max-height:200px">'
     +suspArr.map(function(t){
       return '<div style="display:flex;align-items:center;gap:10px;padding:9px 14px;border-bottom:1px solid var(--cream3)">'
-        +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(t.description||'—')+'</div>'
-        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'—')+' · Claude could not categorise</div></div>'
+        +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(t.description||'--')+'</div>'
+        +'<div style="font-size:10px;color:var(--brown4)">'+(t.transaction_date||'--')+' · Claude could not categorise</div></div>'
         +'<select onchange="saveCat(\''+t.id+'\',this.value)" style="padding:4px 8px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream2);font-size:12px;color:var(--brown);cursor:pointer">'
         +'<option value="">Select category</option>'
         +'<option>fuel</option><option>groceries</option><option>salary</option><option>rent</option>'
@@ -974,7 +974,7 @@ function renderClientDash(){
   );
 }
 
-// ── MANAGE CLIENTS ──
+// -- MANAGE CLIENTS --
 function renderClients(){
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
     +'<div class="panel-head"><h3>All Clients</h3><span>'+clients.length+'</span></div>'
@@ -987,10 +987,10 @@ function renderCliTable(data){
   return'<table><thead><tr><th>Name</th><th>Phone</th><th>Business</th><th>PAN</th><th>Health</th><th>Rcpts</th><th>Total</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
   +data.map(function(c){
     return'<tr onclick="onClientSelect(\''+c.phone+'\')">'
-      +'<td style="font-weight:500">'+(c.name||'—')+'</td>'
-      +'<td class="mono">'+(c.phone||'—')+'</td>'
-      +'<td class="desc-cell">'+(c.business_name||'—')+'</td>'
-      +'<td class="mono">'+(c.pan_number||'—')+'</td>'
+      +'<td style="font-weight:500">'+(c.name||'--')+'</td>'
+      +'<td class="mono">'+(c.phone||'--')+'</td>'
+      +'<td class="desc-cell">'+(c.business_name||'--')+'</td>'
+      +'<td class="mono">'+(c.pan_number||'--')+'</td>'
       +'<td><span style="display:inline-flex;align-items:center;gap:4px;font-size:11px"><div style="width:7px;height:7px;border-radius:50%;background:'+(c.health==='active'?'#27ae60':c.health==='quiet'?'#f39c12':'#c0392b')+'"></div>'+c.health+'</span></td>'
       +'<td style="text-align:center">'+c.count+'</td>'
       +'<td class="amt">₹'+fmtN(c.total)+'</td>'
@@ -1003,7 +1003,7 @@ function renderCliTable(data){
 }
 function selClientGo(ph){selectedClient=clients.find(function(c){return c.phone===ph;});document.getElementById('client-dropdown').value=ph;nav('client-dash');}
 
-// ── RECEIPTS ──
+// -- RECEIPTS --
 function renderReceipts(s,t){
   var inv=selectedClient?invoices.filter(function(i){return i.client_phone===selectedClient.phone;}):invoices;
   if(t)inv=inv.filter(function(i){return i.message_type===t;});
@@ -1022,13 +1022,13 @@ function renderRcptTable(data){
       +'<td class="mono">'+fmtD(i.received_at)+'</td>'
       +'<td style="color:var(--brown3)">'+cName(i.client_phone||'')+'</td>'
       +'<td><span class="badge b-'+(i.message_type||'receipt')+'">'+(i.message_type||'receipt').replace('_',' ')+'</span></td>'
-      +'<td style="font-weight:500">'+(i.vendor_name||'—')+'</td>'
-      +'<td class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'—')+'</td>'
-      +'<td class="desc-cell">'+(i.description||i.raw_text||'—')+'</td></tr>';
+      +'<td style="font-weight:500">'+(i.vendor_name||'--')+'</td>'
+      +'<td class="amt">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</td>'
+      +'<td class="desc-cell">'+(i.description||i.raw_text||'--')+'</td></tr>';
   }).join('')+'</tbody></table>';
 }
 
-// ── Q&A ──
+// -- Q&A --
 function renderQnA(s,f){
   var qs=selectedClient?questions.filter(function(q){return q.client_phone===selectedClient.phone;}):questions;
   if(f==='review')qs=qs.filter(function(q){return q.needs_ca_review;});
@@ -1046,13 +1046,13 @@ function renderQnA(s,f){
           +'<span class="badge '+(q.needs_ca_review?'b-review':'b-answered')+'">'+(q.needs_ca_review?'Needs review':'AI answered')+'</span>'
           +'<span style="font-size:11px;color:var(--brown4)">'+cName(q.client_phone||'')+'</span>'
           +'<span style="margin-left:auto;font-size:10px;color:var(--brown4)">'+fmtD(q.created_at)+'</span></div>'
-          +'<div style="font-size:13px;font-weight:500;color:var(--brown)">'+(q.question||'—')+'</div>'
+          +'<div style="font-size:13px;font-weight:500;color:var(--brown)">'+(q.question||'--')+'</div>'
           +'<div style="font-size:12px;color:var(--brown3);margin-top:3px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden">'+(q.ai_answer||q.ca_reply||'No answer yet')+'</div></div>';
       }).join('')
     )+'</div></div>');
 }
 
-// ── APPOINTMENTS ──
+// -- APPOINTMENTS --
 function renderAppointments(f){
   var ap=selectedClient?appointments.filter(function(a){return a.client_phone===selectedClient.phone;}):appointments;
   if(f==='pending')ap=ap.filter(function(a){return a.status==='pending';});
@@ -1067,13 +1067,13 @@ function renderAppointments(f){
           +'<div style="width:42px;height:42px;border-radius:var(--r);background:var(--purple-light);border:1px solid #d8c8f0;display:flex;align-items:center;justify-content:center;font-size:18px;flex-shrink:0">📅</div>'
           +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(a.requested_date||'TBD')+(a.requested_time?' · '+a.requested_time:'')+'</div>'
           +'<div style="font-size:11px;color:var(--brown4)">'+cName(a.client_phone||'')+'</div>'
-          +'<div style="font-size:11px;color:var(--brown3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.notes||'—')+'</div></div>'
+          +'<div style="font-size:11px;color:var(--brown3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(a.notes||'--')+'</div></div>'
           +'<span class="badge b-'+(a.status||'pending')+'">'+(a.status||'pending')+'</span></div>';
       }).join('')
     )+'</div></div>');
 }
 
-// ── DOCUMENTS ──
+// -- DOCUMENTS --
 function renderDocuments(s){
   var d=selectedClient?documents.filter(function(x){return x.client_phone===selectedClient.phone;}):documents;
   if(s)d=d.filter(function(x){return (x.file_name||'').toLowerCase().includes(s.toLowerCase())||(x.doc_type||'').toLowerCase().includes(s.toLowerCase());});
@@ -1094,7 +1094,7 @@ function renderDocuments(s){
     )+'</div></div>');
 }
 
-// ── REMINDERS ──
+// -- REMINDERS --
 function renderReminders(){
   var rem=selectedClient?reminders.filter(function(r){return r.client_phone===selectedClient.phone||r.is_all_clients;}):reminders;
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
@@ -1107,13 +1107,13 @@ function renderReminders(){
           +'<div style="flex:1;min-width:0"><div style="font-size:13px;font-weight:500;color:var(--brown)">'+(r.title||'Reminder')+'</div>'
           +'<div style="font-size:11px;color:var(--brown4)">'+(r.is_all_clients?'All clients':cName(r.client_phone||''))+' · '+(r.notes||'')+'</div></div>'
           +'<div style="display:flex;flex-direction:column;align-items:flex-end;gap:3px">'
-          +'<div style="font-size:11px;font-family:\'DM Mono\',monospace;color:var(--amber)">'+(r.due_date||'—')+'</div>'
+          +'<div style="font-size:11px;font-family:\'DM Mono\',monospace;color:var(--amber)">'+(r.due_date||'--')+'</div>'
           +'<span class="badge b-'+(r.status||'pending')+'">'+(r.status||'pending')+'</span></div></div>';
       }).join('')
     )+'</div></div>');
 }
 
-// ── CA INVOICES ──
+// -- CA INVOICES --
 function renderCAInvoices(){
   var inv=selectedClient?caInvoices.filter(function(i){return i.client_phone===selectedClient.phone;}):caInvoices;
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
@@ -1125,16 +1125,16 @@ function renderCAInvoices(){
         return'<tr onclick="openCAIDrawer(\''+i.id+'\')">'
           +'<td class="mono">'+fmtD(i.created_at)+'</td>'
           +'<td>'+cName(i.client_phone||'')+'</td>'
-          +'<td class="mono">'+(i.invoice_number||'—')+'</td>'
-          +'<td class="desc-cell">'+(i.description||'—')+'</td>'
+          +'<td class="mono">'+(i.invoice_number||'--')+'</td>'
+          +'<td class="desc-cell">'+(i.description||'--')+'</td>'
           +'<td class="amt">₹'+fmtN(parseFloat(i.amount)||0)+'</td>'
-          +'<td class="mono">'+(i.due_date||'—')+'</td>'
+          +'<td class="mono">'+(i.due_date||'--')+'</td>'
           +'<td><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></td></tr>';
       }).join('')+'</tbody></table>'
     )+'</div></div>');
 }
 
-// ── CHALLANS ──
+// -- CHALLANS --
 function renderChallans(){
   var ch=selectedClient?challans.filter(function(c){return c.client_phone===selectedClient.phone;}):challans;
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
@@ -1143,12 +1143,12 @@ function renderChallans(){
     +(ch.length===0?'<div class="empty"><div class="empty-icon">📋</div><p>No challans yet</p></div>':
       '<table><thead><tr><th>Date</th><th>Client</th><th>Type</th><th>Amount</th><th>Period</th><th>Status</th></tr></thead><tbody>'
       +ch.map(function(c){
-        return'<tr><td class="mono">'+fmtD(c.created_at)+'</td><td>'+cName(c.client_phone||'')+'</td><td>'+(c.challan_type||'—')+'</td><td class="amt">₹'+fmtN(parseFloat(c.amount)||0)+'</td><td class="mono">'+(c.period||'—')+'</td><td><span class="badge b-'+(c.status||'pending')+'">'+(c.status||'pending')+'</span></td></tr>';
+        return'<tr><td class="mono">'+fmtD(c.created_at)+'</td><td>'+cName(c.client_phone||'')+'</td><td>'+(c.challan_type||'--')+'</td><td class="amt">₹'+fmtN(parseFloat(c.amount)||0)+'</td><td class="mono">'+(c.period||'--')+'</td><td><span class="badge b-'+(c.status||'pending')+'">'+(c.status||'pending')+'</span></td></tr>';
       }).join('')+'</tbody></table>'
     )+'</div></div>');
 }
 
-// ── BANK STATEMENTS ──
+// -- BANK STATEMENTS --
 function renderBankStatements(){
   var bs=selectedClient?bankStatements.filter(function(b){return b.client_phone===selectedClient.phone;}):bankStatements;
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
@@ -1158,18 +1158,18 @@ function renderBankStatements(){
       +bs.map(function(b){
         return'<tr onclick="openBSDrawer(\''+b.id+'\')">'
           +'<td style="font-weight:500">'+cName(b.client_phone||'')+'</td>'
-          +'<td>'+(b.bank_name||'—')+'</td>'
-          +'<td class="mono">'+(b.period_from?fmtD(b.period_from)+' – '+fmtD(b.period_to):'—')+'</td>'
+          +'<td>'+(b.bank_name||'--')+'</td>'
+          +'<td class="mono">'+(b.period_from?fmtD(b.period_from)+' – '+fmtD(b.period_to):'--')+'</td>'
           +'<td style="text-align:center">'+(b.transaction_count||0)+'</td>'
           +'<td class="txn-credit">₹'+fmtN(parseFloat(b.total_credits)||0)+'</td>'
           +'<td class="txn-debit">₹'+fmtN(parseFloat(b.total_debits)||0)+'</td>'
-          +'<td><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'—')+'</span></td>'
+          +'<td><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></td>'
           +'<td class="mono">'+fmtD(b.created_at)+'</td></tr>';
       }).join('')+'</tbody></table></div>'
     )+'</div>');
 }
 
-// ── TRANSACTIONS ──
+// -- TRANSACTIONS --
 var txnActiveCat='', txnSearch='', txnDateFrom='', txnDateTo='';
 
 function renderTransactions(s,cat,dateFrom,dateTo){
@@ -1220,7 +1220,7 @@ function renderTransactions(s,cat,dateFrom,dateTo){
     +'</div>';
 
   setPage('<div class="panel" style="height:calc(100vh - 128px)">'
-    +'<div class="panel-head"><h3>Transactions'+(txnActiveCat?' — '+txnActiveCat.replace(/_/g,' '):'')+'</h3>'
+    +'<div class="panel-head"><h3>Transactions'+(txnActiveCat?' -- '+txnActiveCat.replace(/_/g,' '):'')+'</h3>'
     +'<div style="display:flex;align-items:center;gap:8px">'
     +(txnActiveCat||txnSearch||txnDateFrom?'<span style="font-size:13px;color:var(--brown4)">'+t.length+' results</span>':'')
     +'<span class="card-cnt">'+allT.length+' total</span>'
@@ -1235,13 +1235,13 @@ function renderTransactions(s,cat,dateFrom,dateTo){
         var cat=x.ca_category||x.category||'other';
         var isSus=cat==='suspense';
         return'<tr style="'+(isSus?'background:#fffbf0;':'')+'">'
-          +'<td class="mono" style="font-size:13px">'+(x.transaction_date||'—')+'</td>'
+          +'<td class="mono" style="font-size:13px">'+(x.transaction_date||'--')+'</td>'
           +(selectedClient?'':'<td style="font-size:13px">'+cName(x.client_phone||'')+'</td>')
-          +'<td style="font-size:13px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(x.description||'—')+'</td>'
+          +'<td style="font-size:13px;max-width:280px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis">'+(x.description||'--')+'</td>'
           +'<td><span class="cat-badge cat-'+cat+'" onclick="changeCat(''+x.id+'')" title="Click to change category">'+catIcons[cat]+' '+cat.replace('_',' ')+'</span>'+(isSus?'<span style="font-size:11px;color:#8b6010;margin-left:4px">⚠️</span>':'')+'</td>'
-          +'<td><span class="badge '+(x.type==='credit'?'b-answered':'b-unpaid')+'" style="font-size:12px">'+(x.type||'—')+'</span></td>'
+          +'<td><span class="badge '+(x.type==='credit'?'b-answered':'b-unpaid')+'" style="font-size:12px">'+(x.type||'--')+'</span></td>'
           +'<td class="'+(x.type==='credit'?'txn-credit':'txn-debit')+'" style="font-size:14px;font-weight:700">'+(x.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(x.amount)||0)+'</td>'
-          +'<td class="mono" style="font-size:13px;color:var(--brown4)">'+(x.balance?'₹'+fmtN(parseFloat(x.balance)):'—')+'</td></tr>';
+          +'<td class="mono" style="font-size:13px;color:var(--brown4)">'+(x.balance?'₹'+fmtN(parseFloat(x.balance)):'--')+'</td></tr>';
       }).join('')+'</tbody></table>'
     )+'</div></div>');
   // Bind events after DOM is ready
@@ -1265,7 +1265,7 @@ function renderTransactions(s,cat,dateFrom,dateTo){
     if(clBtn)clBtn.addEventListener('click',function(){renderTransactions(txnSearch,txnActiveCat,'','');});
   },50);
 }
-// ── SPENDING ANALYSIS ──
+// -- SPENDING ANALYSIS --
 function renderSpending(){
   var t=selectedClient?transactions.filter(function(x){return x.client_phone===selectedClient.phone&&x.type==='debit';}):transactions.filter(function(x){return x.type==='debit';});
   var cats={};
@@ -1302,7 +1302,7 @@ function renderSpending(){
   );
 }
 
-// ── TALLY ──
+// -- TALLY --
 function renderTally(){
   setPage('<div style="max-width:580px;margin:0 auto">'
     +'<div class="card"><div class="card-head"><h3>Import Tally Backup</h3></div>'
@@ -1325,11 +1325,11 @@ async function uploadTally(input){
   var fn='tally_'+Date.now()+'_'+f.name;
   await sb.storage.from('documents').upload('tally/'+fn,f,{contentType:f.type});
   var url=SB_URL+'/storage/v1/object/public/documents/tally/'+fn;
-  await sb.from('documents').insert({doc_type:'tally_backup',file_name:f.name,file_url:url,summary:'Tally backup — processing scheduled',status:'pending'});
+  await sb.from('documents').insert({doc_type:'tally_backup',file_name:f.name,file_url:url,summary:'Tally backup -- processing scheduled',status:'pending'});
   alert('Uploaded successfully! Will be processed within 24 hours.');
 }
 
-// ── DRAWERS ──
+// -- DRAWERS --
 function openRcptDrawer(id){
   var i=invoices.find(function(x){return x.id===id;});if(!i)return;
   document.getElementById('drawer-title').textContent='Receipt Detail';
@@ -1337,13 +1337,13 @@ function openRcptDrawer(id){
     +'<div class="dr"><div class="dl">Date</div><div class="dv">'+new Date(i.received_at||Date.now()).toLocaleString('en-IN')+'</div></div>'
     +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(i.client_phone||'')+' <span class="mono" style="color:var(--brown4);font-size:11px">'+(i.client_phone||'')+'</span></div></div>'
     +'<div class="dr-div"></div>'
-    +'<div class="dr"><div class="dl">Amount</div><div class="dv big">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">Vendor</div><div class="dv" style="font-weight:500">'+(i.vendor_name||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">Invoice date</div><div class="dv">'+(i.invoice_date||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">GST number</div><div class="dv mono">'+(i.gst_number||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">GST amount</div><div class="dv">'+(i.gst_amount?'₹'+fmtN(parseFloat(i.gst_amount)):'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Amount</div><div class="dv big">'+(i.amount?'₹'+fmtN(parseFloat(i.amount)):'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Vendor</div><div class="dv" style="font-weight:500">'+(i.vendor_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Invoice date</div><div class="dv">'+(i.invoice_date||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">GST number</div><div class="dv mono">'+(i.gst_number||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">GST amount</div><div class="dv">'+(i.gst_amount?'₹'+fmtN(parseFloat(i.gst_amount)):'--')+'</div></div>'
     +'<div class="dr-div"></div>'
-    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(i.description||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(i.description||'--')+'</div></div>'
     +(i.raw_text?'<div class="dr"><div class="dl">Raw text</div><div class="raw-box">'+i.raw_text+'</div></div>':'');
   openDrawer();
 }
@@ -1354,7 +1354,7 @@ function openQnADrawer(id){
     +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(q.client_phone||'')+'</div></div>'
     +'<div class="dr"><div class="dl">Date</div><div class="dv">'+new Date(q.created_at||Date.now()).toLocaleString('en-IN')+'</div></div>'
     +'<div class="dr-div"></div>'
-    +'<div class="dr"><div class="dl">Question</div><div class="dv" style="font-size:15px;font-weight:500;line-height:1.6">'+(q.question||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Question</div><div class="dv" style="font-size:15px;font-weight:500;line-height:1.6">'+(q.question||'--')+'</div></div>'
     +(q.ai_answer?'<div class="dr"><div class="dl">AI Answer</div><div class="ai-box">'+q.ai_answer+'</div></div>':'')
     +(q.ca_reply?'<div class="dr"><div class="dl">Your reply</div><div class="ai-box" style="background:var(--green-light);border-color:var(--green-mid)">'+q.ca_reply+'</div></div>':'')
     +'<div class="dr-div"></div>'
@@ -1371,7 +1371,7 @@ function openApptDrawer(id){
     +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(a.client_phone||'')+'</div></div>'
     +'<div class="dr"><div class="dl">Date</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600">'+(a.requested_date||'Not specified')+'</div></div>'
     +'<div class="dr"><div class="dl">Time</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600">'+(a.requested_time||'Not specified')+'</div></div>'
-    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3)">'+(a.notes||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3)">'+(a.notes||'--')+'</div></div>'
     +'<div class="dr-div"></div>'
     +'<textarea class="reply-area" id="appt-reply-txt" placeholder="Confirmed for...">'+(a.ca_reply||'')+'</textarea>'
     +'<div style="display:flex;gap:8px;margin-top:8px">'
@@ -1385,7 +1385,7 @@ function openDocDrawer(id){
   document.getElementById('drawer-title').textContent='Document';
   document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Type</div><div class="dv"><span class="badge b-document">'+(d.doc_type||'General')+'</span></div></div>'
     +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(d.client_phone||'')+'</div></div>'
-    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(d.file_name||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(d.file_name||'--')+'</div></div>'
     +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(d.status||'pending')+'">'+(d.status||'pending')+'</span></div></div>'
     +(d.summary?'<div class="dr-div"></div><div class="dr"><div class="dl">AI Summary</div><div class="ai-box">'+d.summary+'</div></div>':'')
     +(d.file_url?'<div class="dr-div"></div><a href="'+d.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none">↓ Download</a>':'');
@@ -1394,10 +1394,10 @@ function openDocDrawer(id){
 function openRemDrawer(id){
   var r=reminders.find(function(x){return x.id===id;});if(!r)return;
   document.getElementById('drawer-title').textContent='Reminder';
-  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Title</div><div class="dv" style="font-size:16px;font-weight:600">'+(r.title||'—')+'</div></div>'
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Title</div><div class="dv" style="font-size:16px;font-weight:600">'+(r.title||'--')+'</div></div>'
     +'<div class="dr"><div class="dl">For</div><div class="dv">'+(r.is_all_clients?'All clients':cName(r.client_phone||''))+'</div></div>'
-    +'<div class="dr"><div class="dl">Due date</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600;color:var(--amber)">'+(r.due_date||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(r.notes||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Due date</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:600;color:var(--amber)">'+(r.due_date||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Notes</div><div class="dv" style="color:var(--brown3);line-height:1.7">'+(r.notes||'--')+'</div></div>'
     +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(r.status||'pending')+'">'+(r.status||'pending')+'</span></div></div>'
     +'<div class="dr-div"></div>'
     +'<div style="display:flex;gap:8px">'
@@ -1409,11 +1409,11 @@ function openRemDrawer(id){
 function openCAIDrawer(id){
   var i=caInvoices.find(function(x){return x.id===id;});if(!i)return;
   document.getElementById('drawer-title').textContent='CA Invoice';
-  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Invoice #</div><div class="dv mono" style="font-size:15px;font-weight:600">'+(i.invoice_number||'—')+'</div></div>'
+  document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Invoice #</div><div class="dv mono" style="font-size:15px;font-weight:600">'+(i.invoice_number||'--')+'</div></div>'
     +'<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(i.client_phone||'')+'</div></div>'
     +'<div class="dr"><div class="dl">Amount</div><div class="dv big">₹'+fmtN(parseFloat(i.amount)||0)+'</div></div>'
-    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3)">'+(i.description||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">Due date</div><div class="dv">'+(i.due_date||'—')+'</div></div>'
+    +'<div class="dr"><div class="dl">Description</div><div class="dv" style="color:var(--brown3)">'+(i.description||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Due date</div><div class="dv">'+(i.due_date||'--')+'</div></div>'
     +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(i.status||'unpaid')+'">'+(i.status||'unpaid')+'</span></div></div>'
     +'<div class="dr-div"></div>'
     +'<div style="display:flex;gap:8px">'
@@ -1426,9 +1426,9 @@ function openBSDrawer(id){
   var b=bankStatements.find(function(x){return x.id===id;});if(!b)return;
   document.getElementById('drawer-title').textContent='Bank Statement';
   document.getElementById('drawer-body').innerHTML='<div class="dr"><div class="dl">Client</div><div class="dv">'+cName(b.client_phone||'')+'</div></div>'
-    +'<div class="dr"><div class="dl">Bank</div><div class="dv" style="font-weight:500">'+(b.bank_name||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(b.file_name||'—')+'</div></div>'
-    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'—')+'</span></div></div>'
+    +'<div class="dr"><div class="dl">Bank</div><div class="dv" style="font-weight:500">'+(b.bank_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">File</div><div class="dv mono">'+(b.file_name||'--')+'</div></div>'
+    +'<div class="dr"><div class="dl">Status</div><div class="dv"><span class="badge b-'+(b.status==='done'?'answered':b.status==='processing'?'pending':'error')+'">'+(b.status||'--')+'</span></div></div>'
     +'<div class="dr-div"></div>'
     +'<div style="display:grid;grid-template-columns:1fr 1fr;gap:10px">'
     +'<div style="background:var(--green-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--green);font-weight:600;margin-bottom:3px">CREDITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--green)">₹'+fmtN(b.total_credits||0)+'</div></div>'
@@ -1441,7 +1441,7 @@ function openBSDrawer(id){
 function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open');}
 function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');}
 
-// ── MODALS ──
+// -- MODALS --
 function openModal(type,phone){
   phone=phone||'';
   var cOpts=clients.map(function(c){return'<option value="'+c.phone+'"'+(c.phone===phone?' selected':'')+'>'+(c.name||c.phone)+'</option>';}).join('');
@@ -1538,7 +1538,7 @@ function openModal(type,phone){
 }
 function closeModal(){document.getElementById('modal-ov').classList.remove('open');}
 
-// ── SAVE FUNCTIONS ──
+// -- SAVE FUNCTIONS --
 function saveEvent(){
   var t=document.getElementById('ev-t').value.trim(),d=document.getElementById('ev-d').value,c=document.getElementById('ev-c').value;
   if(!t||!d){alert('Please add title and date');return;}
@@ -1609,7 +1609,7 @@ async function updateCAI(id,status){
   closeDrawer();renderCAInvoices();
 }
 
-// ── BANK STATEMENT UPLOAD ──
+// -- BANK STATEMENT UPLOAD --
 async function uploadBS(){
   var c=document.getElementById('bs-c').value;
   var bank=document.getElementById('bs-b').value.trim();
@@ -1797,7 +1797,7 @@ async function processBS(fileContent, fileName, clientPhone, statementId){
 }
 
 
-// ── CATEGORY CHANGE ──
+// -- CATEGORY CHANGE --
 function changeCat(id){openModal('change-cat',id);}
 async function saveCat(id,cat){
   if(!cat)return;
@@ -1806,7 +1806,7 @@ async function saveCat(id,cat){
   renderView();
 }
 
-// ── EXPORT ──
+// -- EXPORT --
 function exportCSV(){
   var h=['Date','Client','Type','Vendor','Amount','GST','Description'];
   var rows=invoices.map(function(i){return[fmtD(i.received_at),cName(i.client_phone||''),i.message_type||'',(i.vendor_name||'').replace(/,/g,' '),i.amount||'',i.gst_amount||'',(i.description||'').replace(/,/g,' ')];});
@@ -1820,12 +1820,12 @@ function exportTxnCSV(){
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_transactions_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
 }
 
-// ── HELPERS ──
+// -- HELPERS --
 function dIcon(t){if(!t)return'📄';var s=t.toLowerCase();if(s.includes('bank'))return'🏦';if(s.includes('itr'))return'📊';if(s.includes('gst'))return'🧾';if(s.includes('pan'))return'💳';if(s.includes('aadhaar'))return'🪪';if(s.includes('tally'))return'📉';return'📁';}
-function fmtD(d){if(!d)return'—';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
+function fmtD(d){if(!d)return'--';return new Date(d).toLocaleDateString('en-IN',{day:'2-digit',month:'short',year:'numeric'});}
 function fmtN(n){if(!n||isNaN(n))return'0';return n.toLocaleString('en-IN',{maximumFractionDigits:0});}
 
-// ── INIT ──
+// -- INIT --
 sb.auth.getSession().then(function(res){if(res.data&&res.data.session)bootApp(res.data.session.user);});
 </script>
 </body>
