@@ -507,10 +507,15 @@ async function doLogin(){
   err.textContent='';
   if(!email||!pass){err.textContent='Please fill in both fields';return;}
   btn.textContent='Signing in...';btn.disabled=true;
-  var res=await sb.auth.signInWithPassword({email:email,password:pass});
-  btn.textContent='Sign in to Dashboard';btn.disabled=false;
-  if(res.error){err.textContent=res.error.message;return;}
-  bootApp(res.data.user);
+  try{
+    var res=await sb.auth.signInWithPassword({email:email,password:pass});
+    if(res.error){err.textContent=res.error.message;return;}
+    bootApp(res.data.user);
+  }catch(e){
+    err.textContent='Login failed: '+e.message;
+  }finally{
+    btn.textContent='Sign in to Dashboard';btn.disabled=false;
+  }
 }
 
 async function doLogout(){
@@ -520,15 +525,26 @@ async function doLogout(){
 }
 
 function bootApp(user){
-  document.getElementById('login-page').style.display='none';
-  document.getElementById('app').classList.add('show');
-  var email=user.email||'';
-  var initials=email.slice(0,2).toUpperCase();
-  document.getElementById('user-av').textContent=initials;
-  document.getElementById('user-nm').textContent=email.split('@')[0];
-  document.getElementById('sb-av').textContent=initials;
-  document.getElementById('sb-email').textContent=email;
-  loadData();
+  try{
+    document.getElementById('login-page').style.display='none';
+    document.getElementById('app').classList.add('show');
+    var email=user.email||'';
+    var initials=email.slice(0,2).toUpperCase();
+    var userAv=document.getElementById('user-av');
+    var userNm=document.getElementById('user-nm');
+    var sbAv=document.getElementById('sb-av');
+    var sbEmail=document.getElementById('sb-email');
+    if(userAv)userAv.textContent=initials;
+    if(userNm)userNm.textContent=email.split('@')[0];
+    if(sbAv)sbAv.textContent=initials;
+    if(sbEmail)sbEmail.textContent=email;
+    loadData();
+  }catch(e){
+    console.error('bootApp error:',e);
+    document.getElementById('login-err').textContent='App failed to initialise: '+e.message;
+    document.getElementById('login-page').style.display='flex';
+    document.getElementById('app').classList.remove('show');
+  }
 }
 
 // -- DATA --
