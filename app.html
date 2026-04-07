@@ -321,8 +321,22 @@ tbody tr:last-child td{border-bottom:none}
 .cat-medical{background:#fff0e8;color:#8b4513}.cat-utilities{background:#f0f8e8;color:#3d6b1f}
 .cat-gst{background:#fef3dc;color:#8b6010}.cat-tds{background:#f8e8f0;color:#6b1a50}
 .cat-entertainment{background:#e8f8f8;color:#1a6b6b}.cat-bank_charges{background:#f4f4f4;color:#555}
-.cat-suspense{background:#fff0e0;color:#c05000}.cat-insurance{background:#e8f0e8;color:#2d502d}
-.cat-other,.cat-business_income,.cat-refund,.cat-transfer{background:#f0f0f0;color:#666}
+.cat-insurance{background:#e8f0e8;color:#2d502d}
+.cat-other,.cat-others,.cat-business_income,.cat-refund,.cat-transfer,.cat-suspense{background:#fff0e0;color:#c05000}
+/* ── SUSPENSE REVIEW ── */
+.sus-row{background:var(--cream);border:1.5px solid #e0c090;border-radius:var(--r-lg);padding:14px;margin-bottom:10px;box-shadow:var(--shadow)}
+.sus-row:hover{border-color:var(--accent-mid)}
+.sus-meta{display:flex;align-items:center;gap:10px;margin-bottom:10px;flex-wrap:wrap}
+.sus-desc{font-size:13px;font-weight:600;color:var(--brown);flex:1}
+.sus-amt{font-family:'DM Mono',monospace;font-size:13px;font-weight:700}
+.sus-date{font-size:11px;color:var(--brown4);font-family:'DM Mono',monospace}
+.sus-comment{width:100%;padding:8px 11px;background:var(--cream2);border:1.5px solid var(--cream3);border-radius:var(--r);color:var(--brown);font-size:13px;resize:none;min-height:54px;margin-bottom:8px}
+.sus-comment:focus{outline:none;border-color:var(--accent-mid)}
+.sus-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.sus-ai-result{margin-top:8px;padding:10px 12px;background:var(--accent-light);border:1px solid var(--accent-mid);border-radius:var(--r);font-size:13px;color:var(--brown);display:none}
+.sus-ai-result.show{display:block}
+.sus-mem{font-size:11px;color:var(--green);margin-top:4px;display:none}
+.sus-mem.show{display:block}
 .txn-debit{color:var(--red);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
 .txn-credit{color:var(--green);font-family:'DM Mono',monospace;font-size:12px;font-weight:600}
 
@@ -440,6 +454,10 @@ tbody tr:last-child td{border-bottom:none}
         </button>
         <button class="nav-btn" data-view="spending" onclick="nav('spending')">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.21 15.89A10 10 0 118 2.83"/><path d="M22 12A10 10 0 0012 2v10z"/></svg>Spending Analysis
+        </button>
+        <button class="nav-btn" data-view="others-review" onclick="nav('others-review')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>Others Review
+          <span class="nav-badge" id="others-badge" style="display:none">0</span>
         </button>
       </div>
       <div class="sb-sec">
@@ -585,7 +603,24 @@ async function loadData(){
     return;
   }
   // Load new tables (optional - won't break if missing)
-  try{var tr=await sb.from('transactions').select('*').order('transaction_date',{ascending:false});transactions=tr.data||[];}catch(e){transactions=[];}
+  try{var tr=await sb.from('transactions').select('*').order('transaction_date',{ascending:false});
+    var rawTxns=tr.data||[];
+    // Load memory and auto-apply
+    var memRes=await sb.from('category_memory').select('*');
+    var memory=memRes.data||[];
+    transactions=rawTxns.map(function(t){
+      if(t.ca_category) return t; // already manually set
+      if(t.category==='suspense'||t.category==='others'||t.needs_review){
+        var key=(t.description||'').toLowerCase().trim().slice(0,80);
+        var clientMem=memory.find(function(m){return m.client_phone===t.client_phone&&m.description_key===key;});
+        if(clientMem){
+          // auto-apply memory — mark it but don't overwrite ca_category so CA sees it happened
+          return Object.assign({},t,{ca_category:clientMem.category,needs_review:false,_auto_categorised:true});
+        }
+      }
+      return t;
+    });
+  }catch(e){transactions=[];}
   try{var br=await sb.from('bank_statements').select('*').order('created_at',{ascending:false});bankStatements=br.data||[];}catch(e){bankStatements=[];}
   customEvents=JSON.parse(localStorage.getItem('taxnio_events')||'[]');
   updateBadges();
@@ -597,10 +632,12 @@ function cName(phone){if(!phone)return'--';var c=clients.find(function(x){return
 function updateBadges(){
   var pq=questions.filter(function(q){return q.needs_ca_review&&q.status!=='ca_replied';}).length;
   var pa=appointments.filter(function(a){return a.status==='pending';}).length;
-  var qb=document.getElementById('qna-badge');var ab=document.getElementById('appt-badge');
+  var po=transactions.filter(function(t){return (t.category==='suspense'||t.category==='others'||t.needs_review)&&!t.ca_category;}).length;
+  var qb=document.getElementById('qna-badge');var ab=document.getElementById('appt-badge');var ob=document.getElementById('others-badge');
   if(qb){qb.textContent=pq;qb.style.display=pq>0?'inline':'none';}
   if(ab){ab.textContent=pa;ab.style.display=pa>0?'inline':'none';}
-  document.getElementById('notif-dot').style.display=(pq+pa)>0?'block':'none';
+  if(ob){ob.textContent=po;ob.style.display=po>0?'inline':'none';}
+  document.getElementById('notif-dot').style.display=(pq+pa+po)>0?'block':'none';
 }
 function populateDrop(){
   var dd=document.getElementById('client-dropdown');
@@ -656,6 +693,7 @@ function nav(v){
     'bank-statements':['Bank Statements','Upload and manage bank statements'],
     transactions:['Transactions','All categorised bank transactions'],
     spending:['Spending Analysis','AI-powered expense breakdown by category'],
+    'others-review':['Others Review','AI-assisted categorisation of unidentified transactions'],
     tally:['Tally Import','Import data from Tally']
   };
   var t=T[v]||['Dashboard',''];
@@ -685,6 +723,7 @@ function renderView(){
   else if(currentView==='bank-statements')renderBankStatements();
   else if(currentView==='transactions')renderTransactions('','');
   else if(currentView==='spending')renderSpending();
+  else if(currentView==='others-review')renderOthersReview();
   else if(currentView==='tally')renderTally();
 }
 function setPage(h){document.getElementById('page-content').innerHTML=h;}
@@ -1453,8 +1492,37 @@ function openBSDrawer(id){
     +'<div style="background:var(--red-light);border-radius:var(--r);padding:10px;text-align:center"><div style="font-size:10px;color:var(--red);font-weight:600;margin-bottom:3px">DEBITS</div><div style="font-family:\'Playfair Display\',serif;font-size:17px;font-weight:700;color:var(--red)">₹'+fmtN(b.total_debits||0)+'</div></div>'
     +'</div>'
     +'<div class="dr" style="margin-top:12px"><div class="dl">Transactions</div><div class="dv" style="font-family:\'Playfair Display\',serif;font-size:22px;font-weight:700">'+(b.transaction_count||0)+'</div></div>'
-    +(b.file_url?'<div class="dr-div"></div><a href="'+b.file_url+'" target="_blank" class="btn-reply" style="display:inline-block;text-decoration:none">↓ Download</a>':'');
+    +'<div class="dr-div"></div>'
+    +'<div style="display:flex;gap:8px">'
+    +(b.file_url?'<a href="'+b.file_url+'" target="_blank" class="btn-reply" style="flex:1;text-align:center;text-decoration:none">↓ Download</a>':'')
+    +'<button class="btn-reply" style="flex:1;background:var(--red)" onclick="deleteBS(\''+b.id+'\',\''+b.client_phone+'\','+(b.transaction_count||0)+')">🗑 Delete Statement</button>'
+    +'</div>'
+    +'<div id="bs-del-status" style="font-size:12px;color:var(--red);margin-top:8px;display:none"></div>';
   openDrawer();
+}
+
+async function deleteBS(id, clientPhone, txnCount){
+  var confirmed = confirm('Delete this bank statement and all '+txnCount+' transactions linked to it?\n\nThis cannot be undone.');
+  if(!confirmed) return;
+  var statusEl = document.getElementById('bs-del-status');
+  if(statusEl){statusEl.style.display='block';statusEl.textContent='Deleting transactions...';}
+  try{
+    // Delete all transactions linked to this statement
+    var delTxn = await sb.from('transactions').delete().eq('statement_id', id);
+    if(delTxn.error) throw new Error('Failed to delete transactions: '+delTxn.error.message);
+    if(statusEl) statusEl.textContent='Deleting statement record...';
+    // Delete the statement record
+    var delBS = await sb.from('bank_statements').delete().eq('id', id);
+    if(delBS.error) throw new Error('Failed to delete statement: '+delBS.error.message);
+    // Update local state
+    transactions = transactions.filter(function(t){return t.statement_id !== id;});
+    bankStatements = bankStatements.filter(function(b){return b.id !== id;});
+    closeDrawer();
+    loadData();
+  }catch(e){
+    if(statusEl){statusEl.textContent='Error: '+e.message;}
+    console.error('deleteBS error:',e);
+  }
 }
 function openDrawer(){document.getElementById('overlay').classList.add('open');document.getElementById('drawer').classList.add('open');}
 function closeDrawer(){document.getElementById('overlay').classList.remove('open');document.getElementById('drawer').classList.remove('open');}
@@ -1690,15 +1758,15 @@ async function processBS(fileContent, fileName, clientPhone, statementId){
       + 'Return ONLY a JSON array. No explanation. No markdown. No backticks. Just the array.\n\n'
       + 'Each object in the array must have exactly these fields:\n'
       + '{ "transaction_date": "YYYY-MM-DD", "description": "string", "amount": 100.00, "type": "debit", "balance": 5000.00, "category": "fuel", "needs_review": false }\n\n'
-      + 'category must be ONE of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, suspense\n\n'
+      + 'category must be ONE of: fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other, others\n\n'
       + 'Rules for category:\n'
       + 'HPCL/BPCL/IOCL/PETROL = fuel | SWIGGY/ZOMATO/BIGBASKET/DMART/GROCERY = groceries\n'
       + 'SALARY/SAL/PAYROLL/CTC = salary | GST/GSTIN = gst | TDS/INCOME TAX/IT DEPT = tds\n'
       + 'IRCTC/UBER/OLA/AIRLINE/TRAVEL = travel | MEDICAL/PHARMA/HOSPITAL/CLINIC = medical\n'
       + 'ELECTRICITY/WATER/BROADBAND/AIRTEL/JIO/BSNL = utilities | RENT/LEASE = rent\n'
-      + 'ATM/CASH = bank_charges | EMI/LOAN/MORTGAGE = other | UPI UNKNOWN = other\n'
-      + 'needs_review: true ONLY for suspense entries\n'
-      + 'IMPORTANT: When you cannot identify a merchant or transaction type, use "suspense" NOT "other"\n'
+      + 'ATM/CASH = bank_charges | EMI/LOAN/MORTGAGE = other | UPI UNKNOWN = others\n'
+      + 'needs_review: true ONLY for others entries that could not be identified\n'
+      + 'IMPORTANT: When you cannot identify a merchant or transaction type, use "others"\n'
       + '"other" is only for known but uncategorised items like bank transfers between own accounts\n\n'
       + 'Bank statement:\n' + fileContent.slice(0, 7000);
 
@@ -1817,11 +1885,112 @@ async function processBS(fileContent, fileName, clientPhone, statementId){
 
 // -- CATEGORY CHANGE --
 function changeCat(id){openModal('change-cat',id);}
-async function saveCat(id,cat){
-  if(!cat)return;
-  await sb.from('transactions').update({ca_category:cat,needs_review:false}).eq('id',id);
-  var t=transactions.find(function(x){return x.id===id;});if(t){t.ca_category=cat;t.needs_review=false;}
+async function saveCat(id, cat, description, clientPhone){
+  if(!cat) return;
+  await sb.from('transactions').update({ca_category:cat, needs_review:false}).eq('id',id);
+  var t=transactions.find(function(x){return x.id===id;});
+  if(t){t.ca_category=cat;t.needs_review=false;}
+  // Save memory if description and clientPhone provided
+  if(description && clientPhone){
+    var key = description.toLowerCase().trim().slice(0,80);
+    // Upsert into category_memory table
+    await sb.from('category_memory').upsert({
+      client_phone: clientPhone,
+      description_key: key,
+      category: cat,
+      updated_at: new Date().toISOString()
+    }, {onConflict:'client_phone,description_key'});
+  }
   renderView();
+}
+
+// -- SUSPENSE / OTHERS REVIEW --
+var susAiResults = {}; // store AI suggestions per transaction id
+
+async function askAiForSuspense(txnId){
+  var t = transactions.find(function(x){return x.id===txnId;});
+  if(!t) return;
+  var comment = document.getElementById('sus-comment-'+txnId).value.trim();
+  var btn = document.getElementById('sus-ai-btn-'+txnId);
+  var resultBox = document.getElementById('sus-ai-result-'+txnId);
+  btn.textContent='Asking AI...'; btn.disabled=true;
+  resultBox.className='sus-ai-result';
+  resultBox.textContent='';
+  try{
+    var prompt = 'You are an expert Indian CA assistant helping categorise a bank transaction.\n\n'
+      +'Transaction description: "'+t.description+'"\n'
+      +'Amount: ₹'+t.amount+' ('+t.type+')\n'
+      +'CA note: "'+comment+'"\n\n'
+      +'Based on the description and CA note, suggest the best category from this list:\n'
+      +'fuel, groceries, salary, rent, office, travel, medical, utilities, gst, tds, entertainment, bank_charges, insurance, other\n\n'
+      +'Reply in this exact JSON format only, no explanation:\n'
+      +'{"category":"salary","reason":"CA note says this is employee payment"}';
+    var res = await fetch('https://taxnio-ai.harshalbajaj29.workers.dev',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({model:'claude-haiku-4-5-20251001', content:prompt})
+    });
+    var data = await res.json();
+    var text = (data.content&&data.content[0]&&data.content[0].text)||'';
+    var clean = text.replace(/```json|```/g,'').trim();
+    var parsed = JSON.parse(clean);
+    susAiResults[txnId] = parsed.category;
+    resultBox.innerHTML = '🤖 AI suggests: <strong>'+parsed.category+'</strong><br><span style="font-size:12px;color:var(--brown3)">'+parsed.reason+'</span>'
+      +'<div style="display:flex;gap:8px;margin-top:8px">'
+      +'<button class="btn-pri" style="font-size:12px;padding:5px 12px" onclick="confirmSusCat(\''+txnId+'\',\''+parsed.category+'\')">✓ Accept</button>'
+      +'<button class="btn-sm" style="font-size:12px;padding:5px 12px" onclick="document.getElementById(\'sus-manual-'+txnId+'\').style.display=\'flex\'">Change</button>'
+      +'</div>';
+    resultBox.className='sus-ai-result show';
+  }catch(e){
+    resultBox.textContent='AI error: '+e.message+'. Please categorise manually.';
+    resultBox.className='sus-ai-result show';
+    document.getElementById('sus-manual-'+txnId).style.display='flex';
+  }
+  btn.textContent='Ask AI'; btn.disabled=false;
+}
+
+async function confirmSusCat(txnId, cat){
+  var t = transactions.find(function(x){return x.id===txnId;});
+  if(!t) return;
+  await saveCat(txnId, cat, t.description, t.client_phone);
+  // Show memory saved notice
+  var mem = document.getElementById('sus-mem-'+txnId);
+  if(mem){mem.textContent='✅ Saved! Next time "'+t.description.slice(0,30)+'..." will auto-categorise as '+cat;mem.className='sus-mem show';}
+  var row = document.getElementById('sus-row-'+txnId);
+  if(row) setTimeout(function(){row.style.opacity='0.4';row.style.pointerEvents='none';},300);
+}
+
+function renderSuspenseReview(clientPhone){
+  var sus = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone)
+      && !t.ca_category;
+  });
+  if(sus.length===0) return '<div class="empty" style="padding:24px"><div class="empty-icon">✅</div><p>No unreviewed entries</p></div>';
+
+  var cats=['fuel','groceries','salary','rent','office','travel','medical','utilities','gst','tds','entertainment','bank_charges','insurance','other'];
+
+  return sus.map(function(t){
+    var catOpts = cats.map(function(c){return'<option value="'+c+'">'+c+'</option>';}).join('');
+    return '<div class="sus-row" id="sus-row-'+t.id+'">'
+      +'<div class="sus-meta">'
+      +'<div class="sus-desc">'+t.description+'</div>'
+      +'<div class="sus-date">'+t.transaction_date+'</div>'
+      +'<div class="sus-amt '+(t.type==='credit'?'txn-credit':'txn-debit')+'">'+(t.type==='credit'?'+':'−')+'₹'+fmtN(parseFloat(t.amount)||0)+'</div>'
+      +(clientPhone?'':'<div style="font-size:11px;color:var(--brown4)">'+cName(t.client_phone||'')+'</div>')
+      +'</div>'
+      +'<textarea class="sus-comment" id="sus-comment-'+t.id+'" placeholder="Add a note for AI e.g. \'This is salary payment to Mobin Khan\' or \'Monthly office rent\'..."></textarea>'
+      +'<div class="sus-actions">'
+      +'<button class="btn-pri" id="sus-ai-btn-'+t.id+'" style="font-size:12px;padding:6px 14px" onclick="askAiForSuspense(\''+t.id+'\')">🤖 Ask AI</button>'
+      +'<div id="sus-manual-'+t.id+'" style="display:flex;gap:6px;align-items:center">'
+      +'<select id="sus-sel-'+t.id+'" style="padding:6px 10px;border-radius:var(--r);border:1.5px solid var(--cream3);background:var(--cream2);font-size:12px;color:var(--brown)"><option value="">Move to category...</option>'+catOpts+'</select>'
+      +'<button class="btn-sm" style="font-size:12px;padding:6px 12px" onclick="confirmSusCat(\''+t.id+'\',document.getElementById(\'sus-sel-'+t.id+'\').value)">Save</button>'
+      +'</div>'
+      +'</div>'
+      +'<div class="sus-ai-result" id="sus-ai-result-'+t.id+'"></div>'
+      +'<div class="sus-mem" id="sus-mem-'+t.id+'"></div>'
+      +'</div>';
+  }).join('');
 }
 
 // -- EXPORT --
@@ -1836,6 +2005,35 @@ function exportTxnCSV(){
   var rows=transactions.map(function(t){return[t.transaction_date||'',cName(t.client_phone||''),(t.description||'').replace(/,/g,' '),t.category||'',t.ca_category||'',t.type||'',t.amount||'',t.balance||''];});
   var csv=[h].concat(rows).map(function(r){return r.join(',');}).join('\n');
   var a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download='taxnio_transactions_'+new Date().toISOString().slice(0,10)+'.csv';a.click();
+}
+
+// -- OTHERS REVIEW PAGE --
+function renderOthersReview(){
+  var clientPhone = selectedClient ? selectedClient.phone : null;
+  var sus = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone)
+      && !t.ca_category;
+  });
+  var total = transactions.filter(function(t){
+    return (t.category==='suspense'||t.category==='others'||t.needs_review)
+      && (!clientPhone || t.client_phone===clientPhone);
+  }).length;
+  setPage(
+    '<div style="max-width:860px;margin:0 auto">'
+    +'<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">'
+    +'<div>'
+    +'<h3 style="font-size:15px;color:var(--brown)">⚠️ Others — Needs Review</h3>'
+    +'<p style="font-size:12px;color:var(--brown4);margin-top:2px">'+sus.length+' pending · '+total+' total · Add a note and ask AI to auto-categorise</p>'
+    +'</div>'
+    +(clientPhone?'<button class="btn-sm" onclick="selectedClient=null;document.getElementById(\'client-dropdown\').value=\'\';renderOthersReview()">Show All Clients</button>':'')
+    +'</div>'
+    +(sus.length===0
+      ? '<div class="empty" style="margin-top:40px"><div class="empty-icon" style="font-size:36px">✅</div><p style="font-size:14px">All transactions reviewed!</p></div>'
+      : renderSuspenseReview(clientPhone)
+    )
+    +'</div>'
+  );
 }
 
 // -- HELPERS --
